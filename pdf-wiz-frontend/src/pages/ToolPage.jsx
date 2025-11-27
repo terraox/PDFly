@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { UploadCloud, Lock, Sparkles, FileText, AlertCircle } from 'lucide-react';
@@ -7,12 +7,51 @@ export default function ToolPage({ title, icon: Icon }) {
   const [limitReached, setLimitReached] = useState(false);
   const [processing, setProcessing] = useState(false);
 
-  // Check usage limit on mount (optional) or on action
+  // Function to determine the expected file type and prompt based on the tool title
+  const getAcceptedFileType = (toolTitle) => {
+    switch (toolTitle) {
+      // ----------------------------------------------------
+      // I. PDF TO PDF TOOLS (Input MUST be PDF)
+      // ----------------------------------------------------
+      case "Merge PDF":
+      case "Split PDF":
+      case "Compress PDF":
+      case "Rotate PDF":
+      case "Sign PDF":
+      case "Watermark":
+      case "Add Page Numbers":
+      case "Protect PDF":
+      case "Unlock PDF":
+      case "PDF to Word":        // Converting FROM PDF
+      case "PDF to PowerPoint":  // Converting FROM PDF
+      case "PDF to Excel":       // Converting FROM PDF
+      case "PDF to JPG":         // Converting FROM PDF
+        return { extension: ".pdf", prompt: "PDF File" };
+
+      // ----------------------------------------------------
+      // II. CONVERT TO PDF TOOLS (Input is SOURCE file)
+      // ----------------------------------------------------
+      case "Word to PDF":
+        return { extension: ".docx, .doc", prompt: "Word Document (.docx)" };
+      case "PowerPoint to PDF":
+        return { extension: ".ppt, .pptx", prompt: "PowerPoint File (.pptx)" };
+      case "Excel to PDF":
+        return { extension: ".xls, .xlsx", prompt: "Excel Spreadsheet (.xlsx)" };
+      case "JPG to PDF":
+        return { extension: ".jpg, .png", prompt: "Image File (.jpg/.png)" };
+        
+      default:
+        return { extension: ".*", prompt: "File" };
+    }
+  };
+
+  const fileType = getAcceptedFileType(title);
+
+  // Check usage limit
   const checkLimit = () => {
     const lastUsage = localStorage.getItem('pdfly_last_usage');
     if (lastUsage) {
       const hours = (Date.now() - parseInt(lastUsage)) / 1000 / 60 / 60;
-      // If used within the last 24 hours, block access
       if (hours < 24) {
         return true;
       }
@@ -21,17 +60,17 @@ export default function ToolPage({ title, icon: Icon }) {
   };
 
   const handleUpload = () => {
-    // Check if user has already used a service today
+    // 1. Check if user has already used a service today
     if (checkLimit()) {
       setLimitReached(true);
       return;
     }
 
-    // Simulate Processing
+    // 2. Simulate Processing
     setProcessing(true);
     setTimeout(() => {
       setProcessing(false);
-      // Record the usage timestamp
+      // 3. Record the usage timestamp
       localStorage.setItem('pdfly_last_usage', Date.now().toString());
       alert(`${title} processed successfully! (1/1 Free Daily Tasks Used)`);
     }, 2000);
@@ -87,7 +126,7 @@ export default function ToolPage({ title, icon: Icon }) {
             {title}
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-zinc-500 dark:text-zinc-400">
-            Upload your file to get started. 1 free task available today.
+            Upload your {fileType.prompt} to get started. 1 free task available today.
           </p>
         </div>
         
@@ -107,10 +146,10 @@ export default function ToolPage({ title, icon: Icon }) {
             )}
           </div>
           <span className="mt-4 text-xl font-semibold text-zinc-700 dark:text-zinc-200">
-            {processing ? "Processing your file..." : "Click to Upload PDF"}
+            {processing ? "Processing your file..." : `Click to Upload ${fileType.prompt}`}
           </span>
           <span className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-            {processing ? "Please wait a moment" : "or drag and drop it here"}
+            {processing ? "Please wait a moment" : `or drag and drop your ${fileType.extension} file here`}
           </span>
         </div>
 

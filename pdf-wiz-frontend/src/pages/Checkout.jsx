@@ -1,29 +1,73 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
-import { Check, ShieldCheck, Loader2, Tag } from 'lucide-react';
+import { Check, ShieldCheck, Loader2, Tag, AlertTriangle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
+
+const API_VALIDATE_URL = "http://localhost:8080/api/public/coupon/validate";
 
 export default function Checkout() {
   const [coupon, setCoupon] = useState("");
   const [applied, setApplied] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [couponError, setCouponError] = useState(null);
+  const [discountAmount, setDiscountAmount] = useState(0); // NEW State for actual discount amount
+  const { user, login } = useAuth();
+  
+  // Hardcoded amounts for UI display 
+  const price = 499.00;
+  const total = price - discountAmount;
+  const displayTotal = total.toFixed(2);
+  const isFree = total <= 0;
 
-  const handleApplyCoupon = () => {
-    if (!coupon) return;
-    if (coupon.toUpperCase() === "STUDENT50") {
-      setApplied(true);
-    } else {
-      alert("Invalid Coupon");
+  const handleApplyCoupon = async () => {
+    if (!coupon || applied) return;
+
+    setLoading(true);
+    setCouponError(null);
+    
+    try {
+        const response = await axios.post(API_VALIDATE_URL, {
+            code: coupon,
+            userEmail: user.email 
+        });
+
+        if (response.status === 200) {
+            const discountPercent = response.data.discountPercent; // Get % from Java response
+            const calculatedDiscount = price * (discountPercent / 100);
+            
+            setApplied(true);
+            setDiscountAmount(calculatedDiscount); // Set the actual currency amount
+            
+            // Update context if a PRO plan was applied
+            login(
+                localStorage.getItem('pdfly_auth_token'),
+                user.email,
+                'PRO' 
+            );
+        }
+    } catch (err) {
+        let message = "Invalid coupon code.";
+        if (err.response) {
+            if (err.response.status === 404) message = "Coupon not found.";
+            if (err.response.status === 410) message = "Coupon has expired.";
+            if (err.response.status === 423) message = "Coupon limit reached.";
+        }
+        setCouponError(message);
+    } finally {
+        setLoading(false);
     }
   };
 
   const handlePayment = () => {
-    setLoading(true);
-    setTimeout(() => {
-      alert("Payment Successful! (Simulation)");
-      setLoading(false);
-    }, 2000);
+    if (isFree) {
+         alert("Subscription Activated! (Using 100% Coupon)");
+    } else {
+        alert(`Payment of ₹${displayTotal} Successful! (Simulation)`);
+    }
   };
-
+  
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black transition-colors duration-300">
       <Navbar />
@@ -40,19 +84,20 @@ export default function Checkout() {
                   <h3 className="font-semibold text-zinc-900 dark:text-white">PDFly Pro</h3>
                   <p className="text-sm text-zinc-500">Monthly Subscription</p>
                 </div>
-                <span className="font-semibold text-zinc-900 dark:text-white">₹499.00</span>
+                <span className="font-semibold text-zinc-900 dark:text-white">₹{price.toFixed(2)}</span>
               </div>
               
+              {/* Discount Line */}
               {applied && (
                 <div className="flex justify-between items-center text-emerald-600 text-sm">
-                  <span>Coupon (STUDENT50)</span>
-                  <span>- ₹249.50</span>
+                  <span>Coupon Applied ({Math.round(discountAmount / price * 100)}% Off)</span>
+                  <span>- ₹{discountAmount.toFixed(2)}</span>
                 </div>
               )}
 
               <div className="flex justify-between items-center pt-4 text-lg font-bold text-zinc-900 dark:text-white">
-                <span>Total</span>
-                <span>{applied ? '₹249.50' : '₹499.00'}</span>
+                <span>Total Due</span>
+                <span>₹{displayTotal}</span>
               </div>
             </div>
 
@@ -71,13 +116,14 @@ export default function Checkout() {
                 </div>
                 <button 
                   onClick={handleApplyCoupon}
-                  disabled={applied}
-                  className="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-black text-sm font-medium rounded-md hover:opacity-90 disabled:opacity-50"
+                  disabled={applied || loading}
+                  className="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-black text-sm font-medium rounded-md hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  {applied ? <Check className="h-4 w-4" /> : 'Apply'}
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : (applied ? <Check className="h-4 w-4" /> : 'Apply')}
                 </button>
               </div>
-              {applied && <p className="text-xs text-emerald-500">Coupon applied successfully!</p>}
+              {couponError && <p className="text-xs text-red-500 flex items-center gap-1 mt-2"><AlertTriangle className="h-3 w-3" />{couponError}</p>}
+              {applied && <p className="text-xs text-emerald-500 flex items-center gap-1 mt-2"><Check className="h-3 w-3" />Coupon applied successfully! You are now Pro.</p>}
             </div>
           </div>
 
@@ -85,24 +131,28 @@ export default function Checkout() {
           <div>
             <h2 className="text-2xl font-bold text-zinc-900 dark:text-white mb-6">Payment Details</h2>
             <form className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-zinc-500 uppercase">Cardholder Name</label>
-                <input type="text" placeholder="John Doe" className="w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:text-white" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-zinc-500 uppercase">Card Number</label>
-                <input type="text" placeholder="0000 0000 0000 0000" className="w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:text-white" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-zinc-500 uppercase">Expiry</label>
-                  <input type="text" placeholder="MM/YY" className="w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:text-white" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-medium text-zinc-500 uppercase">CVC</label>
-                  <input type="text" placeholder="123" className="w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:text-white" />
-                </div>
-              </div>
+              {total > 0 && (
+                <>
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-zinc-500 uppercase">Cardholder Name</label>
+                    <input type="text" placeholder="John Doe" className="w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:text-white" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-medium text-zinc-500 uppercase">Card Number</label>
+                    <input type="text" placeholder="0000 0000 0000 0000" className="w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:text-white" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-xs font-medium text-zinc-500 uppercase">Expiry</label>
+                      <input type="text" placeholder="MM/YY" className="w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:text-white" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-medium text-zinc-500 uppercase">CVC</label>
+                      <input type="text" placeholder="123" className="w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:border-indigo-500 dark:text-white" />
+                    </div>
+                  </div>
+                </>
+              )}
 
               <button 
                 type="button"
@@ -110,10 +160,10 @@ export default function Checkout() {
                 disabled={loading}
                 className="w-full mt-6 flex items-center justify-center gap-2 rounded-md bg-indigo-600 py-3 text-sm font-semibold text-white hover:bg-indigo-500 disabled:opacity-70 transition-all"
               >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
-                {loading ? 'Processing...' : `Pay ${applied ? '₹249.50' : '₹499.00'}`}
+                <ShieldCheck className="h-4 w-4" />
+                {isFree ? 'Activate Subscription' : `Pay ₹${displayTotal}`}
               </button>
-              <p className="text-center text-xs text-zinc-500 mt-2">Secure encrypted payment via Stripe</p>
+              <p className="text-center text-xs text-zinc-500 mt-2">Secure encrypted payment via Stripe (Simulation)</p>
             </form>
           </div>
 

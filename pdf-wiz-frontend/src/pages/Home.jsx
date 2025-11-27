@@ -14,7 +14,7 @@ const tools = [
   { id: "split", title: "Split PDF", desc: "Separate one page or a whole set for easy conversion into independent PDF files.", icon: Scissors, color: "red" },
   { id: "compress", title: "Compress PDF", desc: "Reduce file size while optimizing for maximal PDF quality.", icon: Minimize2, color: "green" },
   { id: "pdf-to-word", title: "PDF to Word", desc: "Easily convert your PDF files into easy to edit DOC and DOCX documents.", icon: Type, color: "blue" },
-  { id: "pdf-to-ppt", title: "PDF to Powerpoint", desc: "Turn your PDF files into easy to edit PPT and PPTX slideshows.", icon: Presentation, color: "orange" },
+  { id: "pdf-to-ppt", title: "PDF to PowerPoint", desc: "Turn your PDF files into easy to edit PPT and PPTX slideshows.", icon: Presentation, color: "orange" },
   { id: "pdf-to-excel", title: "PDF to Excel", desc: "Pull data straight from PDFs into Excel spreadsheets in a few short seconds.", icon: FileSpreadsheet, color: "green" },
   { id: "word-to-pdf", title: "Word to PDF", desc: "Make DOC and DOCX files easy to read by converting them to PDF.", icon: Type, color: "blue" },
   { id: "pdf-to-jpg", title: "PDF to JPG", desc: "Convert each PDF page into a JPG or extract all images contained in a PDF.", icon: ImageIcon, color: "yellow" },

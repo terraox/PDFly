@@ -1,7 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from 'next-themes';
-import { Scissors, Minimize2, FileText, ArrowLeftRight } from 'lucide-react';
+import { AuthProvider } from './context/AuthContext'; 
+import { ArrowLeftRight, Minimize2, FileText, Type, Presentation, FileSpreadsheet, Image as ImageIcon, PenTool, Stamp, RefreshCw, Unlock, Shield, Hash, Scissors } from 'lucide-react'; 
+
+// Components
+import ProtectedRoute from './components/ProtectedRoute'; 
 
 // Public Pages
 import Home from './pages/Home';
@@ -9,7 +13,12 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Pricing from './pages/Pricing';
 import Checkout from './pages/Checkout';
-import ToolPage from './pages/ToolPage'; // <--- New Tool Component
+import ToolPage from './pages/ToolPage'; 
+import Profile from './pages/Profile'; 
+import MergeTool from './pages/MergeTool'; 
+import ProtectTool from './pages/ProtectTool'; 
+import WatermarkTool from './pages/WatermarkTool'; // Need to ensure this is imported if you created it
+import RotateTool from './pages/RotateTool'; // <--- NEW IMPORT
 
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard';
@@ -24,32 +33,57 @@ function App() {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <Router>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/pricing" element={<Pricing />} />
-          <Route path="/checkout" element={<Checkout />} />
-          
-          {/* Active Tools with Usage Limits */}
-          <Route path="/merge" element={<ToolPage title="Merge PDF" icon={ArrowLeftRight} />} />
-          <Route path="/split" element={<ToolPage title="Split PDF" icon={Scissors} />} />
-          <Route path="/compress" element={<ToolPage title="Compress PDF" icon={Minimize2} />} />
-          <Route path="/pdf-to-word" element={<ToolPage title="PDF to Word" icon={FileText} />} />
-          
-          {/* Placeholder Routes for tools we haven't built specific logic for yet */}
-          <Route path="/convert-pdf" element={<ToolPage title="Convert PDF" icon={FileText} />} />
-          
-          {/* Admin Routes */}
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/users" element={<Users />} />
-          <Route path="/admin/plans" element={<Plans />} />
-          <Route path="/admin/coupons" element={<Coupons />} />
-          <Route path="/admin/finance" element={<Finance />} />
-          <Route path="/admin/health" element={<Health />} />
-          <Route path="/admin/security" element={<Security />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            {/* --------------------------------- */}
+            {/* PUBLIC ROUTES (Always Accessible) */}
+            {/* --------------------------------- */}
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/checkout" element={<Checkout />} />
+            
+            {/* --------------------------------- */}
+            {/* PROTECTED ROUTES (Requires Login) */}
+            {/* --------------------------------- */}
+            <Route element={<ProtectedRoute />}>
+                {/* User Profile Route */}
+                <Route path="/profile" element={<Profile />} /> 
+
+                {/* Core Tool Implementations */}
+                <Route path="/merge" element={<MergeTool />} /> 
+                <Route path="/protect" element={<ProtectTool />} /> 
+                {/* Assuming you created WatermarkTool based on previous chat, otherwise remove this line */}
+                {/* <Route path="/watermark" element={<WatermarkTool />} />  */}
+                 <Route path="/rotate" element={<RotateTool />} /> {/* <--- NEW ROTATE UI */}
+                
+                {/* Remaining 10 Tool Routes using the generic ToolPage component */}
+                <Route path="/split" element={<ToolPage title="Split PDF" icon={Scissors} />} />
+                <Route path="/compress" element={<ToolPage title="Compress PDF" icon={Minimize2} />} />
+                <Route path="/pdf-to-word" element={<ToolPage title="PDF to Word" icon={FileText} />} />
+                <Route path="/pdf-to-ppt" element={<ToolPage title="PDF to PowerPoint" icon={Presentation} />} />
+                <Route path="/pdf-to-excel" element={<ToolPage title="PDF to Excel" icon={FileSpreadsheet} />} />
+                <Route path="/word-to-pdf" element={<ToolPage title="Word to PDF" icon={FileText} />} />
+                <Route path="/pdf-to-jpg" element={<ToolPage title="PDF to JPG" icon={ImageIcon} />} />
+                <Route path="/jpg-to-pdf" element={<ToolPage title="JPG to PDF" icon={ImageIcon} />} />
+                <Route path="/sign" element={<ToolPage title="Sign PDF" icon={PenTool} />} />
+                <Route path="/watermark" element={<ToolPage title="Watermark" icon={Stamp} />} /> {/* Kept generic if dedicated not created yet */}
+                <Route path="/unlock" element={<ToolPage title="Unlock PDF" icon={Unlock} />} />
+                <Route path="/page-numbers" element={<ToolPage title="Add Page Numbers" icon={Hash} />} />
+                
+                {/* Admin Routes */}
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/users" element={<Users />} />
+                <Route path="/admin/plans" element={<Plans />} />
+                <Route path="/admin/coupons" element={<Coupons />} />
+                <Route path="/admin/finance" element={<Finance />} />
+                <Route path="/admin/health" element={<Health />} />
+                <Route path="/admin/security" element={<Security />} />
+            </Route>
+            {/* --------------------------------- */}
+          </Routes>
+        </AuthProvider>
       </Router>
     </ThemeProvider>
   );
