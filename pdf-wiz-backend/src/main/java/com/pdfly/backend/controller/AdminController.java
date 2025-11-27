@@ -31,5 +31,9 @@ public class AdminController {
         return ResponseEntity.ok(couponService.getAllCoupons());
     }
 
-    // You would add DELETE /PUT endpoints here for full CRUD
+    @DeleteMapping("/coupons/{id}")
+    public ResponseEntity<Void> deleteCoupon(@PathVariable Long id) {
+        couponService.deleteCoupon(id);
+        return ResponseEntity.noContent().build();
+    }
 }

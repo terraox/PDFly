@@ -24,10 +24,10 @@ export default function Login() {
       const response = await axios.post(API_URL, { email, password });
 
       if (response.status === 200 && response.data.token) {
-        const { token, email: userEmail, role } = response.data;
+        const { token, email: userEmail, role, plan, planExpiry } = response.data;
         
         // 1. Update Global Context State
-        login(token, userEmail, role); 
+        login(token, userEmail, role, plan, planExpiry); 
 
         // 2. CRITICAL FIX: Redirect based on role
         if (role === 'ADMIN') {

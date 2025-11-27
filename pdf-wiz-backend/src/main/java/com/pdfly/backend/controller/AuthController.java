@@ -103,6 +103,7 @@ public class AuthController {
                 .token(jwt)
                 .email(user.getEmail())
                 .role(user.getRole().name())
+                .plan(user.getPlan().name()) // SEND PLAN TYPE (FREE or PRO)
                 .planExpiry(formatExpiry(user.getPlanExpiryDate())) // SEND EXPIRY DATE
                 .build());
     }

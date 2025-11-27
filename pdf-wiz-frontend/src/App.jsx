@@ -16,6 +16,7 @@ import Checkout from './pages/Checkout';
 import ToolPage from './pages/ToolPage'; 
 import Profile from './pages/Profile'; 
 import MergeTool from './pages/MergeTool'; 
+import SplitTool from './pages/SplitTool';
 import ProtectTool from './pages/ProtectTool'; 
 import WatermarkTool from './pages/WatermarkTool'; // Need to ensure this is imported if you created it
 import RotateTool from './pages/RotateTool'; // <--- NEW IMPORT
@@ -53,13 +54,13 @@ function App() {
 
                 {/* Core Tool Implementations */}
                 <Route path="/merge" element={<MergeTool />} /> 
+                <Route path="/split" element={<SplitTool />} />
                 <Route path="/protect" element={<ProtectTool />} /> 
                 {/* Assuming you created WatermarkTool based on previous chat, otherwise remove this line */}
                 {/* <Route path="/watermark" element={<WatermarkTool />} />  */}
                  <Route path="/rotate" element={<RotateTool />} /> {/* <--- NEW ROTATE UI */}
                 
-                {/* Remaining 10 Tool Routes using the generic ToolPage component */}
-                <Route path="/split" element={<ToolPage title="Split PDF" icon={Scissors} />} />
+                {/* Remaining Tool Routes using the generic ToolPage component */}
                 <Route path="/compress" element={<ToolPage title="Compress PDF" icon={Minimize2} />} />
                 <Route path="/pdf-to-word" element={<ToolPage title="PDF to Word" icon={FileText} />} />
                 <Route path="/pdf-to-ppt" element={<ToolPage title="PDF to PowerPoint" icon={Presentation} />} />

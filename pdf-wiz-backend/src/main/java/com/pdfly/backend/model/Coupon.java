@@ -23,7 +23,8 @@ public class Coupon {
 
     private int discountPercent; // e.g., 50 for 50%
     
-    private String planType; // The plan this coupon grants: "PRO" or "FREE_LIFETIME"
+    @Enumerated(EnumType.STRING)
+    private User.PlanType planType; // The plan this coupon grants: PRO or FREE
 
     private int maxUses;
 

@@ -42,11 +42,28 @@ public class PdfToolController {
         if (files == null || files.size() < 2) {
             return createErrorResponse("Please upload at least two PDF files to merge.");
         }
+        
+        // Validate all files are not empty
+        for (MultipartFile file : files) {
+            if (file == null || file.isEmpty()) {
+                return createErrorResponse("One or more files are empty. Please upload valid PDF files.");
+            }
+        }
+        
         try {
             byte[] mergedPdf = pdfToolService.mergePdfs(files);
+            if (mergedPdf == null || mergedPdf.length == 0) {
+                return createErrorResponse("Merge operation produced an empty file. Please check your PDF files.");
+            }
             return createPdfResponse(mergedPdf, "pdfly_merged.pdf");
+        } catch (org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException e) {
+            return createErrorResponse("One or more PDF files are password protected. Please unlock them first.");
+        } catch (org.apache.pdfbox.io.IOException e) {
+            return createErrorResponse("Invalid or corrupted PDF file detected. Please ensure all files are valid PDFs.");
         } catch (IOException e) {
-            return createErrorResponse("Merging failed due to file reading error: " + e.getMessage());
+            return createErrorResponse("Merging failed: " + e.getMessage() + ". Please ensure all files are valid PDF documents.");
+        } catch (Exception e) {
+            return createErrorResponse("Merge operation failed: " + e.getMessage() + ". Please try again with different files.");
         }
     }
 
@@ -55,17 +72,56 @@ public class PdfToolController {
     // 2. SPLIT ENDPOINT (POST /api/tools/split)
     // =================================================================
     @PostMapping(value = "/split", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> splitPdf(@RequestParam("file") MultipartFile file) {
-         if (file == null || file.isEmpty()) {
-            return ResponseEntity.badRequest().body("Please upload a PDF file to split.");
+    public ResponseEntity<byte[]> splitPdf(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "splitMode", required = false, defaultValue = "all") String splitMode,
+            @RequestParam(value = "pageRanges", required = false) String pageRanges,
+            @RequestParam(value = "pagesPerFile", required = false) Integer pagesPerFile) {
+        
+        if (file == null || file.isEmpty()) {
+            return createErrorResponse("Please upload a PDF file to split.");
         }
+        
         try {
-            // Note: Returning a list of byte arrays requires zipping. 
-            // We return a simple success status for now.
-            List<byte[]> splitFiles = pdfToolService.splitPdf(file);
-            return ResponseEntity.ok().body("Successfully split PDF into " + splitFiles.size() + " pages. (Download feature pending ZIP implementation)");
+            // Split the PDF based on the mode
+            List<byte[]> splitFiles = pdfToolService.splitPdf(file, splitMode, pageRanges, pagesPerFile);
+            
+            if (splitFiles.isEmpty()) {
+                return createErrorResponse("No pages were split. Please check your split options.");
+            }
+            
+            // Create ZIP file containing all split PDFs
+            String baseFilename = file.getOriginalFilename();
+            if (baseFilename != null && baseFilename.endsWith(".pdf")) {
+                baseFilename = baseFilename.substring(0, baseFilename.length() - 4);
+            } else {
+                baseFilename = "split";
+            }
+            
+            byte[] zipBytes = pdfToolService.createZipFromPdfs(splitFiles, baseFilename);
+            
+            if (zipBytes == null || zipBytes.length == 0) {
+                return createErrorResponse("Failed to create ZIP file. Please try again.");
+            }
+            
+            // Return ZIP file with proper content type
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("application/zip"));
+            headers.setContentDispositionFormData("attachment", baseFilename + "_split.zip");
+            headers.setContentLength(zipBytes.length);
+            
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(zipBytes);
+                    
+        } catch (org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException e) {
+            return createErrorResponse("PDF is password protected. Please unlock it first.");
+        } catch (org.apache.pdfbox.io.IOException e) {
+            return createErrorResponse("Invalid or corrupted PDF file detected.");
         } catch (IOException e) {
             return createErrorResponse("Splitting failed: " + e.getMessage());
+        } catch (Exception e) {
+            return createErrorResponse("Split operation failed: " + e.getMessage());
         }
     }
     
@@ -163,7 +219,46 @@ public class PdfToolController {
     
     
     // =================================================================
-    // 8. GENERIC CONVERSION ENDPOINT (Handles the rest 5+ tools)
+    // 8. SIGN PDF ENDPOINT (POST /api/tools/sign)
+    // =================================================================
+    @PostMapping(value = "/sign", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<byte[]> signPdf(@RequestParam("file") MultipartFile file,
+                                         @RequestParam("signatureText") String signatureText) {
+        if (file == null || file.isEmpty()) {
+            return createErrorResponse("Please upload a PDF file to sign.");
+        }
+        if (signatureText == null || signatureText.trim().isEmpty()) {
+            return createErrorResponse("Please provide signature text.");
+        }
+        try {
+            byte[] signedPdf = pdfToolService.signPdf(file, signatureText);
+            return createPdfResponse(signedPdf, "pdfly_signed.pdf");
+        } catch (IOException e) {
+            return createErrorResponse("Signing failed: " + e.getMessage());
+        }
+    }
+    
+    
+    // =================================================================
+    // 9. ADD PAGE NUMBERS ENDPOINT (POST /api/tools/page-numbers)
+    // =================================================================
+    @PostMapping(value = "/page-numbers", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<byte[]> addPageNumbers(@RequestParam("file") MultipartFile file,
+                                                @RequestParam(value = "position", required = false, defaultValue = "bottom-center") String position) {
+        if (file == null || file.isEmpty()) {
+            return createErrorResponse("Please upload a PDF file to add page numbers.");
+        }
+        try {
+            byte[] numberedPdf = pdfToolService.addPageNumbers(file, position);
+            return createPdfResponse(numberedPdf, "pdfly_numbered.pdf");
+        } catch (IOException e) {
+            return createErrorResponse("Adding page numbers failed: " + e.getMessage());
+        }
+    }
+    
+    
+    // =================================================================
+    // 10. GENERIC CONVERSION ENDPOINT (Handles the rest 5+ tools)
     // =================================================================
     
     /**

@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
-import { UploadCloud, Shield, Lock, Loader2, AlertTriangle, FileText } from 'lucide-react';
+import { UploadCloud, Shield, Lock, Loader2, AlertTriangle, FileText, X } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 

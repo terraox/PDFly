@@ -14,4 +14,6 @@ public class AuthResponse {
     private String token;
     private String email;
     private String role;
+    private String plan; // FREE or PRO
+    private String planExpiry; // ISO date string or null
 }

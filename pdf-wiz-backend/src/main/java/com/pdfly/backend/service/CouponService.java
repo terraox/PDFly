@@ -34,7 +34,12 @@ public class CouponService {
         Coupon coupon = new Coupon();
         coupon.setCode(request.getCode().toUpperCase());
         coupon.setDiscountPercent(request.getDiscountPercent());
-        coupon.setPlanType(request.getPlanType());
+        // Convert String to User.PlanType enum
+        try {
+            coupon.setPlanType(User.PlanType.valueOf(request.getPlanType().toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid plan type. Must be FREE or PRO.");
+        }
         coupon.setMaxUses(request.getMaxUses());
         coupon.setExpiryDate(request.getExpiryDate());
 
@@ -43,6 +48,14 @@ public class CouponService {
 
     public List<Coupon> getAllCoupons() {
         return couponRepository.findAll();
+    }
+
+    @Transactional
+    public void deleteCoupon(Long id) {
+        if (!couponRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Coupon not found.");
+        }
+        couponRepository.deleteById(id);
     }
 
 
@@ -68,13 +81,9 @@ public class CouponService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found."));
 
         // 3. Apply the plan to the user AND set a 30-day expiration
-        try {
-            user.setPlan(User.PlanType.valueOf(coupon.getPlanType()));
-            // SET THE EXPIRY DATE TO 30 DAYS FROM NOW
-            user.setPlanExpiryDate(LocalDateTime.now().plusDays(30)); 
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid plan type specified in coupon.");
-        }
+        user.setPlan(coupon.getPlanType()); // planType is already an enum
+        // SET THE EXPIRY DATE TO 30 DAYS FROM NOW
+        user.setPlanExpiryDate(LocalDateTime.now().plusDays(30));
         userRepository.save(user);
 
         // 4. Increment usage count

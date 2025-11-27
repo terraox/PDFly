@@ -36,16 +36,31 @@ export default function Checkout() {
         if (response.status === 200) {
             const discountPercent = response.data.discountPercent; // Get % from Java response
             const calculatedDiscount = price * (discountPercent / 100);
+            // Get planType from coupon response (PRO or FREE)
+            const planType = response.data.planType || 'PRO';
             
             setApplied(true);
             setDiscountAmount(calculatedDiscount); // Set the actual currency amount
             
-            // Update context if a PRO plan was applied
+            // Update context with new plan info
+            const token = localStorage.getItem('pdfly_auth_token');
+            const userRole = localStorage.getItem('pdfly_user_role') || user.role;
+            // Calculate expiry (30 days from now, as set by backend)
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + 30);
+            const expiryString = expiryDate.toISOString();
+            
             login(
-                localStorage.getItem('pdfly_auth_token'),
+                token,
                 user.email,
-                'PRO' 
+                userRole,
+                planType,
+                expiryString
             );
+            
+            // Also update localStorage directly
+            localStorage.setItem('pdfly_user_plan', planType);
+            localStorage.setItem('pdfly_plan_expiry', expiryString);
         }
     } catch (err) {
         let message = "Invalid coupon code.";
