@@ -1,5 +1,6 @@
 com/pdfly/backend/repository/CouponRepository.class
 com/pdfly/backend/service/CouponService.class
+com/pdfly/backend/repository/TransactionRepository.class
 com/pdfly/backend/model/User.class
 com/pdfly/backend/config/ApplicationConfig.class
 com/pdfly/backend/model/User$PlanType.class
@@ -11,8 +12,10 @@ com/pdfly/backend/dto/LoginRequest.class
 com/pdfly/backend/repository/UserRepository.class
 com/pdfly/backend/config/SecurityConfig.class
 com/pdfly/backend/BackendApplication.class
+com/pdfly/backend/model/Plan.class
 com/pdfly/backend/service/PdfToolService$1.class
 com/pdfly/backend/dto/CouponRequest.class
+com/pdfly/backend/model/Transaction$Status.class
 com/pdfly/backend/controller/AuthController.class
 com/pdfly/backend/util/AdminInitializer.class
 com/pdfly/backend/controller/PdfToolController.class
@@ -21,4 +24,9 @@ com/pdfly/backend/controller/PublicCouponController.class
 com/pdfly/backend/service/PdfToolService.class
 com/pdfly/backend/dto/AuthResponse.class
 com/pdfly/backend/config/JwtAuthenticationFilter.class
+com/pdfly/backend/repository/PlanRepository.class
+com/pdfly/backend/service/AdminService.class
+com/pdfly/backend/repository/GlobalConfigRepository.class
+com/pdfly/backend/model/GlobalConfig.class
+com/pdfly/backend/model/Transaction.class
 com/pdfly/backend/dto/AuthResponse$AuthResponseBuilder.class

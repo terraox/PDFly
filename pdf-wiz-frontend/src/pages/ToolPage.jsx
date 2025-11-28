@@ -36,18 +36,27 @@ export default function ToolPage({ title, icon: Icon }) {
   const [watermarkRotation, setWatermarkRotation] = useState(45);
   const [watermarkScale, setWatermarkScale] = useState(1.0);
   const [isFeatureDisabled, setIsFeatureDisabled] = useState(false);
+  const [checkingFeatureStatus, setCheckingFeatureStatus] = useState(false);
 
   React.useEffect(() => {
     const checkConfig = async () => {
       if (title === "Compress PDF") {
+        console.log('[ToolPage] Checking if compression is disabled...');
+        setCheckingFeatureStatus(true);
         try {
           const response = await axios.get('http://localhost:8080/api/tools/config');
+          console.log('[ToolPage] Config response:', response.data);
           const config = response.data.find(c => c.configKey === 'DISABLE_COMPRESSION');
           if (config && config.configValue === 'true') {
+            console.log('[ToolPage] Compression is DISABLED');
             setIsFeatureDisabled(true);
+          } else {
+            console.log('[ToolPage] Compression is ENABLED');
           }
         } catch (error) {
-          console.error("Failed to check feature config:", error);
+          console.error("[ToolPage] Failed to check feature config:", error);
+        } finally {
+          setCheckingFeatureStatus(false);
         }
       }
     };
@@ -346,6 +355,21 @@ export default function ToolPage({ title, icon: Icon }) {
       setProcessing(false);
     }
   };
+
+  // --- UI: CHECKING FEATURE STATUS ---
+  if (checkingFeatureStatus) {
+    return (
+      <div className="min-h-screen bg-zinc-50 dark:bg-black transition-colors duration-300">
+        <Navbar />
+        <div className="flex h-[80vh] items-center justify-center px-6">
+          <div className="max-w-md text-center">
+            <Loader2 className="h-12 w-12 text-indigo-500 mx-auto mb-4 animate-spin" />
+            <p className="text-lg text-zinc-500 dark:text-zinc-400">Checking availability...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // --- UI: FEATURE DISABLED STATE ---
   if (isFeatureDisabled) {

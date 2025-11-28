@@ -37,6 +37,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // Preview endpoint - allow without authentication (just for viewing PDF)
                         .requestMatchers("/api/tools/preview").permitAll()
+                        // Config endpoint - allow without authentication (for checking feature flags)
+                        .requestMatchers("/api/tools/config").permitAll()
                         // Core tool processing endpoints require an active login token
                         .requestMatchers("/api/tools/**").authenticated()
                         // All other requests require authentication
