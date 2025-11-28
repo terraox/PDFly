@@ -35,6 +35,24 @@ export default function ToolPage({ title, icon: Icon }) {
   const [watermarkOpacity, setWatermarkOpacity] = useState(0.3);
   const [watermarkRotation, setWatermarkRotation] = useState(45);
   const [watermarkScale, setWatermarkScale] = useState(1.0);
+  const [isFeatureDisabled, setIsFeatureDisabled] = useState(false);
+
+  React.useEffect(() => {
+    const checkConfig = async () => {
+      if (title === "Compress PDF") {
+        try {
+          const response = await axios.get('http://localhost:8080/api/tools/config');
+          const config = response.data.find(c => c.configKey === 'DISABLE_COMPRESSION');
+          if (config && config.configValue === 'true') {
+            setIsFeatureDisabled(true);
+          }
+        } catch (error) {
+          console.error("Failed to check feature config:", error);
+        }
+      }
+    };
+    checkConfig();
+  }, [title]);
 
   // Function to determine the expected file type and prompt based on the tool title
   const getAcceptedFileType = (toolTitle) => {
@@ -328,6 +346,33 @@ export default function ToolPage({ title, icon: Icon }) {
       setProcessing(false);
     }
   };
+
+  // --- UI: FEATURE DISABLED STATE ---
+  if (isFeatureDisabled) {
+    return (
+      <div className="min-h-screen bg-zinc-50 dark:bg-black transition-colors duration-300">
+        <Navbar />
+        <div className="flex h-[80vh] items-center justify-center px-6">
+          <div className="max-w-md text-center">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/20">
+              <AlertTriangle className="h-10 w-10 text-amber-600 dark:text-amber-500" />
+            </div>
+            <h2 className="mb-2 text-3xl font-bold text-zinc-900 dark:text-white">Feature Temporarily Disabled</h2>
+            <p className="mb-8 text-lg text-zinc-500 dark:text-zinc-400">
+              This tool has been temporarily disabled by the administrator for maintenance. Please try again later.
+            </p>
+
+            <Link
+              to="/"
+              className="block text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-300"
+            >
+              Back to Home
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // --- UI: LIMIT REACHED STATE ---
   if (limitReached) {

@@ -5,6 +5,7 @@
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/util/AdminInitializer.java
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/repository/UserRepository.java
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/controller/PdfToolController.java
+/Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/repository/GlobalConfigRepository.java
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/model/Plan.java
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/config/JwtAuthenticationFilter.java
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/controller/AdminController.java
@@ -21,5 +22,6 @@
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/controller/AuthController.java
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/repository/CouponRepository.java
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/service/PdfToolService.java
+/Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/model/GlobalConfig.java
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/service/CouponService.java
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/config/ApplicationConfig.java

@@ -11,8 +11,10 @@ export default function Security() {
   const { token } = useAuth();
 
   useEffect(() => {
-    fetchConfig();
-  }, []);
+    if (token) {
+      fetchConfig();
+    }
+  }, [token]);
 
   const fetchConfig = async () => {
     try {
