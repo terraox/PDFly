@@ -1,3 +1,4 @@
+// Location: pdf-wiz-backend/src/main/java/com/pdfly/backend/controller/PdfToolController.java
 package com.pdfly.backend.controller;
 
 import com.pdfly.backend.service.PdfToolService;
@@ -19,23 +20,19 @@ public class PdfToolController {
 
     private final PdfToolService pdfToolService;
 
-    // Helper to build a standard PDF download response
     private ResponseEntity<byte[]> createPdfResponse(byte[] fileBytes, String filename) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("attachment", filename);
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(fileBytes);
+        return ResponseEntity.ok().headers(headers).body(fileBytes);
     }
     
-    // Helper for error messages
     private ResponseEntity<byte[]> createErrorResponse(String message) {
         return ResponseEntity.status(500).body(("Error: " + message).getBytes());
     }
 
     // =================================================================
-    // 1. MERGE ENDPOINT (POST /api/tools/merge)
+    // 1. MERGE ENDPOINT
     // =================================================================
     @PostMapping(value = "/merge", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> mergePdfs(@RequestParam("files") List<MultipartFile> files) {
@@ -53,21 +50,16 @@ public class PdfToolController {
         try {
             byte[] mergedPdf = pdfToolService.mergePdfs(files);
             if (mergedPdf == null || mergedPdf.length == 0) {
-                return createErrorResponse("Merge operation produced an empty file. Please check your PDF files.");
+                return createErrorResponse("Merge operation produced an empty file.");
             }
             return createPdfResponse(mergedPdf, "pdfly_merged.pdf");
-        } catch (org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException e) {
-            return createErrorResponse("One or more PDF files are password protected. Please unlock them first.");
-        } catch (IOException e) {
-            return createErrorResponse("Merging failed: " + e.getMessage() + ". Please ensure all files are valid PDF documents.");
         } catch (Exception e) {
-            return createErrorResponse("Merge operation failed: " + e.getMessage() + ". Please try again with different files.");
+            return createErrorResponse("Merge failed: " + e.getMessage());
         }
     }
 
-
     // =================================================================
-    // 2. SPLIT ENDPOINT (POST /api/tools/split)
+    // 2. SPLIT ENDPOINT (Enhanced)
     // =================================================================
     @PostMapping(value = "/split", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> splitPdf(
@@ -99,7 +91,7 @@ public class PdfToolController {
             byte[] zipBytes = pdfToolService.createZipFromPdfs(splitFiles, baseFilename);
             
             if (zipBytes == null || zipBytes.length == 0) {
-                return createErrorResponse("Failed to create ZIP file. Please try again.");
+                return createErrorResponse("Failed to create ZIP file.");
             }
             
             // Return ZIP file with proper content type
@@ -112,18 +104,13 @@ public class PdfToolController {
                     .headers(headers)
                     .body(zipBytes);
                     
-        } catch (org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException e) {
-            return createErrorResponse("PDF is password protected. Please unlock it first.");
-        } catch (IOException e) {
-            return createErrorResponse("Splitting failed: " + e.getMessage());
         } catch (Exception e) {
             return createErrorResponse("Split operation failed: " + e.getMessage());
         }
     }
     
-    
     // =================================================================
-    // 3. COMPRESS ENDPOINT (POST /api/tools/compress)
+    // 3. COMPRESS ENDPOINT
     // =================================================================
     @PostMapping(value = "/compress", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> compressPdf(@RequestParam("file") MultipartFile file) {
@@ -138,9 +125,8 @@ public class PdfToolController {
         }
     }
     
-    
     // =================================================================
-    // 4. ROTATE ENDPOINT (POST /api/tools/rotate)
+    // 4. ROTATE ENDPOINT
     // =================================================================
     @PostMapping(value = "/rotate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> rotatePdf(@RequestParam("file") MultipartFile file, 
@@ -156,9 +142,8 @@ public class PdfToolController {
         }
     }
     
-    
     // =================================================================
-    // 5. WATERMARK ENDPOINT (POST /api/tools/watermark)
+    // 5. WATERMARK ENDPOINT
     // =================================================================
     @PostMapping(value = "/watermark", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> watermarkPdf(@RequestParam("file") MultipartFile file, 
@@ -174,9 +159,8 @@ public class PdfToolController {
         }
     }
 
-    
     // =================================================================
-    // 6. PROTECT ENDPOINT (POST /api/tools/protect)
+    // 6. PROTECT ENDPOINT
     // =================================================================
     @PostMapping(value = "/protect", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> protectPdf(@RequestParam("file") MultipartFile file, 
@@ -192,9 +176,8 @@ public class PdfToolController {
         }
     }
     
-    
     // =================================================================
-    // 7. UNLOCK ENDPOINT (POST /api/tools/unlock)
+    // 7. UNLOCK ENDPOINT
     // =================================================================
     @PostMapping(value = "/unlock", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> unlockPdf(@RequestParam("file") MultipartFile file, 
@@ -206,43 +189,37 @@ public class PdfToolController {
             byte[] unlockedPdf = pdfToolService.unlockPdf(file, password);
             return createPdfResponse(unlockedPdf, "pdfly_unlocked.pdf");
         } catch (InvalidPasswordException e) {
-             // Specific error for wrong password attempt
              return ResponseEntity.status(401).body("InvalidPassword: The password provided is incorrect.".getBytes());
         } catch (IOException e) {
-            return createErrorResponse("Unlock failed due to file reading error: " + e.getMessage());
+            return createErrorResponse("Unlock failed: " + e.getMessage());
         }
     }
     
-    
     // =================================================================
-    // 8. SIGN PDF ENDPOINT (POST /api/tools/sign)
+    // 8. SIGN ENDPOINT
     // =================================================================
     @PostMapping(value = "/sign", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<byte[]> signPdf(@RequestParam("file") MultipartFile file,
-                                         @RequestParam("signatureText") String signatureText) {
+    public ResponseEntity<byte[]> signPdf(@RequestParam("file") MultipartFile file, 
+                                         @RequestParam("signatureText") String text) {
         if (file == null || file.isEmpty()) {
             return createErrorResponse("Please upload a PDF file to sign.");
         }
-        if (signatureText == null || signatureText.trim().isEmpty()) {
-            return createErrorResponse("Please provide signature text.");
-        }
         try {
-            byte[] signedPdf = pdfToolService.signPdf(file, signatureText);
+            byte[] signedPdf = pdfToolService.signPdf(file, text);
             return createPdfResponse(signedPdf, "pdfly_signed.pdf");
         } catch (IOException e) {
             return createErrorResponse("Signing failed: " + e.getMessage());
         }
     }
     
-    
     // =================================================================
-    // 9. ADD PAGE NUMBERS ENDPOINT (POST /api/tools/page-numbers)
+    // 9. PAGE NUMBERS ENDPOINT
     // =================================================================
     @PostMapping(value = "/page-numbers", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> addPageNumbers(@RequestParam("file") MultipartFile file,
                                                 @RequestParam(value = "position", required = false, defaultValue = "bottom-center") String position) {
         if (file == null || file.isEmpty()) {
-            return createErrorResponse("Please upload a PDF file to add page numbers.");
+            return createErrorResponse("Please upload a PDF file.");
         }
         try {
             byte[] numberedPdf = pdfToolService.addPageNumbers(file, position);
@@ -252,43 +229,56 @@ public class PdfToolController {
         }
     }
     
+    // =================================================================
+    // 10. JPG TO PDF ENDPOINT
+    // =================================================================
+    @PostMapping(value = "/jpg-to-pdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<byte[]> jpgToPdf(@RequestParam("file") MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return createErrorResponse("Please upload an image file.");
+        }
+        try {
+            byte[] pdfBytes = pdfToolService.imageToPdf(file);
+            return createPdfResponse(pdfBytes, "converted.pdf");
+        } catch (IOException e) {
+            return createErrorResponse("Image conversion failed: " + e.getMessage());
+        }
+    }
     
     // =================================================================
-    // 10. GENERIC CONVERSION ENDPOINT (Handles the rest 5+ tools)
+    // 11. GENERIC CONVERT ENDPOINT (Handles Word/PPT)
     // =================================================================
-    
-    /**
-     * Generic handler for simple conversions (PDF to Word, JPG to PDF, etc.)
-     * This simulates success since complex POI/DOCX conversion is library-dependent.
-     */
     @PostMapping(value = "/convert/{toolId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<byte[]> handleConversion(@PathVariable("toolId") String toolId,
+    public ResponseEntity<byte[]> handleConversion(@PathVariable("toolId") String toolId, 
                                                    @RequestParam("file") MultipartFile file) {
         if (file == null || file.isEmpty()) {
             return createErrorResponse("Please upload a file for conversion.");
         }
         
         try {
-            // Service returns the original file bytes, simulating success.
-            byte[] processedBytes = pdfToolService.handleConversion(file);
-            
-            // Determine output type for download
-            String outputExtension = toolId.contains("jpg") ? ".jpg" : 
-                                     toolId.contains("word") ? ".docx" : 
-                                     toolId.contains("excel") ? ".xlsx" : 
-                                     toolId.contains("ppt") ? ".pptx" : ".pdf";
+            byte[] processedBytes;
+            String ext;
+            String tool = toolId.toLowerCase();
+
+            if (tool.contains("word")) {
+                processedBytes = pdfToolService.pdfToWord(file);
+                ext = ".docx";
+            } else if (tool.contains("ppt") || tool.contains("powerpoint")) {
+                processedBytes = pdfToolService.pdfToPpt(file);
+                ext = ".pptx";
+            } else {
+                // Fallback for things like Excel or other formats not yet fully implemented
+                processedBytes = pdfToolService.handleConversion(file);
+                ext = ".pdf";
+            }
                                      
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM); // Generic binary stream
-            headers.setContentDispositionFormData("attachment", "pdfly_converted" + outputExtension);
-            
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(processedBytes);
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM); 
+            headers.setContentDispositionFormData("attachment", "pdfly_converted" + ext);
+            return ResponseEntity.ok().headers(headers).body(processedBytes);
             
         } catch (IOException e) {
             return createErrorResponse("Conversion failed: " + e.getMessage());
         }
     }
-
 }
