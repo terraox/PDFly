@@ -2,12 +2,20 @@ package com.pdfly.backend.controller;
 
 import com.pdfly.backend.dto.CouponRequest;
 import com.pdfly.backend.model.Coupon;
+import com.pdfly.backend.model.GlobalConfig;
+import com.pdfly.backend.model.Plan;
+import com.pdfly.backend.model.Transaction;
+import com.pdfly.backend.model.User;
+import com.pdfly.backend.repository.GlobalConfigRepository;
+import com.pdfly.backend.service.AdminService;
 import com.pdfly.backend.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -15,6 +23,82 @@ import java.util.List;
 public class AdminController {
 
     private final CouponService couponService;
+    private final AdminService adminService;
+    private final GlobalConfigRepository globalConfigRepository;
+
+    // =========================================================
+    // GLOBAL CONFIG
+    // =========================================================
+
+    @GetMapping("/config")
+    public ResponseEntity<List<GlobalConfig>> getAllConfigs() {
+        return ResponseEntity.ok(globalConfigRepository.findAll());
+    }
+
+    @PostMapping("/config")
+    public ResponseEntity<GlobalConfig> updateConfig(@RequestBody GlobalConfig config) {
+        Optional<GlobalConfig> existing = globalConfigRepository.findByConfigKey(config.getConfigKey());
+        if (existing.isPresent()) {
+            GlobalConfig toUpdate = existing.get();
+            toUpdate.setConfigValue(config.getConfigValue());
+            return ResponseEntity.ok(globalConfigRepository.save(toUpdate));
+        } else {
+            return ResponseEntity.ok(globalConfigRepository.save(config));
+        }
+    }
+
+    // =========================================================
+    // DASHBOARD STATS
+    // =========================================================
+
+    @GetMapping("/stats")
+    public ResponseEntity<Map<String, Object>> getDashboardStats() {
+        return ResponseEntity.ok(adminService.getDashboardStats());
+    }
+
+    // =========================================================
+    // USER MANAGEMENT
+    // =========================================================
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(adminService.getAllUsers());
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        adminService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // =========================================================
+    // PLAN MANAGEMENT
+    // =========================================================
+
+    @GetMapping("/plans")
+    public ResponseEntity<List<Plan>> getAllPlans() {
+        return ResponseEntity.ok(adminService.getAllPlans());
+    }
+
+    @PostMapping("/plans")
+    public ResponseEntity<Plan> createPlan(@RequestBody Plan plan) {
+        return ResponseEntity.ok(adminService.createPlan(plan));
+    }
+
+    @DeleteMapping("/plans/{id}")
+    public ResponseEntity<Void> deletePlan(@PathVariable Long id) {
+        adminService.deletePlan(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // =========================================================
+    // FINANCE
+    // =========================================================
+
+    @GetMapping("/finance/transactions")
+    public ResponseEntity<List<Transaction>> getAllTransactions() {
+        return ResponseEntity.ok(adminService.getAllTransactions());
+    }
 
     // =========================================================
     // COUPON ENDPOINTS

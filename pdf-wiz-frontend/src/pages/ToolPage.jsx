@@ -379,7 +379,7 @@ export default function ToolPage({ title, icon: Icon }) {
             {title}
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-zinc-500 dark:text-zinc-400">
-            Upload your {fileType.prompt} to get started. 1 free task available today.
+            Upload your {fileType.prompt} to get started. {(!user || (user.plan !== 'PRO' && user.role !== 'ADMIN')) && "1 free task available today."}
           </p>
         </div>
 

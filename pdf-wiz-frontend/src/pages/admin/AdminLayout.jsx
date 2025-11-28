@@ -1,9 +1,10 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, Users, CreditCard, Ticket, 
-  Activity, Settings, ShieldAlert, LogOut, Send 
+import React, { useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import {
+  LayoutDashboard, Users, CreditCard, Ticket,
+  Activity, Settings, ShieldAlert, LogOut, Send
 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: 'Overview', href: '/admin' },
@@ -17,6 +18,27 @@ const sidebarItems = [
 
 export default function AdminLayout({ children }) {
   const location = useLocation();
+  const { user, isAuthenticated, logout, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading) {
+      if (!isAuthenticated) {
+        navigate('/login');
+      } else if (user?.role !== 'ADMIN') {
+        navigate('/');
+      }
+    }
+  }, [isAuthenticated, user, loading, navigate]);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  if (loading || !user || user.role !== 'ADMIN') {
+    return <div className="min-h-screen bg-zinc-950 flex items-center justify-center text-zinc-500">Loading Admin Panel...</div>;
+  }
 
   return (
     <div className="flex min-h-screen w-full bg-zinc-950 text-zinc-100 font-sans">
@@ -26,21 +48,21 @@ export default function AdminLayout({ children }) {
           <Link to="/" className="flex items-center gap-2 group">
             <Send className="h-5 w-5 text-indigo-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
             <span className="text-lg font-bold tracking-tighter text-white">
-              PDF<span className="text-indigo-500">ly</span> 
+              PDF<span className="text-indigo-500">ly</span>
               <span className="text-zinc-600 text-[10px] ml-2 align-top tracking-widest font-medium">ADMIN</span>
             </span>
           </Link>
         </div>
-        
+
         <div className="flex flex-col gap-1 p-4">
           {sidebarItems.map((item) => {
             const isActive = location.pathname === item.href;
             return (
               <Link key={item.href} to={item.href}>
-                <button 
+                <button
                   className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 
-                    ${isActive 
-                      ? 'bg-zinc-800 text-white shadow-inner border border-zinc-700/50' 
+                    ${isActive
+                      ? 'bg-zinc-800 text-white shadow-inner border border-zinc-700/50'
                       : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50'}`}
                 >
                   <item.icon className={`h-4 w-4 ${isActive ? 'text-indigo-500' : 'text-zinc-500'}`} />
@@ -52,11 +74,12 @@ export default function AdminLayout({ children }) {
         </div>
 
         <div className="absolute bottom-4 left-4 right-4">
-          <Link to="/">
-            <button className="flex w-full items-center justify-center gap-2 rounded-md border border-zinc-800 bg-zinc-900 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-red-400 transition-colors">
-              <LogOut className="h-4 w-4" /> Sign Out
-            </button>
-          </Link>
+          <button
+            onClick={handleLogout}
+            className="flex w-full items-center justify-center gap-2 rounded-md border border-zinc-800 bg-zinc-900 py-2 text-sm text-zinc-400 hover:bg-zinc-800 hover:text-red-400 transition-colors"
+          >
+            <LogOut className="h-4 w-4" /> Sign Out
+          </button>
         </div>
       </aside>
 
@@ -69,11 +92,11 @@ export default function AdminLayout({ children }) {
           </h1>
           <div className="flex items-center gap-4">
             <div className="text-right hidden md:block">
-              <p className="text-sm font-medium text-white">Admin User</p>
+              <p className="text-sm font-medium text-white">{user.email}</p>
               <p className="text-xs text-zinc-500">Super Admin</p>
             </div>
             <div className="h-9 w-9 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-xs font-bold text-indigo-400">
-              AD
+              {user.email.substring(0, 2).toUpperCase()}
             </div>
           </div>
         </header>

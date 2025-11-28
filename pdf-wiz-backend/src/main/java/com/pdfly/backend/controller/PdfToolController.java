@@ -1,10 +1,13 @@
 // Location: pdf-wiz-backend/src/main/java/com/pdfly/backend/controller/PdfToolController.java
 package com.pdfly.backend.controller;
 
+import com.pdfly.backend.model.GlobalConfig;
+import com.pdfly.backend.repository.GlobalConfigRepository;
 import com.pdfly.backend.service.PdfToolService;
 import lombok.RequiredArgsConstructor;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/tools")
@@ -19,6 +23,7 @@ import java.util.List;
 public class PdfToolController {
 
     private final PdfToolService pdfToolService;
+    private final GlobalConfigRepository globalConfigRepository;
 
     private ResponseEntity<byte[]> createPdfResponse(byte[] fileBytes, String filename) {
         HttpHeaders headers = new HttpHeaders();
@@ -104,6 +109,22 @@ public class PdfToolController {
     // 3. COMPRESS
     @PostMapping(value = "/compress", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> compressPdf(@RequestParam("file") MultipartFile file) {
+        // CHECK IF COMPRESSION IS DISABLED
+        Optional<GlobalConfig> config = globalConfigRepository.findByConfigKey("DISABLE_COMPRESSION");
+
+        // Debug Log
+        System.out.println("Checking DISABLE_COMPRESSION config...");
+        if (config.isPresent()) {
+            System.out.println("Config found. Value: " + config.get().getConfigValue());
+            if ("true".equalsIgnoreCase(config.get().getConfigValue())) {
+                System.out.println("Compression is DISABLED. Returning 403.");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("PDF Compression is temporarily disabled by the administrator.".getBytes());
+            }
+        } else {
+            System.out.println("Config NOT found. Proceeding.");
+        }
+
         if (file == null || file.isEmpty()) {
             return createErrorResponse("Please upload a PDF file to compress.");
         }
@@ -113,6 +134,12 @@ public class PdfToolController {
         } catch (IOException e) {
             return createErrorResponse("Compression failed: " + e.getMessage());
         }
+    }
+
+    // PUBLIC CONFIG ENDPOINT
+    @GetMapping("/config")
+    public ResponseEntity<List<GlobalConfig>> getPublicConfig() {
+        return ResponseEntity.ok(globalConfigRepository.findAll());
     }
 
     // 4. ROTATE

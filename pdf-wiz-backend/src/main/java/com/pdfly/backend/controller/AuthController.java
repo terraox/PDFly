@@ -3,7 +3,9 @@ package com.pdfly.backend.controller;
 
 import com.pdfly.backend.dto.AuthResponse;
 import com.pdfly.backend.dto.LoginRequest;
+import com.pdfly.backend.model.GlobalConfig;
 import com.pdfly.backend.model.User;
+import com.pdfly.backend.repository.GlobalConfigRepository;
 import com.pdfly.backend.repository.UserRepository;
 import com.pdfly.backend.service.EmailService;
 import com.pdfly.backend.util.JwtUtil;
@@ -30,6 +32,7 @@ import java.util.Map;
 public class AuthController {
 
     private final UserRepository userRepository;
+    private final GlobalConfigRepository globalConfigRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final JwtUtil jwtUtil;
@@ -44,6 +47,13 @@ public class AuthController {
     // POST /api/auth/register
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody LoginRequest request) {
+        // CHECK IF SIGNUPS ARE DISABLED
+        Optional<GlobalConfig> config = globalConfigRepository.findByConfigKey("DISABLE_SIGNUPS");
+        if (config.isPresent() && "true".equalsIgnoreCase(config.get().getConfigValue())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("New user registration is currently disabled by the administrator.");
+        }
+
         if (userRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already registered.");
         }
@@ -52,22 +62,24 @@ public class AuthController {
         String rawPassword = generateRandomPassword();
         String hashedPassword = passwordEncoder.encode(rawPassword);
 
-        // 2. Create and save new user (Default FREE, Set 30-day expiry for PRO features)
+        // 2. Create and save new user (Default FREE, Set 30-day expiry for PRO
+        // features)
         User newUser = new User();
         newUser.setEmail(request.getEmail());
         newUser.setPassword(hashedPassword);
         newUser.setRole(User.Role.USER);
         newUser.setPlan(User.PlanType.FREE);
-        // Default free user doesn't have an expiry date, but setting it here for testing:
-        // newUser.setPlanExpiryDate(null); 
+        // Default free user doesn't have an expiry date, but setting it here for
+        // testing:
+        // newUser.setPlanExpiryDate(null);
 
         // TEMPORARY ADMIN OVERRIDE
         if ("temp-admin@pdfly.io".equalsIgnoreCase(request.getEmail())) {
-             newUser.setRole(User.Role.ADMIN);
-             newUser.setPlan(User.PlanType.PRO);
-             newUser.setPlanExpiryDate(LocalDateTime.now().plusYears(1)); // Admin plan lasts a long time
+            newUser.setRole(User.Role.ADMIN);
+            newUser.setPlan(User.PlanType.PRO);
+            newUser.setPlanExpiryDate(LocalDateTime.now().plusYears(1)); // Admin plan lasts a long time
         }
-        
+
         userRepository.save(newUser);
 
         // 3. Send the raw password via email (WITH FAIL-SAFE)
@@ -79,8 +91,7 @@ public class AuthController {
             e.printStackTrace();
             // Return 200 OK with the key in the body for testing/debugging
             return ResponseEntity.status(HttpStatus.OK).body(
-                "Registration completed, but email failed. Use this key to log in: " + rawPassword
-            );
+                    "Registration completed, but email failed. Use this key to log in: " + rawPassword);
         }
     }
 
@@ -89,8 +100,7 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-            );
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
@@ -119,13 +129,13 @@ public class AuthController {
         }
 
         String resetPhrase = String.format("%06d", new Random().nextInt(999999));
-        
+
         User user = userOpt.get();
         user.setPasswordResetPhrase(resetPhrase);
         userRepository.save(user);
 
         emailService.sendResetPhrase(email, resetPhrase);
-        
+
         return ResponseEntity.ok("Reset code sent.");
     }
 
