@@ -15,7 +15,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource; // CORRECTED IMPORT
 
-import java.util.List; 
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -28,41 +28,43 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable) 
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
-            .authorizeHttpRequests(auth -> auth
-                // Public Endpoints (Registration, Login, Reset password requests)
-                .requestMatchers("/api/auth/**", "/api/public/**").permitAll()
-                // Admin Endpoints (Requires specific role)
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                // Core tool processing endpoints require an active login token
-                .requestMatchers("/api/tools/**").authenticated() 
-                // All other requests require authentication
-                .anyRequest().authenticated()
-            )
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Use JWT, not session cookies
-            )
-            .authenticationProvider(authenticationProvider)
-            // Ensure JWT token is processed before username/password login attempts
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(auth -> auth
+                        // Public Endpoints (Registration, Login, Reset password requests)
+                        .requestMatchers("/api/auth/**", "/api/public/**").permitAll()
+                        // Admin Endpoints (Requires specific role)
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // Preview endpoint - allow without authentication (just for viewing PDF)
+                        .requestMatchers("/api/tools/preview").permitAll()
+                        // Core tool processing endpoints require an active login token
+                        .requestMatchers("/api/tools/**").authenticated()
+                        // All other requests require authentication
+                        .anyRequest().authenticated())
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Use JWT, not session cookies
+                )
+                .authenticationProvider(authenticationProvider)
+                // Ensure JWT token is processed before username/password login attempts
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     /**
-     * Defines CORS policy to allow the React Frontend (localhost:5173) to communicate 
+     * Defines CORS policy to allow the React Frontend (localhost:5173) to
+     * communicate
      * with the Java Backend (localhost:8080).
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // Allow the React development server to make requests
-        configuration.setAllowedOrigins(List.of("http://localhost:5173")); 
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
