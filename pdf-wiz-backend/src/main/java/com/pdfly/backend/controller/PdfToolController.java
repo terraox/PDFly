@@ -31,16 +31,13 @@ public class PdfToolController {
         return ResponseEntity.status(500).body(("Error: " + message).getBytes());
     }
 
-    // =================================================================
-    // 1. MERGE ENDPOINT
-    // =================================================================
+    // 1. MERGE
     @PostMapping(value = "/merge", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> mergePdfs(@RequestParam("files") List<MultipartFile> files) {
         if (files == null || files.size() < 2) {
             return createErrorResponse("Please upload at least two PDF files to merge.");
         }
         
-        // Validate all files are not empty
         for (MultipartFile file : files) {
             if (file == null || file.isEmpty()) {
                 return createErrorResponse("One or more files are empty. Please upload valid PDF files.");
@@ -58,9 +55,7 @@ public class PdfToolController {
         }
     }
 
-    // =================================================================
-    // 2. SPLIT ENDPOINT (Enhanced)
-    // =================================================================
+    // 2. SPLIT
     @PostMapping(value = "/split", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> splitPdf(
             @RequestParam("file") MultipartFile file,
@@ -73,14 +68,12 @@ public class PdfToolController {
         }
         
         try {
-            // Split the PDF based on the mode
             List<byte[]> splitFiles = pdfToolService.splitPdf(file, splitMode, pageRanges, pagesPerFile);
             
             if (splitFiles.isEmpty()) {
                 return createErrorResponse("No pages were split. Please check your split options.");
             }
             
-            // Create ZIP file containing all split PDFs
             String baseFilename = file.getOriginalFilename();
             if (baseFilename != null && baseFilename.endsWith(".pdf")) {
                 baseFilename = baseFilename.substring(0, baseFilename.length() - 4);
@@ -94,7 +87,6 @@ public class PdfToolController {
                 return createErrorResponse("Failed to create ZIP file.");
             }
             
-            // Return ZIP file with proper content type
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType("application/zip"));
             headers.setContentDispositionFormData("attachment", baseFilename + "_split.zip");
@@ -109,9 +101,7 @@ public class PdfToolController {
         }
     }
     
-    // =================================================================
-    // 3. COMPRESS ENDPOINT
-    // =================================================================
+    // 3. COMPRESS
     @PostMapping(value = "/compress", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> compressPdf(@RequestParam("file") MultipartFile file) {
         if (file == null || file.isEmpty()) {
@@ -125,9 +115,7 @@ public class PdfToolController {
         }
     }
     
-    // =================================================================
-    // 4. ROTATE ENDPOINT
-    // =================================================================
+    // 4. ROTATE
     @PostMapping(value = "/rotate", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> rotatePdf(@RequestParam("file") MultipartFile file, 
                                             @RequestParam("degrees") int degrees) {
@@ -142,9 +130,7 @@ public class PdfToolController {
         }
     }
     
-    // =================================================================
-    // 5. WATERMARK ENDPOINT
-    // =================================================================
+    // 5. WATERMARK
     @PostMapping(value = "/watermark", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> watermarkPdf(@RequestParam("file") MultipartFile file, 
                                                @RequestParam("text") String text) {
@@ -159,9 +145,7 @@ public class PdfToolController {
         }
     }
 
-    // =================================================================
-    // 6. PROTECT ENDPOINT
-    // =================================================================
+    // 6. PROTECT
     @PostMapping(value = "/protect", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> protectPdf(@RequestParam("file") MultipartFile file, 
                                              @RequestParam("password") String password) {
@@ -176,9 +160,7 @@ public class PdfToolController {
         }
     }
     
-    // =================================================================
-    // 7. UNLOCK ENDPOINT
-    // =================================================================
+    // 7. UNLOCK
     @PostMapping(value = "/unlock", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> unlockPdf(@RequestParam("file") MultipartFile file, 
                                             @RequestParam("password") String password) {
@@ -195,9 +177,7 @@ public class PdfToolController {
         }
     }
     
-    // =================================================================
-    // 8. SIGN ENDPOINT
-    // =================================================================
+    // 8. SIGN
     @PostMapping(value = "/sign", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> signPdf(@RequestParam("file") MultipartFile file, 
                                          @RequestParam("signatureText") String text) {
@@ -212,9 +192,7 @@ public class PdfToolController {
         }
     }
     
-    // =================================================================
-    // 9. PAGE NUMBERS ENDPOINT
-    // =================================================================
+    // 9. PAGE NUMBERS
     @PostMapping(value = "/page-numbers", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> addPageNumbers(@RequestParam("file") MultipartFile file,
                                                 @RequestParam(value = "position", required = false, defaultValue = "bottom-center") String position) {
@@ -229,9 +207,7 @@ public class PdfToolController {
         }
     }
     
-    // =================================================================
-    // 10. JPG TO PDF ENDPOINT
-    // =================================================================
+    // 10. JPG TO PDF
     @PostMapping(value = "/jpg-to-pdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> jpgToPdf(@RequestParam("file") MultipartFile file) {
         if (file == null || file.isEmpty()) {
@@ -245,9 +221,7 @@ public class PdfToolController {
         }
     }
     
-    // =================================================================
-    // 11. GENERIC CONVERT ENDPOINT (Handles Word/PPT)
-    // =================================================================
+    // 11. GENERIC CONVERT (Handles Word/PPT/Excel)
     @PostMapping(value = "/convert/{toolId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> handleConversion(@PathVariable("toolId") String toolId, 
                                                    @RequestParam("file") MultipartFile file) {
@@ -258,22 +232,31 @@ public class PdfToolController {
         try {
             byte[] processedBytes;
             String ext;
+            String contentType;
             String tool = toolId.toLowerCase();
 
             if (tool.contains("word")) {
                 processedBytes = pdfToolService.pdfToWord(file);
                 ext = ".docx";
+                contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
             } else if (tool.contains("ppt") || tool.contains("powerpoint")) {
                 processedBytes = pdfToolService.pdfToPpt(file);
                 ext = ".pptx";
+                contentType = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+            } else if (tool.contains("excel") || tool.contains("sheet")) {
+                // REAL EXCEL CONVERSION Logic
+                processedBytes = pdfToolService.pdfToExcel(file);
+                ext = ".xlsx";
+                contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             } else {
-                // Fallback for things like Excel or other formats not yet fully implemented
+                // Fallback
                 processedBytes = pdfToolService.handleConversion(file);
                 ext = ".pdf";
+                contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
             }
                                      
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM); 
+            headers.setContentType(MediaType.parseMediaType(contentType)); 
             headers.setContentDispositionFormData("attachment", "pdfly_converted" + ext);
             return ResponseEntity.ok().headers(headers).body(processedBytes);
             

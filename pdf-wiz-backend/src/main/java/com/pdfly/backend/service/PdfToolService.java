@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import java.util.Map;
+import java.util.HashMap;
 
 // Imports for Compression & Images
 import org.apache.pdfbox.pdmodel.PDResources;
@@ -37,13 +39,12 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.cos.COSBase;
-import java.util.Map;
-import java.util.HashMap;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
+import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 
 // Imports for Word Conversion
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -58,7 +59,12 @@ import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.sl.usermodel.PictureData;
 import java.awt.geom.Rectangle2D;
-import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
+
+// Imports for Excel Conversion
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 
 @Service
 @RequiredArgsConstructor
@@ -83,10 +89,8 @@ public class PdfToolService {
     // =================================================================
     public List<byte[]> splitPdf(MultipartFile file, String splitMode, String pageRanges, Integer pagesPerFile) throws IOException {
         try (PDDocument document = PDDocument.load(file.getInputStream())) {
-            int totalPages = document.getNumberOfPages();
             List<byte[]> result = new java.util.ArrayList<>();
             
-            // Simplified Split Logic for MVP robustness
             Splitter splitter = new Splitter();
             if ("every".equalsIgnoreCase(splitMode) && pagesPerFile != null && pagesPerFile > 0) {
                 splitter.setSplitAtPage(pagesPerFile);
@@ -105,7 +109,6 @@ public class PdfToolService {
         }
     }
     
-    // Zip Helper for Split Results
     public byte[] createZipFromPdfs(List<byte[]> pdfFiles, String baseFilename) throws IOException {
         ByteArrayOutputStream zipOutputStream = new ByteArrayOutputStream();
         try (ZipOutputStream zos = new ZipOutputStream(zipOutputStream)) {
@@ -126,7 +129,7 @@ public class PdfToolService {
     // =================================================================
     public byte[] compressPdf(MultipartFile file) throws IOException {
         try (PDDocument document = PDDocument.load(file.getInputStream())) {
-            document.getDocumentCatalog().setMetadata(null); // Strip Metadata
+            document.getDocumentCatalog().setMetadata(null); 
             Map<COSBase, PDImageXObject> cache = new HashMap<>();
             for (PDPage page : document.getPages()) {
                 compressResources(page.getResources(), document, cache);
@@ -145,10 +148,16 @@ public class PdfToolService {
                 compressResources(((PDFormXObject) xobject).getResources(), document, cache);
             } else if (xobject instanceof PDImageXObject) {
                 PDImageXObject image = (PDImageXObject) xobject;
-                if (image.getWidth() > 800 || image.getHeight() > 800) { // Only compress large images
+                if (image.getWidth() > 1000 || image.getHeight() > 1000) {
                     BufferedImage bi = image.getImage();
-                    // Resize logic here (simplified for brevity, relies on ImageIO)
-                    PDImageXObject newImage = JPEGFactory.createFromImage(document, bi, 0.5f); // 50% Quality
+                    int newWidth = bi.getWidth() / 2;
+                    int newHeight = bi.getHeight() / 2;
+                    BufferedImage resized = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+                    Graphics2D g = resized.createGraphics();
+                    g.drawImage(bi, 0, 0, newWidth, newHeight, null);
+                    g.dispose();
+                    
+                    PDImageXObject newImage = JPEGFactory.createFromImage(document, resized, 0.5f); 
                     resources.put(name, newImage);
                 }
             }
@@ -174,14 +183,14 @@ public class PdfToolService {
     // =================================================================
     public byte[] watermarkPdf(MultipartFile file, String watermarkText) throws IOException {
         try (PDDocument document = PDDocument.load(file.getInputStream())) {
-            // USE STATIC CONSTANT (Fixes Compilation Error)
+            // FIXED: Use the public static constant directly instead of the internal class
             PDType1Font font = PDType1Font.HELVETICA_BOLD; 
             
             for (PDPage page : document.getPages()) {
                 float fontSize = 60;
                 try (PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
                     PDExtendedGraphicsState r = new PDExtendedGraphicsState();
-                    r.setNonStrokingAlphaConstant(0.2f); // Transparent
+                    r.setNonStrokingAlphaConstant(0.2f); 
                     contentStream.setGraphicsStateParameters(r);
                     contentStream.setNonStrokingColor(Color.GRAY);
                     contentStream.setFont(font, fontSize);
@@ -235,6 +244,7 @@ public class PdfToolService {
     // =================================================================
     public byte[] signPdf(MultipartFile file, String signatureText) throws IOException {
         try (PDDocument document = PDDocument.load(file.getInputStream())) {
+            // FIXED: Use the public static constant directly
             PDType1Font font = PDType1Font.HELVETICA_BOLD;
             for (PDPage page : document.getPages()) {
                 try (PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
@@ -257,13 +267,14 @@ public class PdfToolService {
     // =================================================================
     public byte[] addPageNumbers(MultipartFile file, String position) throws IOException {
         try (PDDocument document = PDDocument.load(file.getInputStream())) {
+            // FIXED: Use the public static constant directly
             PDType1Font font = PDType1Font.HELVETICA;
             int totalPages = document.getNumberOfPages();
             for (int i = 0; i < totalPages; i++) {
                 PDPage page = document.getPage(i);
                 try (PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
                     contentStream.setNonStrokingColor(Color.BLACK);
-                    contentStream.setFont(font, 10);
+                    contentStream.setFont(font, 12);
                     contentStream.beginText();
                     contentStream.newLineAtOffset(page.getMediaBox().getWidth() / 2, 20);
                     contentStream.showText("Page " + (i + 1) + " of " + totalPages);
@@ -283,14 +294,17 @@ public class PdfToolService {
         try (PDDocument pdfDocument = PDDocument.load(file.getInputStream());
              XWPFDocument wordDocument = new XWPFDocument();
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
             PDFTextStripper stripper = new PDFTextStripper();
             String text = stripper.getText(pdfDocument);
+
             String[] lines = text.split(System.lineSeparator());
             for (String line : lines) {
                 XWPFParagraph paragraph = wordDocument.createParagraph();
                 XWPFRun run = paragraph.createRun();
                 run.setText(line);
             }
+
             wordDocument.write(out);
             return out.toByteArray();
         }
@@ -303,6 +317,7 @@ public class PdfToolService {
         try (PDDocument pdfDocument = PDDocument.load(file.getInputStream());
              XMLSlideShow ppt = new XMLSlideShow();
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
             PDFRenderer pdfRenderer = new PDFRenderer(pdfDocument);
             for (int i = 0; i < pdfDocument.getNumberOfPages(); i++) {
                 BufferedImage bim = pdfRenderer.renderImageWithDPI(i, 150, ImageType.RGB);
@@ -317,6 +332,42 @@ public class PdfToolService {
             return out.toByteArray();
         }
     }
+    
+    // =================================================================
+    // 13. PDF TO EXCEL (REAL)
+    // =================================================================
+    public byte[] pdfToExcel(MultipartFile file) throws IOException {
+        try (PDDocument pdfDocument = PDDocument.load(file.getInputStream());
+             XSSFWorkbook workbook = new XSSFWorkbook(); 
+             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+            XSSFSheet sheet = workbook.createSheet("PDF Data");
+            
+            PDFTextStripper stripper = new PDFTextStripper();
+            stripper.setSortByPosition(true);
+            String text = stripper.getText(pdfDocument);
+
+            String[] lines = text.split(System.lineSeparator());
+            int rowNum = 0;
+            
+            for (String line : lines) {
+                if (line.trim().isEmpty()) continue;
+                XSSFRow row = sheet.createRow(rowNum++);
+                String[] columns = line.split("\\s{2,}"); // Split by 2+ spaces
+                
+                int colNum = 0;
+                for (String colData : columns) {
+                    XSSFCell cell = row.createCell(colNum++);
+                    cell.setCellValue(colData.trim());
+                }
+            }
+            
+            for (int i = 0; i < 10; i++) sheet.autoSizeColumn(i);
+
+            workbook.write(out);
+            return out.toByteArray();
+        }
+    }
 
     // =================================================================
     // 12. IMAGE TO PDF (REAL)
@@ -327,7 +378,6 @@ public class PdfToolService {
             document.addPage(page);
             PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, imageFile.getBytes(), imageFile.getOriginalFilename());
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                 // Scale image to fit page
                  float scale = Math.min(page.getMediaBox().getWidth() / pdImage.getWidth(), page.getMediaBox().getHeight() / pdImage.getHeight());
                  contentStream.drawImage(pdImage, 0, 0, pdImage.getWidth() * scale, pdImage.getHeight() * scale);
             }
