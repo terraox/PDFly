@@ -10,6 +10,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font; 
+// Removed ambiguous font import that was causing compile error
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
@@ -38,6 +39,14 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
+
+// Imports for Word Conversion
+import org.apache.pdfbox.text.PDFTextStripper;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+
+// WE RELY ONLY ON IMPLICIT REFERENCE OR FQCN WHERE NECESSARY
 
 @Service
 @RequiredArgsConstructor
@@ -418,8 +427,35 @@ public class PdfToolService {
     }
     
     // =================================================================
-    // 10. CONVERSIONS (Simulated)
+    // 10. CONVERSIONS (REAL PDF TO WORD)
     // =================================================================
+
+    /**
+     * Converts PDF to Word (.docx) by extracting text.
+     * NOTE: Requires 'poi-ooxml' dependency in pom.xml
+     */
+    public byte[] pdfToWord(MultipartFile file) throws IOException {
+        try (PDDocument pdfDocument = PDDocument.load(file.getInputStream());
+             XWPFDocument wordDocument = new XWPFDocument();
+             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+            // Extract text from PDF
+            PDFTextStripper stripper = new PDFTextStripper();
+            String text = stripper.getText(pdfDocument);
+
+            // Add text to Word doc, line by line to preserve basic structure
+            String[] lines = text.split(System.lineSeparator());
+            
+            for (String line : lines) {
+                XWPFParagraph paragraph = wordDocument.createParagraph();
+                XWPFRun run = paragraph.createRun();
+                run.setText(line);
+            }
+
+            wordDocument.write(out);
+            return out.toByteArray();
+        }
+    }
 
     public byte[] handleConversion(MultipartFile file) throws IOException {
          return file.getBytes();
