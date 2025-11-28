@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { UploadCloud, RefreshCw, RotateCw, Loader2, AlertTriangle, FileText, X, Download, ArrowLeft } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 
 const API_URL = "http://localhost:8080/api/tools/rotate";
 
@@ -102,20 +103,50 @@ export default function RotateTool() {
       <div className="mx-auto max-w-5xl px-6 py-12 lg:px-8">
 
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/30">
+        <motion.div
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.div
+            className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/30"
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{
+              type: "spring",
+              stiffness: 260,
+              damping: 20,
+              delay: 0.1
+            }}
+          >
             <RefreshCw className="h-8 w-8" />
-          </div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-5xl">
+          </motion.div>
+          <motion.h1
+            className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-5xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
             Rotate PDF
-          </h1>
-          <p className="mt-4 text-lg text-zinc-500 dark:text-zinc-400">
+          </motion.h1>
+          <motion.p
+            className="mt-4 text-lg text-zinc-500 dark:text-zinc-400"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
             Permanently rotate all pages in your PDF document.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Main Interface */}
-        <div className="grid gap-8 md:grid-cols-2 items-start">
+        <motion.div
+          className="grid gap-8 md:grid-cols-2 items-start"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+        >
 
           {/* Left: Upload Zone or Preview */}
           <div className="relative">
@@ -131,8 +162,8 @@ export default function RotateTool() {
               <div
                 {...getRootProps()}
                 className={`relative h-64 rounded-3xl border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center cursor-pointer ${isDragActive
-                    ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/10'
-                    : 'border-zinc-300 hover:border-indigo-500 bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-indigo-400'
+                  ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/10'
+                  : 'border-zinc-300 hover:border-indigo-500 bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-indigo-400'
                   }`}
               >
                 <input {...getInputProps()} />
@@ -191,8 +222,8 @@ export default function RotateTool() {
                       key={angle}
                       onClick={() => setDegrees(angle)}
                       className={`py-3 rounded-xl border text-sm font-bold transition-all ${degrees === angle
-                          ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-500/30'
-                          : 'bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
+                        ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-500/30'
+                        : 'bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
                         }`}
                     >
                       {angle}°
@@ -239,7 +270,7 @@ export default function RotateTool() {
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
 
       </div>
     </div>

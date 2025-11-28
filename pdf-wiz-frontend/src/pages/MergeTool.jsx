@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { UploadCloud, FileText, ArrowLeftRight, Trash2, Loader2, ArrowUp, Download, AlertTriangle } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 
 const API_URL = "http://localhost:8080/api/tools/merge";
 
@@ -36,18 +37,18 @@ export default function MergeTool() {
       setError("Please upload at least two files to merge.");
       return;
     }
-    
+
     // Validate all files are PDFs
     const invalidFiles = files.filter(f => f.type !== 'application/pdf' && !f.name.toLowerCase().endsWith('.pdf'));
     if (invalidFiles.length > 0) {
       setError(`Invalid file type. All files must be PDFs. Found: ${invalidFiles.map(f => f.name).join(', ')}`);
       return;
     }
-    
+
     if (!isAuthenticated) {
-        alert("Please log in to use the Merge feature.");
-        navigate('/login');
-        return;
+      alert("Please log in to use the Merge feature.");
+      navigate('/login');
+      return;
     }
 
     setLoading(true);
@@ -55,7 +56,7 @@ export default function MergeTool() {
     const formData = new FormData();
     files.forEach(file => {
       // Append files with the key 'files', matching the Java @RequestParam("files")
-      formData.append('files', file); 
+      formData.append('files', file);
     });
 
     const token = localStorage.getItem('pdfly_auth_token');
@@ -94,7 +95,7 @@ export default function MergeTool() {
         // Valid PDF response
         const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
         setDownloadUrl(url);
-        
+
         // Record usage (only for FREE users)
         const userPlan = user?.plan || localStorage.getItem('pdfly_user_plan') || 'FREE';
         if (userPlan !== 'PRO' && user?.role !== 'ADMIN') {
@@ -109,10 +110,10 @@ export default function MergeTool() {
           setError("Merge failed. Invalid response format.");
         }
       }
-      
+
     } catch (error) {
       let errorMsg = "Merge failed. ";
-      
+
       if (error.response) {
         // Server responded with error status
         if (error.response.data instanceof Blob) {
@@ -132,7 +133,7 @@ export default function MergeTool() {
       } else {
         errorMsg += error.message || "An unexpected error occurred.";
       }
-      
+
       setError(errorMsg);
       console.error("Merge Error Details:", {
         message: error.message,
@@ -149,26 +150,53 @@ export default function MergeTool() {
     <div className="min-h-screen bg-zinc-50 dark:bg-black transition-colors duration-300">
       <Navbar />
       <div className="mx-auto max-w-5xl px-6 py-12 lg:px-8">
-        
+
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-600 text-white shadow-lg shadow-red-500/30">
+        <motion.div
+          className="text-center mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.div
+            className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-600 text-white shadow-lg shadow-red-500/30"
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{
+              type: "spring",
+              stiffness: 260,
+              damping: 20,
+              delay: 0.1
+            }}
+          >
             <ArrowLeftRight className="h-8 w-8" />
-          </div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-5xl">
+          </motion.div>
+          <motion.h1
+            className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-5xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
             Merge PDF Files
-          </h1>
-          <p className="mt-2 text-lg text-zinc-500 dark:text-zinc-400">
+          </motion.h1>
+          <motion.p
+            className="mt-2 text-lg text-zinc-500 dark:text-zinc-400"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
             Combine multiple PDF files into one complete document easily.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Drag and Drop Zone */}
-        <div 
-          {...getRootProps()} 
-          className={`relative h-56 rounded-3xl border-2 border-dashed transition-all duration-300 ${
-            isDragActive ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/10' : 'border-zinc-300 hover:border-indigo-500 dark:border-zinc-700 dark:bg-zinc-900/50 dark:hover:border-indigo-400'
-          }`}
+        <motion.div
+          {...getRootProps()}
+          className={`relative h-56 rounded-3xl border-2 border-dashed transition-all duration-300 ${isDragActive ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/10' : 'border-zinc-300 hover:border-indigo-500 dark:border-zinc-700 dark:bg-zinc-900/50 dark:hover:border-indigo-400'
+            }`}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
         >
           <input {...getInputProps()} />
           <div className="flex h-full w-full flex-col items-center justify-center">
@@ -180,14 +208,19 @@ export default function MergeTool() {
               Minimum 2 files required for merging. (.pdf only)
             </span>
           </div>
-        </div>
+        </motion.div>
 
         {/* File List and Action */}
-        <div className="mt-8 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-lg">
+        <motion.div
+          className="mt-8 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-lg"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.6 }}
+        >
           <h3 className="text-xl font-semibold text-zinc-900 dark:text-white mb-4 border-b pb-3 border-zinc-200 dark:border-zinc-800">
             Files in Queue ({files.length})
           </h3>
-          
+
           <ul className="space-y-3 max-h-60 overflow-y-auto pr-2">
             {files.length === 0 ? (
               <p className="text-zinc-500 text-sm italic">No files added yet.</p>
@@ -245,7 +278,7 @@ export default function MergeTool() {
               </button>
             </div>
           ) : (
-            <button 
+            <button
               onClick={handleMerge}
               disabled={files.length < 2 || loading}
               className="group mt-6 flex w-full items-center justify-center gap-2 overflow-hidden rounded-lg bg-red-600 py-3 text-lg font-bold text-white shadow-xl transition-all hover:bg-red-500 disabled:opacity-50"
@@ -261,7 +294,7 @@ export default function MergeTool() {
               )}
             </button>
           )}
-        </div>
+        </motion.div>
       </div>
     </div>
   );

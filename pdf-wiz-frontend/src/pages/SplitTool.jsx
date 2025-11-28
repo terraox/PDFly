@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { UploadCloud, Scissors, Loader2, AlertTriangle, FileText, X, Download, Settings, Hash } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 
 const API_URL = "http://localhost:8080/api/tools/split";
 
@@ -27,7 +28,7 @@ export default function SplitTool() {
       setFile(pdfFile);
       setError(null);
       setDownloadUrl(null);
-      
+
       // Try to get page count from file (this is a rough estimate)
       // In a real implementation, you might want to send to backend to get exact count
       const reader = new FileReader();
@@ -78,7 +79,7 @@ export default function SplitTool() {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('splitMode', splitMode);
-    
+
     if (splitMode === 'every') {
       formData.append('pagesPerFile', pagesPerFile.toString());
     } else if (splitMode === 'range') {
@@ -128,19 +129,19 @@ export default function SplitTool() {
 
       // Success - create download URL for ZIP file
       // Ensure we're creating a proper ZIP blob
-      const blob = new Blob([response.data], { 
-        type: 'application/zip' 
+      const blob = new Blob([response.data], {
+        type: 'application/zip'
       });
-      
+
       // Verify blob size
       if (blob.size === 0) {
         setError("Split operation produced an empty file. Please try again.");
         return;
       }
-      
+
       const url = window.URL.createObjectURL(blob);
       const filename = (file.name.replace('.pdf', '') || 'split') + '_split.zip';
-      
+
       setDownloadUrl(url);
       setDownloadFilename(filename);
 
@@ -152,7 +153,7 @@ export default function SplitTool() {
 
     } catch (error) {
       let errorMsg = "Split failed. ";
-      
+
       if (error.response) {
         if (error.response.data instanceof Blob) {
           try {
@@ -169,7 +170,7 @@ export default function SplitTool() {
       } else {
         errorMsg += error.message || "An unexpected error occurred.";
       }
-      
+
       setError(errorMsg);
       console.error("Split Error:", error);
     } finally {
@@ -179,10 +180,10 @@ export default function SplitTool() {
 
   const getPreviewText = () => {
     if (!file) return "Upload a PDF to see split preview";
-    
+
     switch (splitMode) {
       case 'all':
-        return totalPages 
+        return totalPages
           ? `Will create ${totalPages} individual PDF files (one per page)`
           : "Will split into individual PDF files (one per page)";
       case 'every':
@@ -202,31 +203,60 @@ export default function SplitTool() {
     <div className="min-h-screen bg-zinc-50 dark:bg-black transition-colors duration-300">
       <Navbar />
       <div className="mx-auto max-w-6xl px-6 py-12 lg:px-8">
-        
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-600 text-white shadow-lg shadow-red-500/30">
-            <Scissors className="h-8 w-8" />
-          </div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-5xl">
-            Split PDF
-          </h1>
-          <p className="mt-4 text-lg text-zinc-500 dark:text-zinc-400">
-            Split your PDF into multiple files with customizable options.
-          </p>
-        </div>
 
-        <div className="grid gap-8 md:grid-cols-2 items-start">
-          
+        {/* Header */}
+        <motion.div
+          className="text-center mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.div
+            className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-600 text-white shadow-lg shadow-red-500/30"
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{
+              type: "spring",
+              stiffness: 260,
+              damping: 20,
+              delay: 0.1
+            }}
+          >
+            <Scissors className="h-8 w-8" />
+          </motion.div>
+          <motion.h1
+            className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-5xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
+            Split PDF
+          </motion.h1>
+          <motion.p
+            className="mt-4 text-lg text-zinc-500 dark:text-zinc-400"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
+            Split your PDF into multiple files with customizable options.
+          </motion.p>
+        </motion.div>
+
+        <motion.div
+          className="grid gap-8 md:grid-cols-2 items-start"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+        >
+
           {/* Left: Upload Zone */}
           <div className="relative">
-            <div 
-              {...getRootProps()} 
-              className={`relative h-64 rounded-3xl border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center cursor-pointer ${
-                isDragActive 
-                  ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/10' 
+            <div
+              {...getRootProps()}
+              className={`relative h-64 rounded-3xl border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center cursor-pointer ${isDragActive
+                  ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/10'
                   : 'border-zinc-300 hover:border-indigo-500 bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-indigo-400'
-              }`}
+                }`}
             >
               <input {...getInputProps()} />
               {file ? (
@@ -253,8 +283,8 @@ export default function SplitTool() {
               )}
             </div>
             {file && (
-              <button 
-                onClick={(e) => { e.stopPropagation(); setFile(null); setError(null); setDownloadUrl(null); setTotalPages(null); }} 
+              <button
+                onClick={(e) => { e.stopPropagation(); setFile(null); setError(null); setDownloadUrl(null); setTotalPages(null); }}
                 className="absolute top-4 right-4 text-zinc-400 hover:text-red-500 transition-colors p-2 rounded-full bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200 dark:border-zinc-700"
               >
                 <X className="h-4 w-4" />
@@ -279,31 +309,28 @@ export default function SplitTool() {
               <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={() => setSplitMode('all')}
-                  className={`py-2.5 px-3 rounded-lg border text-sm font-medium transition-all ${
-                    splitMode === 'all'
+                  className={`py-2.5 px-3 rounded-lg border text-sm font-medium transition-all ${splitMode === 'all'
                       ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
                       : 'bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
-                  }`}
+                    }`}
                 >
                   All Pages
                 </button>
                 <button
                   onClick={() => setSplitMode('every')}
-                  className={`py-2.5 px-3 rounded-lg border text-sm font-medium transition-all ${
-                    splitMode === 'every'
+                  className={`py-2.5 px-3 rounded-lg border text-sm font-medium transition-all ${splitMode === 'every'
                       ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
                       : 'bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
-                  }`}
+                    }`}
                 >
                   Every N
                 </button>
                 <button
                   onClick={() => setSplitMode('range')}
-                  className={`py-2.5 px-3 rounded-lg border text-sm font-medium transition-all ${
-                    splitMode === 'range'
+                  className={`py-2.5 px-3 rounded-lg border text-sm font-medium transition-all ${splitMode === 'range'
                       ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
                       : 'bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
-                  }`}
+                    }`}
                 >
                   Custom Range
                 </button>
@@ -401,7 +428,7 @@ export default function SplitTool() {
                 </button>
               </div>
             ) : (
-              <button 
+              <button
                 onClick={handleSplit}
                 disabled={!file || loading}
                 className="group mt-6 flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-red-600 py-3.5 text-lg font-bold text-white shadow-lg shadow-red-500/25 transition-all hover:bg-red-500 hover:shadow-red-500/40 disabled:opacity-50 disabled:shadow-none"
@@ -418,7 +445,7 @@ export default function SplitTool() {
               </button>
             )}
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

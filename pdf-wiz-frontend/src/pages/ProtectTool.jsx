@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { UploadCloud, Shield, Lock, Loader2, AlertTriangle, FileText, X } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 
 const API_URL = "http://localhost:8080/api/tools/protect";
 
@@ -101,20 +102,50 @@ export default function ProtectTool() {
       <div className="mx-auto max-w-5xl px-6 py-12 lg:px-8">
 
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-700 text-white shadow-lg shadow-gray-700/30">
+        <motion.div
+          className="text-center mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.div
+            className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-700 text-white shadow-lg shadow-gray-700/30"
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{
+              type: "spring",
+              stiffness: 260,
+              damping: 20,
+              delay: 0.1
+            }}
+          >
             <Shield className="h-8 w-8" />
-          </div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-5xl">
+          </motion.div>
+          <motion.h1
+            className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-5xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
             Protect PDF
-          </h1>
-          <p className="mt-2 text-lg text-zinc-500 dark:text-zinc-400">
+          </motion.h1>
+          <motion.p
+            className="mt-2 text-lg text-zinc-500 dark:text-zinc-400"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
             Encrypt your PDF with a password to ensure confidentiality.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Main Interface */}
-        <div className="grid gap-8 md:grid-cols-2">
+        <motion.div
+          className="grid gap-8 md:grid-cols-2"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+        >
 
           {/* Left: Upload Zone */}
           <div className="relative">
@@ -210,9 +241,9 @@ export default function ProtectTool() {
               )}
             </button>
           </div>
-        </div>
+        </motion.div>
 
       </div>
-    </div>
+    </div >
   );
 }

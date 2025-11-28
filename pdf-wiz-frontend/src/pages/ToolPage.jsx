@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { UploadCloud, Lock, Sparkles, FileText, AlertCircle, Loader2, AlertTriangle, X, Download } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 
 export default function ToolPage({ title, icon: Icon }) {
   const { isAuthenticated, user } = useAuth();
@@ -440,19 +441,49 @@ export default function ToolPage({ title, icon: Icon }) {
     <div className="min-h-screen bg-zinc-50 dark:bg-black transition-colors duration-300">
       <Navbar />
       <div className="mx-auto max-w-5xl px-6 py-12 lg:px-8">
-        <div className="text-center mb-8">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/30">
+        <motion.div
+          className="text-center mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.div
+            className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/30"
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{
+              type: "spring",
+              stiffness: 260,
+              damping: 20,
+              delay: 0.1
+            }}
+          >
             {Icon ? <Icon className="h-8 w-8" /> : <FileText className="h-8 w-8" />}
-          </div>
-          <h1 className="mb-4 text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-5xl">
+          </motion.div>
+          <motion.h1
+            className="mb-4 text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-5xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
             {title}
-          </h1>
-          <p className="mx-auto max-w-2xl text-lg text-zinc-500 dark:text-zinc-400">
+          </motion.h1>
+          <motion.p
+            className="mx-auto max-w-2xl text-lg text-zinc-500 dark:text-zinc-400"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
             Upload your {fileType.prompt} to get started. {(!user || (user.plan !== 'PRO' && user.role !== 'ADMIN')) && "1 free task available today."}
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="grid gap-8 md:grid-cols-2 items-start">
+        <motion.div
+          className="grid gap-8 md:grid-cols-2 items-start"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+        >
           {/* Left: Upload Zone */}
           <div className="relative">
             <div
@@ -918,7 +949,7 @@ export default function ToolPage({ title, icon: Icon }) {
               <span>Files are automatically deleted after 1 hour</span>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
