@@ -1,14 +1,16 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { UploadCloud, Lock, Sparkles, FileText, AlertCircle, Loader2, AlertTriangle, X, Download } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 
-export default function ToolPage({ title, icon: Icon }) {
+export default function ToolPage({ title, description, icon: Icon, endpoint, processButtonText, color = "indigo" }) {
   const { isAuthenticated, user } = useAuth();
+  const toast = useToast();
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const [password, setPassword] = useState('');
@@ -63,6 +65,40 @@ export default function ToolPage({ title, icon: Icon }) {
     };
     checkConfig();
   }, [title]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl/Cmd + U - Upload file
+      if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
+        e.preventDefault();
+        open();
+        toast.info('File picker opened');
+      }
+
+      // Escape - Clear file
+      if (e.key === 'Escape' && file) {
+        e.preventDefault();
+        setFile(null);
+        setError(null);
+        setDownloadUrl(null);
+        toast.info('File cleared');
+      }
+
+      // Ctrl/Cmd + D - Download (if available)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'd' && downloadUrl) {
+        e.preventDefault();
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = downloadFilename || 'processed.pdf';
+        link.click();
+        toast.success('Download started');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [file, downloadUrl, downloadFilename, toast]);
 
   // Function to determine the expected file type and prompt based on the tool title
   const getAcceptedFileType = (toolTitle) => {
@@ -176,7 +212,7 @@ export default function ToolPage({ title, icon: Icon }) {
     }
   }, [title]);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     accept: fileType.accept,
     maxFiles: 1,
@@ -486,25 +522,44 @@ export default function ToolPage({ title, icon: Icon }) {
         >
           {/* Left: Upload Zone */}
           <div className="relative">
-            <div
+            <motion.div
               {...getRootProps()}
               className={`relative h-64 rounded-3xl border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center cursor-pointer ${isDragActive
                 ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/10'
                 : 'border-zinc-300 hover:border-indigo-500 bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-indigo-400'
                 }`}
+              animate={isDragActive ? {
+                scale: [1, 1.02, 1],
+                boxShadow: [
+                  '0 0 0 0 rgba(99, 102, 241, 0)',
+                  '0 0 0 10px rgba(99, 102, 241, 0.1)',
+                  '0 0 0 0 rgba(99, 102, 241, 0)',
+                ],
+              } : {}}
+              transition={{ duration: 1, repeat: isDragActive ? Infinity : 0 }}
+              whileHover={{ scale: 1.01 }}
             >
               <input {...getInputProps()} />
               {file ? (
-                <div className="text-center p-6">
+                <motion.div
+                  className="text-center p-6"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', stiffness: 200 }}
+                >
                   <FileText className="h-12 w-12 text-indigo-500 mx-auto mb-3" />
                   <span className="font-semibold text-zinc-900 dark:text-zinc-100 text-lg block">{file.name}</span>
                   <span className="text-sm text-zinc-500 dark:text-zinc-400">{(file.size / 1024 / 1024).toFixed(2)} MB</span>
-                </div>
+                </motion.div>
               ) : (
                 <>
-                  <div className="p-4 rounded-full bg-zinc-100 dark:bg-zinc-800 mb-4">
+                  <motion.div
+                    className="p-4 rounded-full bg-zinc-100 dark:bg-zinc-800 mb-4"
+                    animate={isDragActive ? { scale: [1, 1.1, 1] } : {}}
+                    transition={{ duration: 0.5, repeat: isDragActive ? Infinity : 0 }}
+                  >
                     <UploadCloud className="h-8 w-8 text-zinc-500 dark:text-zinc-400" />
-                  </div>
+                  </motion.div>
                   <span className="text-lg font-semibold text-zinc-700 dark:text-zinc-200">
                     {isDragActive ? "Drop it here!" : "Click or Drag File"}
                   </span>
@@ -513,7 +568,7 @@ export default function ToolPage({ title, icon: Icon }) {
                   </span>
                 </>
               )}
-            </div>
+            </motion.div>
             {file && (
               <button
                 onClick={(e) => { e.stopPropagation(); setFile(null); setError(null); }}
@@ -927,10 +982,16 @@ export default function ToolPage({ title, icon: Icon }) {
                 </button>
               </div>
             ) : (
-              <button
+              <motion.button
                 onClick={handleProcess}
                 disabled={!file || (needsPassword && !password.trim()) || (needsSignature && !signatureText.trim()) || processing}
-                className="group mt-6 flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-indigo-600 py-3.5 text-lg font-bold text-white shadow-lg shadow-indigo-500/25 transition-all hover:bg-indigo-500 hover:shadow-indigo-500/40 disabled:opacity-50 disabled:shadow-none"
+                className="group mt-6 flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-indigo-600 py-3.5 text-lg font-bold text-white shadow-lg shadow-indigo-500/25 transition-all disabled:opacity-50 disabled:shadow-none"
+                whileHover={{
+                  scale: 1.02,
+                  boxShadow: '0 20px 25px -5px rgba(99, 102, 241, 0.3), 0 10px 10px -5px rgba(99, 102, 241, 0.2)'
+                }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 17 }}
               >
                 {processing ? (
                   <>
@@ -941,12 +1002,24 @@ export default function ToolPage({ title, icon: Icon }) {
                     <UploadCloud className="h-5 w-5" /> PROCESS FILE
                   </>
                 )}
-              </button>
+              </motion.button>
             )}
 
             <div className="flex items-center gap-2 text-sm text-zinc-400 pt-4 border-t border-zinc-200 dark:border-zinc-800">
               <AlertCircle className="h-4 w-4" />
               <span>Files are automatically deleted after 1 hour</span>
+            </div>
+
+            {/* Keyboard Shortcuts Hint */}
+            <div className="mt-4 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-2">⌨️ Keyboard Shortcuts</p>
+              <div className="grid grid-cols-2 gap-2 text-xs text-zinc-600 dark:text-zinc-400">
+                <div><kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 font-mono">Ctrl+U</kbd> Upload</div>
+                <div><kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 font-mono">Esc</kbd> Clear</div>
+                {downloadUrl && (
+                  <div><kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 font-mono">Ctrl+D</kbd> Download</div>
+                )}
+              </div>
             </div>
           </div>
         </motion.div>

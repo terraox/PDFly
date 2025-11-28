@@ -1,7 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { UploadCloud, RefreshCw, RotateCw, Loader2, AlertTriangle, FileText, X, Download, ArrowLeft } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
@@ -11,12 +12,48 @@ const API_URL = "http://localhost:8080/api/tools/rotate";
 
 export default function RotateTool() {
   const { isAuthenticated } = useAuth();
+  const toast = useToast();
   const [file, setFile] = useState(null);
   const [degrees, setDegrees] = useState(90); // Default rotation
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const navigate = useNavigate();
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl/Cmd + U - Upload file
+      if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
+        e.preventDefault();
+        open();
+        toast.info('File picker opened');
+      }
+
+      // Escape - Clear file
+      if (e.key === 'Escape' && file) {
+        e.preventDefault();
+        setFile(null);
+        setError(null);
+        setPreviewUrl(null);
+        toast.info('File cleared');
+      }
+
+      // Ctrl/Cmd + D - Download (if available)
+      // Note: Rotate tool auto-downloads or shows preview, but we can add it if previewUrl is available
+      if ((e.ctrlKey || e.metaKey) && e.key === 'd' && previewUrl) {
+        e.preventDefault();
+        const link = document.createElement('a');
+        link.href = previewUrl;
+        link.download = `rotated_${file.name}`;
+        link.click();
+        toast.success('Download started');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [file, previewUrl, toast]);
 
   const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles.length > 0) {
@@ -26,11 +63,10 @@ export default function RotateTool() {
     }
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     accept: { 'application/pdf': ['.pdf'] },
     maxFiles: 1,
-    disabled: !!previewUrl, // Disable dropzone when preview is shown
   });
 
   const handleRotate = async () => {
@@ -269,6 +305,18 @@ export default function RotateTool() {
                 </button>
               </div>
             )}
+          </div>
+
+          {/* Keyboard Shortcuts Hint */}
+          <div className="mt-6 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+            <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-2">⌨️ Keyboard Shortcuts</p>
+            <div className="grid grid-cols-2 gap-2 text-xs text-zinc-600 dark:text-zinc-400">
+              <div><kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 font-mono">Ctrl+U</kbd> Upload</div>
+              <div><kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 font-mono">Esc</kbd> Clear</div>
+              {previewUrl && (
+                <div><kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 font-mono">Ctrl+D</kbd> Download</div>
+              )}
+            </div>
           </div>
         </motion.div>
 

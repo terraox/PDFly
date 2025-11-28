@@ -1,7 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { UploadCloud, Scissors, Loader2, AlertTriangle, FileText, X, Download, Settings, Hash } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
@@ -11,6 +12,7 @@ const API_URL = "http://localhost:8080/api/tools/split";
 
 export default function SplitTool() {
   const { isAuthenticated, user } = useAuth();
+  const toast = useToast();
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const [totalPages, setTotalPages] = useState(null);
@@ -20,6 +22,40 @@ export default function SplitTool() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [downloadUrl, setDownloadUrl] = useState(null);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl/Cmd + U - Upload file
+      if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
+        e.preventDefault();
+        open();
+        toast.info('File picker opened');
+      }
+
+      // Escape - Clear file
+      if (e.key === 'Escape' && file) {
+        e.preventDefault();
+        setFile(null);
+        setError(null);
+        setDownloadUrl(null);
+        toast.info('File cleared');
+      }
+
+      // Ctrl/Cmd + D - Download (if available)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'd' && downloadUrl) {
+        e.preventDefault();
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = 'pdfly_split.zip';
+        link.click();
+        toast.success('Download started');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [file, downloadUrl, toast]);
   const [downloadFilename, setDownloadFilename] = useState(null);
 
   const onDrop = useCallback((acceptedFiles) => {
@@ -44,7 +80,7 @@ export default function SplitTool() {
     }
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     accept: { 'application/pdf': ['.pdf'] },
     maxFiles: 1,
@@ -254,8 +290,8 @@ export default function SplitTool() {
             <div
               {...getRootProps()}
               className={`relative h-64 rounded-3xl border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center cursor-pointer ${isDragActive
-                  ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/10'
-                  : 'border-zinc-300 hover:border-indigo-500 bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-indigo-400'
+                ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/10'
+                : 'border-zinc-300 hover:border-indigo-500 bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-indigo-400'
                 }`}
             >
               <input {...getInputProps()} />
@@ -310,8 +346,8 @@ export default function SplitTool() {
                 <button
                   onClick={() => setSplitMode('all')}
                   className={`py-2.5 px-3 rounded-lg border text-sm font-medium transition-all ${splitMode === 'all'
-                      ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
-                      : 'bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
+                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
+                    : 'bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
                     }`}
                 >
                   All Pages
@@ -319,8 +355,8 @@ export default function SplitTool() {
                 <button
                   onClick={() => setSplitMode('every')}
                   className={`py-2.5 px-3 rounded-lg border text-sm font-medium transition-all ${splitMode === 'every'
-                      ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
-                      : 'bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
+                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
+                    : 'bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
                     }`}
                 >
                   Every N
@@ -328,8 +364,8 @@ export default function SplitTool() {
                 <button
                   onClick={() => setSplitMode('range')}
                   className={`py-2.5 px-3 rounded-lg border text-sm font-medium transition-all ${splitMode === 'range'
-                      ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
-                      : 'bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
+                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-md'
+                    : 'bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700'
                     }`}
                 >
                   Custom Range
@@ -444,6 +480,19 @@ export default function SplitTool() {
                 )}
               </button>
             )}
+
+
+            {/* Keyboard Shortcuts Hint */}
+            <div className="mt-6 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-2">⌨️ Keyboard Shortcuts</p>
+              <div className="grid grid-cols-2 gap-2 text-xs text-zinc-600 dark:text-zinc-400">
+                <div><kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 font-mono">Ctrl+U</kbd> Upload</div>
+                <div><kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 font-mono">Esc</kbd> Clear</div>
+                {downloadUrl && (
+                  <div><kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 font-mono">Ctrl+D</kbd> Download</div>
+                )}
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>

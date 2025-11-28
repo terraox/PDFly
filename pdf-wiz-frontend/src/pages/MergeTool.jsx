@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
-import { UploadCloud, FileText, ArrowLeftRight, Trash2, Loader2, ArrowUp, Download, AlertTriangle } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
+import { UploadCloud, FileText, ArrowLeftRight, Trash2, Loader2, ArrowUp, Download, AlertTriangle, AlertCircle } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { motion } from 'framer-motion';
@@ -11,11 +12,46 @@ const API_URL = "http://localhost:8080/api/tools/merge";
 
 export default function MergeTool() {
   const { isAuthenticated, user } = useAuth();
+  const toast = useToast();
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [downloadUrl, setDownloadUrl] = useState(null);
   const navigate = useNavigate();
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl/Cmd + U - Upload file
+      if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
+        e.preventDefault();
+        open();
+        toast.info('File picker opened');
+      }
+
+      // Escape - Clear files
+      if (e.key === 'Escape' && files.length > 0) {
+        e.preventDefault();
+        setFiles([]);
+        setError(null);
+        setDownloadUrl(null);
+        toast.info('Files cleared');
+      }
+
+      // Ctrl/Cmd + D - Download (if available)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'd' && downloadUrl) {
+        e.preventDefault();
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = 'pdfly_merged.pdf';
+        link.click();
+        toast.success('Download started');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [files, downloadUrl, toast]);
 
   const onDrop = useCallback((acceptedFiles) => {
     // Filter to only accept PDF files (if needed, although Java checks this too)
@@ -23,9 +59,9 @@ export default function MergeTool() {
     setFiles(prevFiles => [...prevFiles, ...pdfFiles]);
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
-    accept: { 'application/pdf': ['.pdf'] }
+    accept: { 'application/pdf': ['.pdf'] },
   });
 
   const removeFile = (fileName) => {
@@ -294,6 +330,18 @@ export default function MergeTool() {
               )}
             </button>
           )}
+
+          {/* Keyboard Shortcuts Hint */}
+          <div className="mt-6 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+            <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-2">⌨️ Keyboard Shortcuts</p>
+            <div className="grid grid-cols-2 gap-2 text-xs text-zinc-600 dark:text-zinc-400">
+              <div><kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 font-mono">Ctrl+U</kbd> Upload</div>
+              <div><kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 font-mono">Esc</kbd> Clear</div>
+              {downloadUrl && (
+                <div><kbd className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 font-mono">Ctrl+D</kbd> Download</div>
+              )}
+            </div>
+          </div>
         </motion.div>
       </div>
     </div>
