@@ -216,23 +216,47 @@ public class PdfToolService {
                     contentStream.setGraphicsStateParameters(graphicsState);
 
                     if (watermarkImage != null && !watermarkImage.isEmpty()) {
-                        // IMAGE WATERMARK
+                        // IMAGE WATERMARK - Clean solution
                         PDImageXObject pdImage = PDImageXObject.createFromByteArray(
                                 document, watermarkImage.getBytes(), watermarkImage.getOriginalFilename());
 
-                        float imageWidth = pdImage.getWidth() * scaleValue;
-                        float imageHeight = pdImage.getHeight() * scaleValue;
+                        // Get image dimensions
+                        float imgWidth = pdImage.getWidth();
+                        float imgHeight = pdImage.getHeight();
+
+                        // Scale down only if image is too large (keep small images small)
+                        float maxDimension = Math.max(imgWidth, imgHeight);
+                        float autoScale = 1.0f;
+                        if (maxDimension > 400) {
+                            autoScale = 400f / maxDimension;
+                        }
+
+                        // Apply auto-scale to base dimensions
+                        float baseWidth = imgWidth * autoScale;
+                        float baseHeight = imgHeight * autoScale;
+
+                        // Apply user's scale factor
+                        float finalWidth = baseWidth * scaleValue;
+                        float finalHeight = baseHeight * scaleValue;
 
                         // Save graphics state
                         contentStream.saveGraphicsState();
 
-                        // Apply rotation and translation
-                        contentStream.transform(org.apache.pdfbox.util.Matrix.getRotateInstance(
-                                Math.toRadians(rotationDegrees), x, y));
+                        // Build transformation matrix
+                        org.apache.pdfbox.util.Matrix matrix = new org.apache.pdfbox.util.Matrix();
 
-                        // Draw image centered at position
-                        contentStream.drawImage(pdImage, x - imageWidth / 2, y - imageHeight / 2,
-                                imageWidth, imageHeight);
+                        // 1. Translate to clicked position
+                        matrix.translate(x, y);
+
+                        // 2. Rotate by NEGATIVE angle to match Frontend's Clockwise rotation
+                        // PDF rotation is Counter-Clockwise, so we negate to get Clockwise
+                        matrix.rotate(Math.toRadians(-rotationDegrees));
+
+                        // Apply transformation
+                        contentStream.transform(matrix);
+
+                        // 3. Draw image centered at origin (no flips needed)
+                        contentStream.drawImage(pdImage, -finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight);
 
                         contentStream.restoreGraphicsState();
 

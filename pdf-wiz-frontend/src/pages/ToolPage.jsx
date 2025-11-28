@@ -30,6 +30,7 @@ export default function ToolPage({ title, icon: Icon }) {
   const [watermarkType, setWatermarkType] = useState('text'); // 'text' or 'image'
   const [watermarkText, setWatermarkText] = useState('');
   const [watermarkImage, setWatermarkImage] = useState(null);
+  const [watermarkImagePreview, setWatermarkImagePreview] = useState(null); // For preview display
   const [watermarkPosition, setWatermarkPosition] = useState(null);
   const [watermarkOpacity, setWatermarkOpacity] = useState(0.3);
   const [watermarkRotation, setWatermarkRotation] = useState(45);
@@ -646,7 +647,12 @@ export default function ToolPage({ title, icon: Icon }) {
                       accept="image/*"
                       onChange={(e) => {
                         const file = e.target.files[0];
-                        if (file) setWatermarkImage(file);
+                        if (file) {
+                          setWatermarkImage(file);
+                          // Create preview URL for the image
+                          const previewUrl = URL.createObjectURL(file);
+                          setWatermarkImagePreview(previewUrl);
+                        }
                       }}
                       className="w-full text-sm text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-900/20 dark:file:text-indigo-400"
                     />
@@ -698,6 +704,21 @@ export default function ToolPage({ title, icon: Icon }) {
                         >
                           {watermarkText}
                         </div>
+                      )}
+                      {watermarkPosition && watermarkType === 'image' && watermarkImagePreview && (
+                        <img
+                          src={watermarkImagePreview}
+                          alt="Watermark preview"
+                          className="absolute pointer-events-none"
+                          style={{
+                            left: `${(watermarkPosition.x / 595) * 100}%`,
+                            top: `${(1 - watermarkPosition.y / 842) * 100}%`,
+                            transform: `translate(-50%, -50%) rotate(${watermarkRotation}deg) scale(${watermarkScale * 0.3})`,
+                            opacity: watermarkOpacity,
+                            maxWidth: '200px',
+                            maxHeight: '200px'
+                          }}
+                        />
                       )}
                     </div>
                     {watermarkPosition && (
