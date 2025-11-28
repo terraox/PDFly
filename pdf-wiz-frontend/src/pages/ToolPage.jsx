@@ -230,7 +230,6 @@ export default function ToolPage({ title, icon: Icon }) {
       // Store download URL and filename for download button
       setDownloadUrl(url);
       setDownloadFilename(filename);
-      }
 
       // Record usage (only for FREE users)
       const userPlan = user?.plan || localStorage.getItem('pdfly_user_plan') || 'FREE';

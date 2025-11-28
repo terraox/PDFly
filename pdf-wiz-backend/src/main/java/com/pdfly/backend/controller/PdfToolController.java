@@ -58,8 +58,6 @@ public class PdfToolController {
             return createPdfResponse(mergedPdf, "pdfly_merged.pdf");
         } catch (org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException e) {
             return createErrorResponse("One or more PDF files are password protected. Please unlock them first.");
-        } catch (org.apache.pdfbox.io.IOException e) {
-            return createErrorResponse("Invalid or corrupted PDF file detected. Please ensure all files are valid PDFs.");
         } catch (IOException e) {
             return createErrorResponse("Merging failed: " + e.getMessage() + ". Please ensure all files are valid PDF documents.");
         } catch (Exception e) {
@@ -116,8 +114,6 @@ public class PdfToolController {
                     
         } catch (org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException e) {
             return createErrorResponse("PDF is password protected. Please unlock it first.");
-        } catch (org.apache.pdfbox.io.IOException e) {
-            return createErrorResponse("Invalid or corrupted PDF file detected.");
         } catch (IOException e) {
             return createErrorResponse("Splitting failed: " + e.getMessage());
         } catch (Exception e) {
