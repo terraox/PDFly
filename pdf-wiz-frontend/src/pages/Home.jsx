@@ -50,41 +50,64 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-zinc-50 font-sans text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 transition-colors duration-300 overflow-x-hidden">
-      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-indigo-50 via-white to-pink-50 dark:from-zinc-950 dark:via-black dark:to-zinc-900 animate-gradient opacity-80" />
+    <div className="min-h-screen bg-zinc-50 font-sans text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 transition-colors duration-300 overflow-x-hidden selection:bg-indigo-500/30">
+      <div className="fixed inset-0 -z-10 aurora-bg opacity-50 dark:opacity-30 animate-gradient" style={{ backgroundSize: '400% 400%', animationDuration: '20s' }} />
+      <div className="fixed inset-0 -z-10 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay" />
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative px-6 py-20 text-center lg:py-32 overflow-hidden">
-        {/* Background Blobs */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-purple-300/30 dark:bg-purple-900/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }} />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-300/30 dark:bg-indigo-900/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '7s' }} />
-        </div>
-
+      <section className="relative px-6 pt-32 pb-20 text-center lg:pt-40 lg:pb-32 overflow-hidden">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
+          }}
           className="relative mx-auto max-w-5xl space-y-8"
         >
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl text-zinc-900 dark:text-white leading-tight">
-            Every tool you need to work with PDFs in <span className="text-gradient">one place</span>
-          </h1>
-          <p className="mx-auto max-w-2xl text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed">
-            All the tools you need to use PDFs, at your fingertips. All are 100% FREE and easy to use! Merge, split, compress, convert, rotate, unlock and watermark PDFs with just a few clicks.
-          </p>
+          <div className="overflow-hidden">
+            <motion.h1
+              className="text-6xl font-extrabold tracking-tight sm:text-7xl lg:text-8xl text-zinc-900 dark:text-white leading-[1.1]"
+              variants={{
+                hidden: { y: 100, opacity: 0 },
+                visible: { y: 0, opacity: 1, transition: { type: "spring", stiffness: 100, damping: 20 } }
+              }}
+            >
+              Every tool you need to <br />
+              work with <span className="relative inline-block px-4">
+                <span className="absolute inset-0 bg-gradient-to-r from-red-600 via-orange-500 to-red-600 blur-2xl opacity-50 animate-pulse"></span>
+                <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-orange-500 to-red-500 animate-gradient bg-[length:200%_auto] drop-shadow-2xl">
+                  PDFs
+                </span>
+              </span> <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 animate-gradient" style={{ backgroundSize: '200% auto' }}>
+                in one place.
+              </span>
+            </motion.h1>
+          </div>
+
+          <motion.p
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            className="mx-auto max-w-2xl text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed"
+          >
+            Merge, split, compress, convert, rotate, unlock and watermark PDFs with just a few clicks. 100% FREE and easy to use.
+          </motion.p>
 
           {/* Usage Limit Badge for Free Users */}
           {user && (user.plan !== 'PRO' && user.role !== 'ADMIN') && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
+              variants={{
+                hidden: { opacity: 0, scale: 0.8 },
+                visible: { opacity: 1, scale: 1 }
+              }}
               className="flex justify-center"
             >
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/50 backdrop-blur-sm border border-indigo-200 px-5 py-2.5 text-sm font-semibold text-indigo-700 shadow-sm dark:bg-white/5 dark:border-indigo-500/30 dark:text-indigo-400">
-                <Sparkles className="h-4 w-4 animate-pulse" />
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/50 backdrop-blur-md border border-white/20 px-5 py-2.5 text-sm font-semibold text-indigo-700 shadow-xl shadow-indigo-500/10 dark:bg-white/5 dark:border-white/10 dark:text-indigo-300">
+                <Sparkles className="h-4 w-4 animate-pulse text-indigo-500" />
                 <span>
                   <span className="font-bold">{Math.max(0, freeLimit - (user.dailyUsageCount || 0))}</span> free tasks remaining today
                 </span>
@@ -92,20 +115,34 @@ export default function Home() {
             </motion.div>
           )}
 
-          <motion.div
-            className="flex flex-col sm:flex-row justify-center gap-4 pt-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <Link to="/register" className="group relative inline-flex items-center justify-center gap-2 rounded-full bg-zinc-900 px-8 py-4 text-base font-bold text-white shadow-xl transition-all hover:bg-zinc-800 hover:scale-105 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200">
-              Get Started
-              <ArrowLeftRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-            <Link to="/pricing" className="inline-flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm px-8 py-4 text-base font-bold text-zinc-900 shadow-lg ring-1 ring-zinc-200 hover:bg-white hover:scale-105 dark:bg-white/10 dark:text-white dark:ring-zinc-700 dark:hover:bg-white/20 transition-all">
-              View Pricing
-            </Link>
-          </motion.div>
+          {/* Buttons Logic:
+              - Guest: Show Both
+              - Free User: Show Pricing Only
+              - Pro User: Show None
+          */}
+          {(!user || user.plan !== 'PRO') && (
+            <motion.div
+              className="flex flex-col sm:flex-row justify-center gap-6 pt-8"
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 }
+              }}
+            >
+              {!user && (
+                <Link to="/register" className="group relative inline-flex h-12 items-center justify-center overflow-hidden rounded-full bg-zinc-900 px-8 font-medium text-white transition-all duration-300 hover:bg-zinc-800 hover:scale-105 hover:ring-2 hover:ring-zinc-900 hover:ring-offset-2 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:hover:ring-white dark:hover:ring-offset-zinc-950">
+                  <span className="relative z-10 flex items-center gap-2">
+                    Get Started
+                    <ArrowLeftRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </span>
+                  <div className="absolute inset-0 -z-10 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:animate-[shimmer_1.5s_infinite]" />
+                </Link>
+              )}
+
+              <Link to="/pricing" className="group inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-transparent px-8 font-medium text-zinc-900 transition-all duration-300 hover:bg-zinc-100 hover:scale-105 dark:border-zinc-800 dark:text-white dark:hover:bg-zinc-800">
+                View Pricing
+              </Link>
+            </motion.div>
+          )}
         </motion.div>
       </section>
 
@@ -115,9 +152,10 @@ export default function Home() {
           {tools.map((tool, index) => (
             <motion.div
               key={tool.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 + 0.5 }}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: index * 0.05, duration: 0.5, ease: "easeOut" }}
             >
               <Link to={`/${tool.id}`}>
                 <ToolCard {...tool} />
@@ -128,7 +166,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-200 bg-white/50 backdrop-blur-xl py-12 dark:border-zinc-800 dark:bg-zinc-950/50">
+      <footer className="border-t border-zinc-200 bg-white/30 backdrop-blur-xl py-12 dark:border-zinc-800 dark:bg-black/30">
         <div className="mx-auto max-w-7xl px-6 text-center text-zinc-500 dark:text-zinc-400">
           <p>&copy; 2025 PDFly. All rights reserved.</p>
         </div>

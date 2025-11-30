@@ -15,9 +15,25 @@ export default function ToolCard({ icon: Icon, title, desc, color }) {
     <motion.div
       whileHover={{ y: -6, scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
+      onMouseMove={(e) => {
+        const { currentTarget, clientX, clientY } = e;
+        const { left, top } = currentTarget.getBoundingClientRect();
+        const x = clientX - left;
+        const y = clientY - top;
+        currentTarget.style.setProperty("--x", `${x}px`);
+        currentTarget.style.setProperty("--y", `${y}px`);
+      }}
       className="group relative flex h-[240px] cursor-pointer flex-col justify-between overflow-hidden rounded-2xl glass-card p-7 transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/20 dark:hover:shadow-indigo-900/30"
     >
       <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:from-white/5" />
+
+      {/* Spotlight Effect */}
+      <div
+        className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        style={{
+          background: `radial-gradient(600px circle at var(--x) var(--y), rgba(99, 102, 241, 0.15), transparent 40%)`
+        }}
+      />
 
       <div className="relative z-10">
         <div className={`mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl ${colorMap[color] || colorMap.gray} transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-sm`}>
