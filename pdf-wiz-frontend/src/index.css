@@ -64,10 +64,16 @@
 }
 
 /* Hide default cursor globally */
+/* Hide default cursor globally */
 html,
 body,
 * {
   cursor: none !important;
+}
+
+html,
+body {
+  overflow-x: hidden;
 }
 
 /* Restore text cursor for inputs */

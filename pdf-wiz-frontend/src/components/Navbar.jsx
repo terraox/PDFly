@@ -139,9 +139,9 @@ export default function Navbar() {
           marginTop: navTop,
           borderRadius: navBorderRadius,
         }}
-        className={`pointer-events-auto transition-shadow duration-300 ${scrolled
+        className={`pointer-events-auto transition-all duration-500 ${scrolled
           ? "glass border border-white/20 dark:border-white/10 shadow-2xl shadow-black/5"
-          : "bg-transparent"
+          : "bg-white/50 dark:bg-black/50 backdrop-blur-md border-b border-white/10 dark:border-white/5"
           }`}
       >
         <div className="mx-auto flex h-20 items-center justify-between px-6 lg:px-8">
