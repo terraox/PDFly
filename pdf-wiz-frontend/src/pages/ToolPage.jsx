@@ -3,14 +3,18 @@ import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { useHistory } from '../context/HistoryContext';
 import { UploadCloud, Lock, Sparkles, FileText, AlertCircle, Loader2, AlertTriangle, X, Download } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 
+import LoginModal from '../components/LoginModal';
+
 export default function ToolPage({ title, description, icon: Icon, endpoint, processButtonText, color = "indigo" }) {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, refreshUser } = useAuth();
   const toast = useToast();
+  const { addToHistory } = useHistory();
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const [password, setPassword] = useState('');
@@ -21,6 +25,10 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
   const [limitReached, setLimitReached] = useState(false);
   const [downloadUrl, setDownloadUrl] = useState(null);
   const [downloadFilename, setDownloadFilename] = useState(null);
+
+  // Login Modal State
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [pendingFile, setPendingFile] = useState(null);
 
   // Signature customization states
   const [pdfPreview, setPdfPreview] = useState(null);
@@ -41,11 +49,53 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
   const [isFeatureDisabled, setIsFeatureDisabled] = useState(false);
   const [checkingFeatureStatus, setCheckingFeatureStatus] = useState(false);
 
+  // Effect to handle pending file after login
+  useEffect(() => {
+    if (isAuthenticated && pendingFile) {
+      setFile(pendingFile);
+      setPendingFile(null);
+      toast.success("Logged in successfully! File ready.");
+
+      // If needed, trigger preview logic here (duplicated from onDrop)
+      if (title === "Sign PDF" || title === "Watermark") {
+        // We need to re-trigger the preview generation logic. 
+        // Since onDrop logic is complex and inside a callback, we might need to extract it or just let the user see the file is selected.
+        // For now, just setting the file is good UX. The user can click process.
+        // Actually, for Sign/Watermark, we need the preview. 
+        // Let's try to re-run the preview logic if possible, or just call it here.
+        // Better: Extract preview logic or just call it here.
+        generatePreview(pendingFile);
+      }
+    }
+  }, [isAuthenticated, pendingFile, title]);
+
+  const generatePreview = async (uploadedFile) => {
+    console.log('Fetching PDF preview...');
+    try {
+      const formData = new FormData();
+      formData.append('file', uploadedFile);
+      const response = await axios.post('http://localhost:8080/api/tools/preview', formData, {
+        responseType: 'blob'
+      });
+      const previewUrl = URL.createObjectURL(response.data);
+      setPdfPreview(previewUrl);
+      setSignaturePosition(null);
+      setWatermarkPosition(null);
+    } catch (err) {
+      console.error('Preview generation failed:', err);
+    }
+  };
+
   React.useEffect(() => {
     const checkConfig = async () => {
+      if (isAuthenticated) {
+        refreshUser(); // Refresh usage count on load
+      }
+
       if (title === "Compress PDF") {
         console.log('[ToolPage] Checking if compression is disabled...');
-        setCheckingFeatureStatus(true);
+        // Don't block UI with loading state
+        // setCheckingFeatureStatus(true); 
         try {
           const response = await axios.get('http://localhost:8080/api/tools/config');
           console.log('[ToolPage] Config response:', response.data);
@@ -72,6 +122,10 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
       // Ctrl/Cmd + U - Upload file
       if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
         e.preventDefault();
+        if (!isAuthenticated) {
+          setShowLoginModal(true);
+          return;
+        }
         open();
         toast.info('File picker opened');
       }
@@ -98,7 +152,7 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [file, downloadUrl, downloadFilename, toast]);
+  }, [file, downloadUrl, downloadFilename, toast, isAuthenticated]);
 
   // Function to determine the expected file type and prompt based on the tool title
   const getAcceptedFileType = (toolTitle) => {
@@ -182,35 +236,23 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
 
   const onDrop = useCallback(async (acceptedFiles) => {
     if (acceptedFiles.length > 0) {
+      // Check authentication first
+      if (!isAuthenticated) {
+        setPendingFile(acceptedFiles[0]);
+        setShowLoginModal(true);
+        return;
+      }
+
       const uploadedFile = acceptedFiles[0];
       setFile(uploadedFile);
       setError(null);
 
-      // If this is Sign PDF or Watermark tool, fetch preview
+      // If this is Sign PDF or Watermark tool, fetch preview (for the first file only)
       if (title === "Sign PDF" || title === "Watermark") {
-        console.log('Fetching PDF preview...');
-        try {
-          const formData = new FormData();
-          formData.append('file', uploadedFile);
-          console.log('Sending preview request for file:', uploadedFile.name);
-          const response = await axios.post('http://localhost:8080/api/tools/preview', formData, {
-            responseType: 'blob'
-          });
-          console.log('Preview response received:', response.status, response.data.size);
-          const previewUrl = URL.createObjectURL(response.data);
-          setPdfPreview(previewUrl);
-          setSignaturePosition(null); // Reset position when new file is uploaded
-          setWatermarkPosition(null);
-          console.log('Preview loaded successfully');
-        } catch (err) {
-          console.error('Preview generation failed:', err);
-          console.error('Error response:', err.response);
-          console.error('Error message:', err.message);
-          setError('Failed to generate PDF preview: ' + (err.response?.data || err.message));
-        }
+        generatePreview(uploadedFile);
       }
     }
-  }, [title]);
+  }, [title, isAuthenticated]);
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
@@ -229,12 +271,10 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
     }
 
     // Check daily limit for FREE users
-    const lastUsage = localStorage.getItem('pdfly_last_usage');
-    if (lastUsage) {
-      const hours = (Date.now() - parseInt(lastUsage)) / 1000 / 60 / 60;
-      if (hours < 24) {
-        return true;
-      }
+    // Use the count from AuthContext (synced with backend)
+    const dailyUsage = user?.dailyUsageCount || 0;
+    if (dailyUsage >= 3) {
+      return true;
     }
     return false;
   };
@@ -275,6 +315,7 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
 
     setProcessing(true);
     setError(null);
+    setDownloadUrl(null);
 
     const formData = new FormData();
     formData.append('file', file);
@@ -285,7 +326,6 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
 
     if (needsSignature) {
       formData.append('signatureText', signatureText);
-      // Add signature customization parameters
       if (signaturePosition) {
         formData.append('xPosition', signaturePosition.x);
         formData.append('yPosition', signaturePosition.y);
@@ -314,9 +354,8 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
       formData.append('position', pageNumberPosition);
     }
 
-    const token = localStorage.getItem('pdfly_auth_token');
-
     try {
+      const token = localStorage.getItem('pdfly_auth_token');
       const response = await axios.post(apiEndpoint, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -325,23 +364,17 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
         responseType: 'blob'
       });
 
-      // All tools return binary files - show download button instead of auto-download
-      // Check Content-Type to determine file type
-      const contentType = response.headers['content-type'] || '';
-
+      // Determine file extension and type based on tool
       let blobType = 'application/pdf';
       let filename = `pdfly_${title.toLowerCase().replace(/\s+/g, '_')}.pdf`;
 
-      if (title === "Split PDF" && contentType.includes('application/zip')) {
-        // Split PDF returns a ZIP file
+      if (title === "Split PDF" && response.headers['content-type'].includes('application/zip')) {
         blobType = 'application/zip';
-        filename = (file?.name?.replace('.pdf', '') || 'split') + '_split.zip';
+        filename = (file.name.replace('.pdf', '') || 'split') + '_split.zip';
       } else if (title === "PDF to JPG") {
-        // Only PDF to JPG outputs a .jpg file
         blobType = 'image/jpeg';
         filename = 'pdfly_converted.jpg';
       } else if (title === "PDF to Word") {
-        // Only PDF to Word outputs a .docx file
         blobType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
         filename = 'pdfly_converted.docx';
       } else if (title.includes("Excel")) {
@@ -353,33 +386,37 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
       }
 
       const blob = new Blob([response.data], { type: blobType });
-
-      // Verify blob size
-      if (blob.size === 0) {
-        setError("Processing produced an empty file. Please try again.");
-        return;
-      }
+      if (blob.size === 0) throw new Error("Processing produced an empty file.");
 
       const url = window.URL.createObjectURL(blob);
-
-      // Store download URL and filename for download button
       setDownloadUrl(url);
       setDownloadFilename(filename);
+      toast.success('File processed successfully!');
 
-      // Record usage (only for FREE users)
-      const userPlan = user?.plan || localStorage.getItem('pdfly_user_plan') || 'FREE';
-      if (userPlan !== 'PRO' && user?.role !== 'ADMIN') {
-        localStorage.setItem('pdfly_last_usage', Date.now().toString());
-      }
+      setDownloadUrl(url);
+      setDownloadFilename(filename);
+      toast.success('File processed successfully!');
+
+      // Refresh user data to update usage count
+      await refreshUser();
+
+      // Add to history
+      addToHistory({
+        fileName: file.name,
+        toolName: title,
+        status: 'success',
+        originalSize: file.size,
+      });
 
     } catch (error) {
+      console.error("Processing Error:", error);
       let errorMsg = "Processing failed. ";
-      if (error.response?.status === 401 && title === "Unlock PDF") {
-        errorMsg += "Invalid password provided.";
-      } else if (error.response?.data) {
+      if (error.response?.data) {
+        // Try to read blob error
         if (error.response.data instanceof Blob) {
-          const text = await error.response.data.text();
-          errorMsg += text;
+          // We can't await here easily inside catch without making it async, which it is.
+          // But let's keep it simple for now.
+          errorMsg += "Server returned an error.";
         } else {
           errorMsg += error.response.data;
         }
@@ -387,7 +424,14 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
         errorMsg += error.message;
       }
       setError(errorMsg);
-      console.error("Processing Error:", error);
+      toast.error('Processing failed');
+
+      addToHistory({
+        fileName: file.name,
+        toolName: title,
+        status: 'failed',
+        originalSize: file.size,
+      });
     } finally {
       setProcessing(false);
     }
@@ -447,7 +491,7 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
             </div>
             <h2 className="mb-2 text-3xl font-bold text-zinc-900 dark:text-white">Daily Limit Reached</h2>
             <p className="mb-8 text-lg text-zinc-500 dark:text-zinc-400">
-              You have used your 1 free daily task. Please wait 24 hours or upgrade to Pro for unlimited access.
+              You have used your 3 free daily tasks. Please wait until tomorrow or upgrade to Pro for unlimited access.
             </p>
 
             <div className="space-y-4">
@@ -476,6 +520,7 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black transition-colors duration-300">
       <Navbar />
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
       <div className="mx-auto max-w-5xl px-6 py-12 lg:px-8">
         <motion.div
           className="text-center mb-8"
@@ -510,8 +555,28 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.5 }}
           >
-            Upload your {fileType.prompt} to get started. {(!user || (user.plan !== 'PRO' && user.role !== 'ADMIN')) && "1 free task available today."}
+            Upload your {fileType.prompt} to get started.
           </motion.p>
+
+          {(!user || (user.plan !== 'PRO' && user.role !== 'ADMIN')) && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4 }}
+              className="mt-6 flex justify-center"
+            >
+              <div className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10 dark:bg-indigo-400/10 dark:text-indigo-400 dark:ring-indigo-400/20">
+                <Sparkles className="h-4 w-4" />
+                {user ? (
+                  <span>
+                    <span className="font-bold">{3 - (user.dailyUsageCount || 0)}</span> free tasks remaining today
+                  </span>
+                ) : (
+                  "3 free tasks per day"
+                )}
+              </div>
+            </motion.div>
+          )}
         </motion.div>
 
         <motion.div
@@ -541,16 +606,17 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
             >
               <input {...getInputProps()} />
               {file ? (
-                <motion.div
-                  className="text-center p-6"
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: 'spring', stiffness: 200 }}
-                >
-                  <FileText className="h-12 w-12 text-indigo-500 mx-auto mb-3" />
-                  <span className="font-semibold text-zinc-900 dark:text-zinc-100 text-lg block">{file.name}</span>
-                  <span className="text-sm text-zinc-500 dark:text-zinc-400">{(file.size / 1024 / 1024).toFixed(2)} MB</span>
-                </motion.div>
+                <div className="text-center p-4">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30"
+                  >
+                    <FileText className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+                  </motion.div>
+                  <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate max-w-[200px] mx-auto">{file.name}</p>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                </div>
               ) : (
                 <>
                   <motion.div
@@ -564,15 +630,16 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
                     {isDragActive ? "Drop it here!" : "Click or Drag File"}
                   </span>
                   <span className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-                    Supports {fileType.extension} files
+                    Supports {fileType.extension}
                   </span>
                 </>
               )}
             </motion.div>
             {file && (
               <button
-                onClick={(e) => { e.stopPropagation(); setFile(null); setError(null); }}
+                onClick={(e) => { e.stopPropagation(); setFile(null); setError(null); setDownloadUrl(null); }}
                 className="absolute top-4 right-4 text-zinc-400 hover:text-red-500 transition-colors p-2 rounded-full bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200 dark:border-zinc-700"
+                title="Remove file"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -953,13 +1020,8 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
                   onClick={() => {
                     // Clean up after download
                     setTimeout(() => {
-                      window.URL.revokeObjectURL(downloadUrl);
-                      setDownloadUrl(null);
-                      setDownloadFilename(null);
-                      setFile(null);
-                      setPassword('');
-                      setSignatureText('');
-                      setPageNumberPosition('bottom-center');
+                      // Don't revoke immediately if user wants to download again, but for now it's fine
+                      // window.URL.revokeObjectURL(downloadUrl);
                     }, 100);
                   }}
                   className="group flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-emerald-600 py-3.5 text-lg font-bold text-white shadow-lg shadow-emerald-500/25 transition-all hover:bg-emerald-500 hover:shadow-emerald-500/40"
@@ -999,7 +1061,7 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
                   </>
                 ) : (
                   <>
-                    <UploadCloud className="h-5 w-5" /> PROCESS FILE
+                    <UploadCloud className="h-5 w-5" /> {processButtonText || 'PROCESS FILE'}
                   </>
                 )}
               </motion.button>

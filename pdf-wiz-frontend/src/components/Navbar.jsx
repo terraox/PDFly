@@ -2,6 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, Send, LogOut, LayoutDashboard, Sparkles } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
+import { ShinyBadge } from "./ui/ShinyBadge";
+import { AnimatedShinyText } from "./ui/AnimatedShinyText";
+import { ShimmerButton } from "./ui/ShimmerButton";
+import { RainbowButton } from "./ui/RainbowButton";
+import { ShineBorder } from "./ui/ShineBorder";
+import { ShinyButton } from "./ui/ShinyButton";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
 
@@ -51,9 +57,21 @@ export default function Navbar() {
     // Show Profile/Logout
     return (
       <div className="flex items-center gap-4">
-        {user.plan === 'PRO' && (
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-xs font-bold shadow-lg shadow-indigo-500/20">
-            <Sparkles className="h-3 w-3" /> PRO
+        {user.plan === 'PRO' ? (
+          <ShimmerButton className="h-8 px-4 text-xs font-bold" shimmerColor="#fbbf24" background="rgba(0, 0, 0, 1)">
+            <div className="flex items-center gap-1.5">
+              <Sparkles className="h-3 w-3 text-amber-400" />
+              <span className="text-amber-100">PRO</span>
+            </div>
+          </ShimmerButton>
+        ) : (
+          <div className="flex items-center gap-3">
+            <ShinyBadge text="FREE" className="bg-zinc-100 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-500 dark:text-zinc-400" />
+            <Link to="/pricing">
+              <RainbowButton className="h-8 px-4 text-xs font-bold">
+                UPGRADE
+              </RainbowButton>
+            </Link>
           </div>
         )}
 

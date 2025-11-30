@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { UploadCloud, Scissors, Loader2, AlertTriangle, FileText, X, Download, Settings, Hash } from 'lucide-react';
+import { useHistory } from '../context/HistoryContext';
+import { UploadCloud, Scissors, Loader2, AlertTriangle, FileText, X, Download, Settings, Hash, Sparkles } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { motion } from 'framer-motion';
@@ -13,6 +14,7 @@ const API_URL = "http://localhost:8080/api/tools/split";
 export default function SplitTool() {
   const { isAuthenticated, user } = useAuth();
   const toast = useToast();
+  const { addToHistory } = useHistory();
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const [totalPages, setTotalPages] = useState(null);
@@ -142,9 +144,23 @@ export default function SplitTool() {
           const errorText = await response.data.text();
           const cleanError = errorText.startsWith('Error:') ? errorText.substring(7).trim() : errorText.trim();
           setError(cleanError || "Split failed. Please try again.");
+          toast.error('Split failed');
+          addToHistory({
+            fileName: file.name,
+            toolName: 'Split PDF',
+            status: 'failed',
+            originalSize: file.size,
+          });
           return;
         } catch (e) {
           setError(`Server error (${response.status}). Please try again.`);
+          toast.error('Split failed');
+          addToHistory({
+            fileName: file.name,
+            toolName: 'Split PDF',
+            status: 'failed',
+            originalSize: file.size,
+          });
           return;
         }
       }
@@ -276,6 +292,26 @@ export default function SplitTool() {
           >
             Split your PDF into multiple files with customizable options.
           </motion.p>
+
+          {(!user || (user.plan !== 'PRO' && user.role !== 'ADMIN')) && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4 }}
+              className="mt-6 flex justify-center"
+            >
+              <div className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10 dark:bg-indigo-400/10 dark:text-indigo-400 dark:ring-indigo-400/20">
+                <Sparkles className="h-4 w-4" />
+                {user ? (
+                  <span>
+                    <span className="font-bold">{3 - (user.dailyUsageCount || 0)}</span> free tasks remaining today
+                  </span>
+                ) : (
+                  "3 free tasks per day"
+                )}
+              </div>
+            </motion.div>
+          )}
         </motion.div>
 
         <motion.div

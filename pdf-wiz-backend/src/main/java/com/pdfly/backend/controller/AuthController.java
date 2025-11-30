@@ -115,6 +115,28 @@ public class AuthController {
                 .role(user.getRole().name())
                 .plan(user.getPlan().name()) // SEND PLAN TYPE (FREE or PRO)
                 .planExpiry(formatExpiry(user.getPlanExpiryDate())) // SEND EXPIRY DATE
+                .dailyUsageCount(user.getDailyUsageCount())
+                .build());
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<AuthResponse> getCurrentUser() {
+        org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder
+                .getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String email = auth.getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+        return ResponseEntity.ok(AuthResponse.builder()
+                .token(null) // Token not needed for refresh
+                .email(user.getEmail())
+                .role(user.getRole().name())
+                .plan(user.getPlan().name())
+                .planExpiry(formatExpiry(user.getPlanExpiryDate()))
+                .dailyUsageCount(user.getDailyUsageCount())
                 .build());
     }
 

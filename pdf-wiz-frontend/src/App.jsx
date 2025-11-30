@@ -3,12 +3,14 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { ThemeProvider } from 'next-themes';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
+import { HistoryProvider } from './context/HistoryContext';
 import { ArrowLeftRight, Minimize2, FileText, Type, Presentation, FileSpreadsheet, Image as ImageIcon, PenTool, Stamp, RefreshCw, Unlock, Shield, Hash, Scissors } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 
 // Components
 import ProtectedRoute from './components/ProtectedRoute';
 import ToastContainer from './components/Toast';
+import { SmoothCursor } from './components/ui/SmoothCursor';
 
 // Public Pages
 import Home from './pages/Home';
@@ -97,8 +99,11 @@ function App() {
       <Router>
         <AuthProvider>
           <ToastProvider>
-            <ToastContainer />
-            <AnimatedRoutes />
+            <HistoryProvider>
+              <ToastContainer />
+              <SmoothCursor />
+              <AnimatedRoutes />
+            </HistoryProvider>
           </ToastProvider>
         </AuthProvider>
       </Router>

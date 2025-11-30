@@ -1,288 +1,156 @@
-✈️ PDFly - Enterprise PDF SaaS Platform
+# ✈️ PDFly - Enterprise PDF SaaS Platform
+
+PDFly is a scalable, high-performance Micro-SaaS application designed for secure and efficient PDF manipulation. Built with a modern **React** frontend and a robust **Java Spring Boot** backend, it offers enterprise-grade document processing capabilities including merging, splitting, compression, conversion (Word/Excel/PPT), and security tools.
+
+The platform operates on a **Freemium** business model, offering essential tools for free with daily usage limits, while incentivizing upgrades to the **Pro** tier for unlimited access and advanced features.
+
+---
+
+## 🌟 Key Features
+
+### 🎨 Frontend (User Experience)
+- **Premium UI/UX**: A modern, high-end interface built with **Tailwind CSS** and **Framer Motion**. Features "Magic UI" components like `RainbowButton`, `ShineBorder`, and `NumberTicker` for a polished feel.
+- **15+ PDF Tools**: Comprehensive suite including Merge, Split, Compress, Convert (Word/Excel/PPT/JPG), Watermark, Sign, Protect, and Unlock.
+- **Smart Rate Limiting**: Enforces a **3 Free Tasks per Day** policy for free users, with visual countdowns and "Limit Reached" prompts.
+- **Interactive Pricing**: Animated pricing page with counting numbers to drive conversions.
+- **Dark Mode**: Fully responsive theme support (System/Light/Dark) using `next-themes`.
+- **Real-time Feedback**: Toast notifications and smooth loading states for all operations.
+
+### 🛡️ Backend (Core Engine)
+- **Secure Authentication**: Stateless architecture using **Spring Security** and **JWT** (JSON Web Tokens).
+- **Passwordless Entry**: "Magic Link" style access where secure keys are emailed to users via **JavaMail**.
+- **Robust PDF Engine**: Powered by **Apache PDFBox** and **Apache POI**, handling complex document manipulations efficiently in memory.
+- **Daily Usage Reset**: Automated scheduled tasks (`@Scheduled`) reset user limits daily.
+- **Role-Based Access Control (RBAC)**: Strict separation between `USER` and `ADMIN` roles.
+- **HTML Emails**: Beautifully styled transactional emails for welcome messages and password resets.
+
+### 📊 Admin Command Center
+- **Live Dashboard**: Real-time visualization of system health and user activity.
+- **Feature Flags**: Dynamic control to enable/disable specific tools (e.g., "Disable Compression") or signups globally.
+- **User Management**: CRM-style interface to view users, manage plans, and monitor usage.
+
+---
+
+## 🏗 System Architecture & Code Patterns
+
+The application follows a **Monolithic Service-Oriented Architecture** designed for maintainability and easy containerization.
+
+### Backend Patterns (Spring Boot)
+- **Controller-Service-Repository**: Separation of concerns.
+    - **Controllers** (`/controller`): Handle HTTP requests, input validation, and response formatting.
+    - **Services** (`/service`): Contain business logic (e.g., `PdfToolService` for file processing, `UsageResetService` for scheduling).
+    - **Repositories** (`/repository`): Interface with PostgreSQL via Spring Data JPA.
+- **DTOs**: Data Transfer Objects used for type-safe communication between frontend and backend (e.g., `AuthResponse`, `LoginRequest`).
+- **Global Configuration**: System-wide settings stored in the database for dynamic runtime adjustments.
+
+### Frontend Patterns (React)
+- **Context API**: Global state management for Authentication (`AuthContext`), Toast Notifications (`ToastContext`), and User History (`HistoryContext`).
+- **Component-Based Design**: Reusable UI components (`/components/ui`) like Modals, Buttons, and Inputs.
+- **Layout Wrapper**: `Navbar` and `Footer` integrated into the main layout for consistent navigation.
+
+---
+
+## 🛠 Technology Stack
+
+### Frontend
+| Technology | Description |
+| :--- | :--- |
+| **React 18** | High-performance SPA library |
+| **Vite** | Next-generation frontend tooling |
+| **Tailwind CSS** | Utility-first CSS framework |
+| **Framer Motion** | Production-ready animation library |
+| **Axios** | Promise-based HTTP client |
+| **Lucide React** | Beautiful & consistent icon set |
+| **React Dropzone** | Drag-and-drop file handling |
+
+### Backend
+| Technology | Description |
+| :--- | :--- |
+| **Java 17 (LTS)** | Core programming language |
+| **Spring Boot 3.2** | Application framework |
+| **Spring Security** | Authentication & Access Control |
+| **Spring Data JPA** | Hibernate-based ORM |
+| **PostgreSQL** | Relational Database |
+| **Apache PDFBox** | PDF manipulation engine |
+| **Apache POI** | Microsoft Office document conversion |
+| **Lombok** | Boilerplate code reduction |
+
+---
+
+## 📂 Project Structure
+
+```
+proj/
+├── pdf-wiz-backend/          # Spring Boot Application
+│   ├── src/main/java/com/pdfly/backend/
+│   │   ├── controller/       # REST API Endpoints
+│   │   ├── dto/              # Data Transfer Objects
+│   │   ├── model/            # JPA Entities (User, GlobalConfig)
+│   │   ├── repository/       # Database Interfaces
+│   │   ├── service/          # Business Logic (PdfToolService, EmailService)
+│   │   └── config/           # Security & App Config
+│   └── pom.xml               # Maven Dependencies
+│
+├── pdf-wiz-frontend/         # React Application
+│   ├── src/
+│   │   ├── components/       # Reusable UI Components
+│   │   │   └── ui/           # Magic UI & Base Elements
+│   │   ├── context/          # Global State (Auth, Toast)
+│   │   ├── pages/            # Page Views (ToolPage, Login, Admin)
+│   │   └── lib/              # Utilities (Tailwind merge, etc.)
+│   └── package.json          # NPM Dependencies
+│
+└── README.md                 # Project Documentation
+```
 
-PDFly is a scalable, high-performance Micro-SaaS application designed for secure and efficient PDF manipulation. Built with a modern React frontend and a robust Java Spring Boot backend, it offers enterprise-grade document processing capabilities including merging, splitting, compression, and conversion.
+---
 
-📖 Table of Contents
+## 🚀 Getting Started
 
-Executive Summary
+### Prerequisites
+- **Node.js** (v18+)
+- **Java JDK** (v17+)
+- **PostgreSQL** (Local or Cloud)
 
-Key Features
-
-System Architecture
-
-Technology Stack
-
-Getting Started
-
-Prerequisites
-
-Frontend Setup
-
-Backend Setup
-
-Configuration & Secrets
-
-Admin Portal
-
-Roadmap
-
-License
-
-📋 Executive Summary
-
-PDFly bridges the gap between complex desktop PDF software and accessible web tools. It provides a "freemium" business model where users can perform basic tasks for free (with rate limiting) or upgrade to a Pro tier for unlimited access and advanced features like OCR and high-compression algorithms.
-
-The platform is engineered for horizontal scalability, utilizing Docker containers for deployment on cloud platforms like Render or AWS.
-
-🌟 Key Features
-
-🎨 Frontend (User Experience)
-
-Glassmorphism UI: A modern, high-end interface built with Tailwind CSS and Framer Motion for fluid interactions.
-
-13+ PDF Tools: Comprehensive suite including Merge, Split, Compress, Convert (Word/Excel/PPT), Watermark, and Security.
-
-Smart Rate Limiting: Client-side logic enforces a "1 Free Tool per 24 Hours" policy using LocalStorage, driving conversion to paid plans.
-
-Dark Mode: Fully responsive theme support (System/Light/Dark) using next-themes.
-
-E-Commerce Flow: Integrated Pricing and Checkout pages with Coupon Code logic simulation.
-
-🛡️ Backend (Core Engine)
-
-Secure Authentication: Stateless architecture using Spring Security and JWT (JSON Web Tokens).
-
-Passwordless Entry: "Magic Link" style access where passwords/keys are generated and emailed to users via SMTP.
-
-PDF Processing Engine: powered by Apache PDFBox, handling binary file streams efficiently in memory (optimized for cloud constraints).
-
-Role-Based Access Control (RBAC): Strict separation between USER and ADMIN roles.
-
-📊 Admin Command Center
-
-A dedicated portal for business operations:
-
-Live Dashboard: Real-time visualization of Revenue, Active Users, and Traffic.
-
-DevOps Monitoring: Live tracking of JVM Heap Memory and Disk Usage to prevent OOM errors on free-tier cloud instances.
-
-User & Plan Management: CRM-style interfaces to ban users, upgrade plans, and configure tier limits dynamically.
-
-🏗 System Architecture
-
-The application follows a Monolithic Service-Oriented Architecture designed for easy containerization.
-
-graph TD
-    Client[React Frontend (Vite)] -->|REST API / JSON| LB[Load Balancer / Nginx]
-    LB --> API[Java Spring Boot API]
-    API -->|Auth| Security[Spring Security / JWT]
-    API -->|Data| DB[(PostgreSQL Database)]
-    API -->|Files| PDFEngine[Apache PDFBox]
-    API -->|Email| SMTP[Gmail SMTP Server]
-
-
-🛠 Technology Stack
-
-Layer
-
-Technology
-
-Description
-
-Frontend
-
-React 18, Vite
-
-High-performance SPA framework.
-
-Styling
-
-Tailwind CSS v3
-
-Utility-first CSS for rapid UI development.
-
-UI Components
-
-Lucide React, Radix
-
-Accessible icons and primitives.
-
-Visuals
-
-Framer Motion, Recharts
-
-Animations and Data Visualization.
-
-Backend
-
-Java 17 (LTS)
-
-Core language for business logic.
-
-Framework
-
-Spring Boot 3.2
-
-Application framework and DI container.
-
-Database
-
-PostgreSQL
-
-Relational database for Users, Transactions, and Logs.
-
-ORM
-
-Spring Data JPA
-
-Hibernate-based data abstraction.
-
-PDF Engine
-
-Apache PDFBox 2.0
-
-Open-source Java library for working with PDF documents.
-
-DevOps
-
-Docker
-
-Containerization for consistent deployment.
-
-🚀 Getting Started
-
-Follow these instructions to set up the project locally for development.
-
-Prerequisites
-
-Node.js (v18 or higher)
-
-Java JDK (v17 or higher)
-
-PostgreSQL (Local instance or Cloud URL)
-
-Maven (Optional, wrapper included)
-
-Frontend Setup
-
-Navigate to the frontend directory:
-
-cd pdf-wiz-frontend
-
-
-Install dependencies:
-
-npm install
-
-
-Start the development server:
-
-npm run dev
-
-
-Access the UI at http://localhost:5173
-
-Backend Setup
-
-Navigate to the backend directory:
-
+### 1. Backend Setup
+```bash
 cd pdf-wiz-backend
 
+# Configure Database in src/main/resources/application.properties
+# spring.datasource.url=jdbc:postgresql://localhost:5432/pdfly_db
+# spring.datasource.username=postgres
+# spring.datasource.password=your_password
 
-Update src/main/resources/application.properties with your database credentials (see Configuration section).
-
-Run the application:
-
+# Run the application
 ./mvnw spring-boot:run
+```
+*Server starts on `http://localhost:8080`*
 
+### 2. Frontend Setup
+```bash
+cd pdf-wiz-frontend
 
-Server will start on http://localhost:8080
+# Install dependencies
+npm install
 
-🔑 Configuration & Secrets
+# Start development server
+npm run dev
+```
+*UI accessible at `http://localhost:5173`*
 
-To ensure security and functionality, the backend requires specific environment variables or property configurations.
+---
 
-File: src/main/resources/application.properties
+## 🔑 Configuration
 
-Variable
+The backend `application.properties` requires the following configurations:
 
-Description
+| Variable | Description | Example |
+| :--- | :--- | :--- |
+| `spring.datasource.url` | DB Connection | `jdbc:postgresql://localhost:5432/pdfly_db` |
+| `jwt.secret` | Token Signing Key | `5367566B59...` (Base64 encoded) |
+| `spring.mail.password` | SMTP Password | Google App Password |
 
-Example / Value
+---
 
-spring.datasource.url
-
-Database Connection String
-
-jdbc:postgresql://localhost:5432/pdfly_db
-
-spring.datasource.username
-
-DB User
-
-postgres
-
-spring.datasource.password
-
-DB Password
-
-******
-
-jwt.secret
-
-Token Signing Key
-
-5367566B59703373367639792F423F45...
-
-jwt.expiration
-
-Token Validity
-
-86400000 (24 hours)
-
-spring.mail.password
-
-SMTP App Password
-
-abcd efgh ijkl mnop (Google App Password)
-
-👮 Admin Portal
-
-The Admin Portal is restricted to users with the ROLE_ADMIN authority. It includes specialized tools for managing the SaaS business.
-
-URL: /admin
-
-Default Features:
-
-System Health: Monitor JVM memory to optimize Render/Heroku free tier usage.
-
-Feature Flags: Enable/Disable specific PDF tools (e.g., disable "Compression" during high load).
-
-Financials: Track mocked revenue and transaction history.
-
-🗺 Roadmap
-
-[x] Phase 1: Core UI & Auth Flow (Completed)
-
-[ ] Phase 2: Backend Implementation (In Progress)
-
-Implement PDFBox services for Merge/Split.
-
-Connect User/Auth Registration to PostgreSQL.
-
-[ ] Phase 3: Cloud Deployment
-
-Dockerize Spring Boot application.
-
-Deploy Frontend to Vercel / Backend to Render.
-
-[ ] Phase 4: Advanced Features
-
-OCR integration (Tesseract).
-
-Cloud Storage (AWS S3) for file persistence.
-
-📄 License
-
+## 📄 License
 Copyright © 2025 PDFly Inc. All rights reserved.
-This project is proprietary software. Unauthorized copying of these files via any medium is strictly prohibited.

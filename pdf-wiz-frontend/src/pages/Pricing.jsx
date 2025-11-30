@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import { Check, X, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import NumberTicker from '../components/ui/NumberTicker';
 
 export default function Pricing() {
   const { user, isAuthenticated } = useAuth();
@@ -70,7 +71,9 @@ export default function Pricing() {
             </h3>
             <p className="mt-4 text-sm leading-6 text-zinc-300">For power users who need professional tools.</p>
             <p className="mt-6 flex items-baseline gap-x-1">
-              <span className="text-4xl font-bold tracking-tight text-white">₹499</span>
+              <span className="text-4xl font-bold tracking-tight text-white">
+                ₹<NumberTicker value={499} className="text-white" />
+              </span>
               <span className="text-sm font-semibold leading-6 text-zinc-300">/month</span>
             </p>
             <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-zinc-300">

@@ -155,15 +155,24 @@ public class PdfToolService {
                 compressResources(((PDFormXObject) xobject).getResources(), document, cache);
             else if (xobject instanceof PDImageXObject) {
                 PDImageXObject image = (PDImageXObject) xobject;
-                if (image.getWidth() > 1000 || image.getHeight() > 1000) {
+                // Optimization: Only compress images larger than 1500px (was 1000px) to save
+                // time
+                if (image.getWidth() > 1500 || image.getHeight() > 1500) {
                     BufferedImage bi = image.getImage();
-                    int newWidth = (int) (bi.getWidth() * 0.6);
-                    int newHeight = (int) (bi.getHeight() * 0.6);
+                    // Aggressive downscaling for speed: 50% scale
+                    int newWidth = (int) (bi.getWidth() * 0.5);
+                    int newHeight = (int) (bi.getHeight() * 0.5);
+
                     BufferedImage resized = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
                     Graphics2D g = resized.createGraphics();
+                    // Use faster rendering hints
+                    g.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION,
+                            java.awt.RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
                     g.drawImage(bi, 0, 0, newWidth, newHeight, null);
                     g.dispose();
-                    PDImageXObject newImage = JPEGFactory.createFromImage(document, resized, 0.5f);
+
+                    // Lower quality to 0.4 for better compression speed/ratio
+                    PDImageXObject newImage = JPEGFactory.createFromImage(document, resized, 0.4f);
                     resources.put(name, newImage);
                 }
             }

@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { UploadCloud, FileText, ArrowLeftRight, Trash2, Loader2, ArrowUp, Download, AlertTriangle, AlertCircle } from 'lucide-react';
+import { useHistory } from '../context/HistoryContext';
+import { UploadCloud, FileText, ArrowLeftRight, Trash2, Loader2, ArrowUp, Download, AlertTriangle, AlertCircle, Sparkles } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { motion } from 'framer-motion';
@@ -11,8 +12,9 @@ import { motion } from 'framer-motion';
 const API_URL = "http://localhost:8080/api/tools/merge";
 
 export default function MergeTool() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, refreshUser } = useAuth();
   const toast = useToast();
+  const { addToHistory } = useHistory();
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -53,6 +55,29 @@ export default function MergeTool() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [files, downloadUrl, toast]);
 
+  // Refresh user data on mount
+  useEffect(() => {
+    if (isAuthenticated) {
+      refreshUser();
+    }
+  }, [isAuthenticated]);
+
+  // Check usage limit (only for FREE users)
+  const checkLimit = () => {
+    const userPlan = user?.plan || localStorage.getItem('pdfly_user_plan') || 'FREE';
+    const userRole = user?.role || localStorage.getItem('pdfly_user_role');
+
+    if (userPlan === 'PRO' || userRole === 'ADMIN') {
+      return false;
+    }
+
+    const dailyUsage = user?.dailyUsageCount || 0;
+    if (dailyUsage >= 3) {
+      return true;
+    }
+    return false;
+  };
+
   const onDrop = useCallback((acceptedFiles) => {
     // Filter to only accept PDF files (if needed, although Java checks this too)
     const pdfFiles = acceptedFiles.filter(f => f.type === 'application/pdf');
@@ -84,6 +109,12 @@ export default function MergeTool() {
     if (!isAuthenticated) {
       alert("Please log in to use the Merge feature.");
       navigate('/login');
+      return;
+    }
+
+    // Check usage limit (for free users)
+    if (checkLimit()) {
+      setError("Daily limit reached. Upgrade to Pro for unlimited access.");
       return;
     }
 
@@ -131,12 +162,23 @@ export default function MergeTool() {
         // Valid PDF response
         const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
         setDownloadUrl(url);
+        toast.success('PDFs merged successfully!');
+
+        addToHistory({
+          fileName: `Merged_${files.length}_files.pdf`,
+          toolName: 'Merge PDF',
+          status: 'success',
+          originalSize: files.reduce((acc, f) => acc + f.size, 0),
+        });
 
         // Record usage (only for FREE users)
         const userPlan = user?.plan || localStorage.getItem('pdfly_user_plan') || 'FREE';
         if (userPlan !== 'PRO' && user?.role !== 'ADMIN') {
           localStorage.setItem('pdfly_last_usage', Date.now().toString());
         }
+
+        // Refresh user data to update usage count
+        await refreshUser();
       } else {
         // Unexpected response format
         try {
@@ -223,6 +265,26 @@ export default function MergeTool() {
           >
             Combine multiple PDF files into one complete document easily.
           </motion.p>
+
+          {(!user || (user.plan !== 'PRO' && user.role !== 'ADMIN')) && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4 }}
+              className="mt-6 flex justify-center"
+            >
+              <div className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10 dark:bg-indigo-400/10 dark:text-indigo-400 dark:ring-indigo-400/20">
+                <Sparkles className="h-4 w-4" />
+                {user ? (
+                  <span>
+                    <span className="font-bold">{3 - (user.dailyUsageCount || 0)}</span> free tasks remaining today
+                  </span>
+                ) : (
+                  "3 free tasks per day"
+                )}
+              </div>
+            </motion.div>
+          )}
         </motion.div>
 
         {/* Drag and Drop Zone */}
@@ -344,6 +406,6 @@ export default function MergeTool() {
           </div>
         </motion.div>
       </div>
-    </div>
+    </div >
   );
 }

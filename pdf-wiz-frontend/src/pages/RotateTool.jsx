@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { UploadCloud, RefreshCw, RotateCw, Loader2, AlertTriangle, FileText, X, Download, ArrowLeft } from 'lucide-react';
+import { useHistory } from '../context/HistoryContext';
+import { UploadCloud, RefreshCw, RotateCw, Loader2, AlertTriangle, FileText, X, Download, ArrowLeft, Sparkles } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { motion } from 'framer-motion';
@@ -13,6 +14,7 @@ const API_URL = "http://localhost:8080/api/tools/rotate";
 export default function RotateTool() {
   const { isAuthenticated } = useAuth();
   const toast = useToast();
+  const { addToHistory } = useHistory();
   const [file, setFile] = useState(null);
   const [degrees, setDegrees] = useState(90); // Default rotation
   const [loading, setLoading] = useState(false);
@@ -106,10 +108,26 @@ export default function RotateTool() {
       // Don't reset file here, keep it for context or re-rotation if needed
       // alert("PDF rotated successfully!"); // Optional: remove alert to make it smoother
 
-    } catch (error) {
-      const errorMsg = error.response?.data ? new TextDecoder().decode(error.response.data) : error.message;
-      setError(`Rotation failed: ${errorMsg}`);
-      console.error("Rotate Error:", error);
+      setPreviewUrl(url);
+      toast.success('PDF rotated successfully!');
+
+      addToHistory({
+        fileName: file.name,
+        toolName: 'Rotate PDF',
+        status: 'success',
+        originalSize: file.size,
+      });
+    } catch (err) {
+      console.error('Rotation failed:', err);
+      setError('Failed to rotate PDF. Please try again.');
+      toast.error('Rotation failed');
+
+      addToHistory({
+        fileName: file.name,
+        toolName: 'Rotate PDF',
+        status: 'failed',
+        originalSize: file.size,
+      });
     } finally {
       setLoading(false);
     }
@@ -174,6 +192,26 @@ export default function RotateTool() {
           >
             Permanently rotate all pages in your PDF document.
           </motion.p>
+
+          {(!user || (user.plan !== 'PRO' && user.role !== 'ADMIN')) && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4 }}
+              className="mt-6 flex justify-center"
+            >
+              <div className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10 dark:bg-indigo-400/10 dark:text-indigo-400 dark:ring-indigo-400/20">
+                <Sparkles className="h-4 w-4" />
+                {user ? (
+                  <span>
+                    <span className="font-bold">{3 - (user.dailyUsageCount || 0)}</span> free tasks remaining today
+                  </span>
+                ) : (
+                  "3 free tasks per day"
+                )}
+              </div>
+            </motion.div>
+          )}
         </motion.div>
 
         {/* Main Interface */}
