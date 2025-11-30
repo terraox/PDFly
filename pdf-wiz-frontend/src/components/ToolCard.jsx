@@ -13,19 +13,21 @@ export default function ToolCard({ icon: Icon, title, desc, color }) {
 
   return (
     <motion.div
-      whileHover={{ y: -6, scale: 1.01 }}
+      whileHover={{ y: -6, scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      className="group relative flex h-[240px] cursor-pointer flex-col justify-between overflow-hidden rounded-2xl border border-zinc-200 bg-white p-7 shadow-sm transition-all duration-300 hover:shadow-2xl hover:shadow-zinc-200/50 dark:border-zinc-800 dark:bg-zinc-900/50 dark:hover:shadow-black/50"
+      className="group relative flex h-[240px] cursor-pointer flex-col justify-between overflow-hidden rounded-2xl glass-card p-7 transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/20 dark:hover:shadow-indigo-900/30"
     >
-      <div>
-        <div className={`mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl ${colorMap[color] || colorMap.gray} transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
+      <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:from-white/5" />
+
+      <div className="relative z-10">
+        <div className={`mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl ${colorMap[color] || colorMap.gray} transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-sm`}>
           <Icon className="h-7 w-7" strokeWidth={2} />
         </div>
-        
-        <h3 className="mb-2 text-lg font-bold tracking-tight text-zinc-900 transition-colors group-hover:text-red-600 dark:text-zinc-100 dark:group-hover:text-red-400">
+
+        <h3 className="mb-2 text-lg font-bold tracking-tight text-zinc-900 transition-colors group-hover:text-indigo-600 dark:text-zinc-100 dark:group-hover:text-indigo-400">
           {title}
         </h3>
-        
+
         <p className="text-[15px] leading-relaxed text-zinc-500 dark:text-zinc-400">
           {desc}
         </p>

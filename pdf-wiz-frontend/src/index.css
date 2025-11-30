@@ -40,7 +40,7 @@
 }
 
 .glass {
-  @apply bg-white/70 backdrop-blur-xl border-b border-white/20 dark:bg-black/70 dark:border-white/10;
+  @apply bg-white/70 backdrop-blur-xl border-b border-white/20 dark:bg-black/70 dark:border-white/10 shadow-sm supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-black/60;
 }
 
 .shine-effect {
@@ -71,8 +71,36 @@ body,
 }
 
 /* Restore text cursor for inputs */
+/* Restore text cursor for inputs */
 input,
 textarea,
 [contenteditable="true"] {
   cursor: text !important;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 15s ease infinite;
+}
+
+.glass-card {
+  @apply bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-800 shadow-xl;
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500;
 }

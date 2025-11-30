@@ -50,22 +50,29 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-zinc-50 font-sans text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 transition-colors duration-300">
+    <div className="min-h-screen bg-zinc-50 font-sans text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 transition-colors duration-300 overflow-x-hidden">
+      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-indigo-50 via-white to-pink-50 dark:from-zinc-950 dark:via-black dark:to-zinc-900 animate-gradient opacity-80" />
       <Navbar />
 
       {/* Hero Section */}
-      <section className="px-6 py-16 text-center lg:py-24">
+      <section className="relative px-6 py-20 text-center lg:py-32 overflow-hidden">
+        {/* Background Blobs */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-purple-300/30 dark:bg-purple-900/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }} />
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-300/30 dark:bg-indigo-900/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '7s' }} />
+        </div>
+
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mx-auto max-w-4xl space-y-6"
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative mx-auto max-w-5xl space-y-8"
         >
-          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl text-zinc-900 dark:text-white">
-            Every tool you need to work with PDFs in one place
+          <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl text-zinc-900 dark:text-white leading-tight">
+            Every tool you need to work with PDFs in <span className="text-gradient">one place</span>
           </h1>
-          <p className="mx-auto max-w-2xl text-xl text-zinc-500 dark:text-zinc-400">
-            Every tool you need to use PDFs, at your fingertips. All are 100% FREE and easy to use! Merge, split, compress, convert, rotate, unlock and watermark PDFs with just a few clicks.
+          <p className="mx-auto max-w-2xl text-xl text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            All the tools you need to use PDFs, at your fingertips. All are 100% FREE and easy to use! Merge, split, compress, convert, rotate, unlock and watermark PDFs with just a few clicks.
           </p>
 
           {/* Usage Limit Badge for Free Users */}
@@ -76,8 +83,8 @@ export default function Home() {
               transition={{ delay: 0.2 }}
               className="flex justify-center"
             >
-              <div className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10 dark:bg-indigo-400/10 dark:text-indigo-400 dark:ring-indigo-400/20">
-                <Sparkles className="h-4 w-4" />
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/50 backdrop-blur-sm border border-indigo-200 px-5 py-2.5 text-sm font-semibold text-indigo-700 shadow-sm dark:bg-white/5 dark:border-indigo-500/30 dark:text-indigo-400">
+                <Sparkles className="h-4 w-4 animate-pulse" />
                 <span>
                   <span className="font-bold">{Math.max(0, freeLimit - (user.dailyUsageCount || 0))}</span> free tasks remaining today
                 </span>
@@ -85,28 +92,32 @@ export default function Home() {
             </motion.div>
           )}
 
-          <div className="flex justify-center gap-4 pt-4">
-            <Link to="/register" className="rounded-full bg-indigo-600 px-8 py-3 text-base font-semibold text-white shadow-lg hover:bg-indigo-500 transition-all hover:-translate-y-1">
+          <motion.div
+            className="flex flex-col sm:flex-row justify-center gap-4 pt-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <Link to="/register" className="group relative inline-flex items-center justify-center gap-2 rounded-full bg-zinc-900 px-8 py-4 text-base font-bold text-white shadow-xl transition-all hover:bg-zinc-800 hover:scale-105 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200">
               Get Started
+              <ArrowLeftRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
-            <Link to="/pricing" className="rounded-full bg-white px-8 py-3 text-base font-semibold text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-300 hover:bg-zinc-50 dark:bg-white/10 dark:text-white dark:ring-zinc-700 dark:hover:bg-white/20 transition-all">
+            <Link to="/pricing" className="inline-flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm px-8 py-4 text-base font-bold text-zinc-900 shadow-lg ring-1 ring-zinc-200 hover:bg-white hover:scale-105 dark:bg-white/10 dark:text-white dark:ring-zinc-700 dark:hover:bg-white/20 transition-all">
               View Pricing
             </Link>
-          </div>
+          </motion.div>
         </motion.div>
       </section>
 
-      {/* Recent Files Section Removed - Moved to /history */}
-
       {/* Tools Grid Section */}
-      <section className="mx-auto max-w-[1440px] px-6 pb-24">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+      <section className="mx-auto max-w-[1600px] px-6 pb-32">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           {tools.map((tool, index) => (
             <motion.div
               key={tool.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
+              transition={{ delay: index * 0.05 + 0.5 }}
             >
               <Link to={`/${tool.id}`}>
                 <ToolCard {...tool} />
@@ -117,11 +128,11 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-zinc-200 bg-white py-12 dark:border-zinc-800 dark:bg-zinc-950">
+      <footer className="border-t border-zinc-200 bg-white/50 backdrop-blur-xl py-12 dark:border-zinc-800 dark:bg-zinc-950/50">
         <div className="mx-auto max-w-7xl px-6 text-center text-zinc-500 dark:text-zinc-400">
           <p>&copy; 2025 PDFly. All rights reserved.</p>
         </div>
       </footer>
-    </div >
+    </div>
   );
 }
