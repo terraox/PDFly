@@ -76,8 +76,8 @@ export default function Home() {
             >
               Every tool you need to <br />
               work with <span className="relative inline-block px-4">
-                <span className="absolute inset-0 bg-gradient-to-r from-red-600 via-orange-500 to-red-600 blur-2xl opacity-50 animate-pulse"></span>
-                <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-orange-500 to-red-500 animate-gradient bg-[length:200%_auto] drop-shadow-2xl">
+                <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 via-pink-500 via-orange-500 to-indigo-500 blur-2xl opacity-50 animate-gradient bg-[length:300%_auto]" style={{ animationDuration: '4s' }}></span>
+                <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 via-pink-500 via-orange-500 to-indigo-500 animate-gradient bg-[length:300%_auto] drop-shadow-2xl" style={{ animationDuration: '4s' }}>
                   PDFs
                 </span>
               </span> <br />
