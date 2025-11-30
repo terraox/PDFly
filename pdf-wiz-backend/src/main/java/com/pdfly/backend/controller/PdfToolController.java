@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -37,7 +38,19 @@ public class PdfToolController {
                 if (userOpt.isPresent()) {
                     com.pdfly.backend.model.User user = userOpt.get();
                     if (user.getPlan() == com.pdfly.backend.model.User.PlanType.FREE) {
-                        if (user.getDailyUsageCount() >= 3) {
+                        // Fetch dynamic limit
+                        int limit = 3; // Default
+                        Optional<GlobalConfig> limitConfig = globalConfigRepository.findByConfigKey("FREE_TIER_LIMIT");
+                        if (limitConfig.isPresent()) {
+                            try {
+                                limit = Integer.parseInt(limitConfig.get().getConfigValue());
+                            } catch (NumberFormatException e) {
+                                System.err.println(
+                                        "Invalid FREE_TIER_LIMIT config: " + limitConfig.get().getConfigValue());
+                            }
+                        }
+
+                        if (user.getDailyUsageCount() >= limit) {
                             throw new RuntimeException("Daily limit reached. Please upgrade to Pro.");
                         }
                         user.setDailyUsageCount(user.getDailyUsageCount() + 1);
@@ -305,16 +318,38 @@ public class PdfToolController {
     // 9. PAGE NUMBERS
     @PostMapping(value = "/page-numbers", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> addPageNumbers(@RequestParam("file") MultipartFile file,
-            @RequestParam(value = "position", required = false, defaultValue = "bottom-center") String position) {
+            @RequestParam(value = "position", required = false, defaultValue = "bottom-center") String position,
+            @RequestParam(value = "margin", required = false, defaultValue = "recommended") String margin,
+            @RequestParam(value = "textTemplate", required = false, defaultValue = "{n}") String textTemplate,
+            @RequestParam(value = "font", required = false, defaultValue = "HELVETICA") String font,
+            @RequestParam(value = "fontSize", required = false, defaultValue = "12") Float fontSize,
+            @RequestParam(value = "color", required = false, defaultValue = "#000000") String color,
+            @RequestParam(value = "startNumber", required = false, defaultValue = "1") Integer startNumber,
+            @RequestParam(value = "startPage", required = false) Integer startPage,
+            @RequestParam(value = "endPage", required = false) Integer endPage) {
         if (file == null || file.isEmpty()) {
             return createErrorResponse("Please upload a PDF file.");
         }
         try {
             checkAndIncrementUsage();
-            byte[] numberedPdf = pdfToolService.addPageNumbers(file, position);
+            byte[] numberedPdf = pdfToolService.addPageNumbers(file, position, margin, textTemplate, font, fontSize,
+                    color, startNumber, startPage, endPage);
             return createPdfResponse(numberedPdf, "pdfly_numbered.pdf");
         } catch (IOException e) {
             return createErrorResponse("Adding page numbers failed: " + e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/page-count", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> getPageCount(@RequestParam("file") MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest().body("Please upload a PDF file.");
+        }
+        try {
+            int count = pdfToolService.getPageCount(file);
+            return ResponseEntity.ok(Map.of("count", count));
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Failed to get page count: " + e.getMessage());
         }
     }
 

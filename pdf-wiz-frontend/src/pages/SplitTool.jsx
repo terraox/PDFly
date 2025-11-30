@@ -59,6 +59,38 @@ export default function SplitTool() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [file, downloadUrl, toast]);
   const [downloadFilename, setDownloadFilename] = useState(null);
+  const [freeLimit, setFreeLimit] = useState(3);
+
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/tools/config');
+        const config = response.data.find(c => c.configKey === 'FREE_TIER_LIMIT');
+        if (config) {
+          setFreeLimit(parseInt(config.configValue));
+        }
+      } catch (error) {
+        console.error('Failed to fetch config', error);
+      }
+    };
+    fetchConfig();
+  }, []);
+
+  // Check usage limit (only for FREE users)
+  const checkLimit = () => {
+    const userPlan = user?.plan || localStorage.getItem('pdfly_user_plan') || 'FREE';
+    const userRole = user?.role || localStorage.getItem('pdfly_user_role');
+
+    if (userPlan === 'PRO' || userRole === 'ADMIN') {
+      return false;
+    }
+
+    const dailyUsage = user?.dailyUsageCount || 0;
+    if (dailyUsage >= freeLimit) {
+      return true;
+    }
+    return false;
+  };
 
   const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles.length > 0) {
@@ -97,6 +129,12 @@ export default function SplitTool() {
     if (!isAuthenticated) {
       alert("Please log in to use the Split feature.");
       navigate('/login');
+      return;
+    }
+
+    // Check usage limit (for free users)
+    if (checkLimit()) {
+      setError(`Daily limit reached. You have used your ${freeLimit} free daily tasks.`);
       return;
     }
 
@@ -304,10 +342,10 @@ export default function SplitTool() {
                 <Sparkles className="h-4 w-4" />
                 {user ? (
                   <span>
-                    <span className="font-bold">{3 - (user.dailyUsageCount || 0)}</span> free tasks remaining today
+                    <span className="font-bold">{Math.max(0, freeLimit - (user.dailyUsageCount || 0))}</span> free tasks remaining today
                   </span>
                 ) : (
-                  "3 free tasks per day"
+                  `${freeLimit} free tasks per day`
                 )}
               </div>
             </motion.div>

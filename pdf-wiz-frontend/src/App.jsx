@@ -25,6 +25,8 @@ import SplitTool from './pages/SplitTool';
 import ProtectTool from './pages/ProtectTool';
 import WatermarkTool from './pages/WatermarkTool'; // Need to ensure this is imported if you created it
 import RotateTool from './pages/RotateTool'; // <--- NEW IMPORT
+import PageNumberTool from './pages/PageNumberTool';
+import History from './pages/History';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard';
@@ -56,6 +58,7 @@ function AnimatedRoutes() {
         <Route element={<ProtectedRoute />}>
           {/* User Profile Route */}
           <Route path="/profile" element={<Profile />} />
+          <Route path="/history" element={<History />} />
 
           {/* Core Tool Implementations */}
           <Route path="/merge" element={<MergeTool />} />
@@ -76,7 +79,7 @@ function AnimatedRoutes() {
           <Route path="/sign" element={<ToolPage title="Sign PDF" icon={PenTool} />} />
           <Route path="/watermark" element={<ToolPage title="Watermark" icon={Stamp} />} /> {/* Kept generic if dedicated not created yet */}
           <Route path="/unlock" element={<ToolPage title="Unlock PDF" icon={Unlock} />} />
-          <Route path="/page-numbers" element={<ToolPage title="Add Page Numbers" icon={Hash} />} />
+          <Route path="/page-numbers" element={<PageNumberTool />} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminDashboard />} />

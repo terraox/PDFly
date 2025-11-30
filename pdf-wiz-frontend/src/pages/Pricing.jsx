@@ -1,12 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import { Check, X, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import NumberTicker from '../components/ui/NumberTicker';
+import axios from 'axios';
 
 export default function Pricing() {
   const { user, isAuthenticated } = useAuth();
+  const [freeLimit, setFreeLimit] = useState(3);
+
+  useEffect(() => {
+    fetchConfig();
+  }, []);
+
+  const fetchConfig = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/tools/config');
+      const config = response.data.find(c => c.configKey === 'FREE_TIER_LIMIT');
+      if (config) {
+        setFreeLimit(parseInt(config.configValue));
+      }
+    } catch (error) {
+      console.error('Failed to fetch config', error);
+    }
+  };
 
   const isPro = user?.plan === 'PRO';
   const isFree = user?.plan === 'FREE' || !isAuthenticated;
@@ -37,7 +55,7 @@ export default function Pricing() {
               <span className="text-sm font-semibold leading-6 text-zinc-600 dark:text-zinc-400">/month</span>
             </p>
             <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
-              <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-600" /> 5 Tasks per day</li>
+              <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-600" /> {freeLimit} Tasks per day</li>
               <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-600" /> 10MB Max File Size</li>
               <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-600" /> Standard Processing Speed</li>
               <li className="flex gap-x-3 text-zinc-400 dark:text-zinc-600"><X className="h-6 w-5 flex-none" /> No OCR Support</li>

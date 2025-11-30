@@ -261,6 +261,23 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
   });
 
   // Check usage limit (only for FREE users)
+  const [freeLimit, setFreeLimit] = useState(3);
+
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/tools/config');
+        const config = response.data.find(c => c.configKey === 'FREE_TIER_LIMIT');
+        if (config) {
+          setFreeLimit(parseInt(config.configValue));
+        }
+      } catch (error) {
+        console.error('Failed to fetch config', error);
+      }
+    };
+    fetchConfig();
+  }, []);
+
   const checkLimit = () => {
     // PRO users and ADMINs have unlimited access
     const userPlan = user?.plan || localStorage.getItem('pdfly_user_plan') || 'FREE';
@@ -273,7 +290,7 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
     // Check daily limit for FREE users
     // Use the count from AuthContext (synced with backend)
     const dailyUsage = user?.dailyUsageCount || 0;
-    if (dailyUsage >= 3) {
+    if (dailyUsage >= freeLimit) {
       return true;
     }
     return false;
@@ -393,10 +410,6 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
       setDownloadFilename(filename);
       toast.success('File processed successfully!');
 
-      setDownloadUrl(url);
-      setDownloadFilename(filename);
-      toast.success('File processed successfully!');
-
       // Refresh user data to update usage count
       await refreshUser();
 
@@ -491,7 +504,7 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
             </div>
             <h2 className="mb-2 text-3xl font-bold text-zinc-900 dark:text-white">Daily Limit Reached</h2>
             <p className="mb-8 text-lg text-zinc-500 dark:text-zinc-400">
-              You have used your 3 free daily tasks. Please wait until tomorrow or upgrade to Pro for unlimited access.
+              You have used your {freeLimit} free daily tasks. Please wait until tomorrow or upgrade to Pro for unlimited access.
             </p>
 
             <div className="space-y-4">
@@ -569,10 +582,10 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
                 <Sparkles className="h-4 w-4" />
                 {user ? (
                   <span>
-                    <span className="font-bold">{3 - (user.dailyUsageCount || 0)}</span> free tasks remaining today
+                    <span className="font-bold">{Math.max(0, freeLimit - (user.dailyUsageCount || 0))}</span> free tasks remaining today
                   </span>
                 ) : (
-                  "3 free tasks per day"
+                  `${freeLimit} free tasks per day`
                 )}
               </div>
             </motion.div>

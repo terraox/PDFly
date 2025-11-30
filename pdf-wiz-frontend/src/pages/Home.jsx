@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import ToolCard from "../components/ToolCard";
-import RecentFiles from "../components/RecentFiles";
 import {
   ArrowLeftRight, Minimize2, FileText, Type, Presentation,
   FileSpreadsheet, Image as ImageIcon, PenTool, Stamp,
@@ -29,8 +28,27 @@ const tools = [
   { id: "page-numbers", title: "Page Numbers", desc: "Add page numbers into your PDFs with ease.", icon: Hash, color: "green" },
 ];
 
+import axios from 'axios';
+
 export default function Home() {
   const { user } = useAuth();
+  const [freeLimit, setFreeLimit] = useState(3);
+
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/tools/config');
+        const config = response.data.find(c => c.configKey === 'FREE_TIER_LIMIT');
+        if (config) {
+          setFreeLimit(parseInt(config.configValue));
+        }
+      } catch (error) {
+        console.error('Failed to fetch config', error);
+      }
+    };
+    fetchConfig();
+  }, []);
+
   return (
     <div className="min-h-screen bg-zinc-50 font-sans text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 transition-colors duration-300">
       <Navbar />
@@ -61,7 +79,7 @@ export default function Home() {
               <div className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10 dark:bg-indigo-400/10 dark:text-indigo-400 dark:ring-indigo-400/20">
                 <Sparkles className="h-4 w-4" />
                 <span>
-                  <span className="font-bold">{3 - (user.dailyUsageCount || 0)}</span> free tasks remaining today
+                  <span className="font-bold">{Math.max(0, freeLimit - (user.dailyUsageCount || 0))}</span> free tasks remaining today
                 </span>
               </div>
             </motion.div>
@@ -78,8 +96,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Recent Files Section */}
-      <RecentFiles />
+      {/* Recent Files Section Removed - Moved to /history */}
 
       {/* Tools Grid Section */}
       <section className="mx-auto max-w-[1440px] px-6 pb-24">

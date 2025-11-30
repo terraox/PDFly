@@ -98,6 +98,13 @@ export default function AdminLayout({ children }) {
             <div className="h-9 w-9 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-xs font-bold text-indigo-400">
               {user.email.substring(0, 2).toUpperCase()}
             </div>
+            <button
+              onClick={handleLogout}
+              className="ml-2 p-2 text-zinc-400 hover:text-red-400 transition-colors rounded-full hover:bg-zinc-800"
+              title="Sign Out"
+            >
+              <LogOut className="h-5 w-5" />
+            </button>
           </div>
         </header>
 

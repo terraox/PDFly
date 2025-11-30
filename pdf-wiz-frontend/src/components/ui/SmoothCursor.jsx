@@ -66,6 +66,16 @@ export const SmoothCursor = () => {
         document.body.addEventListener("mouseleave", handleMouseLeave);
         document.body.addEventListener("mouseenter", handleMouseEnter);
 
+        // Force hide default cursor via JS
+        document.documentElement.style.cursor = 'none';
+        document.body.style.cursor = 'none';
+
+        // Add a style tag to force it everywhere
+        const style = document.createElement('style');
+        style.id = 'cursor-hider';
+        style.innerHTML = `* { cursor: none !important; }`;
+        document.head.appendChild(style);
+
         return () => {
             window.removeEventListener("mousemove", moveCursor);
             window.removeEventListener("mousedown", handleMouseDown);
@@ -73,6 +83,12 @@ export const SmoothCursor = () => {
             window.removeEventListener("mouseover", handleMouseOver);
             document.body.removeEventListener("mouseleave", handleMouseLeave);
             document.body.removeEventListener("mouseenter", handleMouseEnter);
+
+            // Cleanup
+            document.documentElement.style.cursor = '';
+            document.body.style.cursor = '';
+            const existingStyle = document.getElementById('cursor-hider');
+            if (existingStyle) existingStyle.remove();
         };
     }, [cursorX, cursorY, isVisible]);
 

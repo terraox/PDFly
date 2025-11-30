@@ -1,19 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from './AdminLayout';
 import { Save, AlertCircle, Check } from 'lucide-react';
+import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Plans() {
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [freeLimit, setFreeLimit] = useState(3);
+  const { user } = useAuth();
 
-  const handleSave = () => {
+  useEffect(() => {
+    fetchConfig();
+  }, []);
+
+  const fetchConfig = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/tools/config');
+      const config = response.data.find(c => c.configKey === 'FREE_TIER_LIMIT');
+      if (config) {
+        setFreeLimit(parseInt(config.configValue));
+      }
+    } catch (error) {
+      console.error('Failed to fetch config', error);
+    }
+  };
+
+  const handleSave = async () => {
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      await axios.post('http://localhost:8080/api/admin/config', {
+        configKey: 'FREE_TIER_LIMIT',
+        configValue: freeLimit.toString()
+      });
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
-    }, 1000);
+    } catch (error) {
+      console.error('Failed to save config', error);
+      alert('Failed to save changes');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -23,7 +50,7 @@ export default function Plans() {
           <h2 className="text-2xl font-bold text-white tracking-tight">Plans & Configuration</h2>
           <p className="text-zinc-400 text-sm">Configure limits for Free and Pro tiers dynamically.</p>
         </div>
-        <button 
+        <button
           onClick={handleSave}
           disabled={loading}
           className="flex items-center gap-2 h-10 rounded-md bg-indigo-600 px-6 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50 transition-all"
@@ -39,7 +66,7 @@ export default function Plans() {
             <h3 className="text-lg font-semibold text-white">Free Tier Limits</h3>
             <span className="rounded-full bg-zinc-800 px-3 py-1 text-xs font-medium text-zinc-400">Default</span>
           </div>
-          
+
           <div className="space-y-6">
             <div className="space-y-2">
               <label className="text-sm font-medium text-zinc-300">Max File Size (MB)</label>
@@ -49,7 +76,12 @@ export default function Plans() {
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-zinc-300">Daily Operations Limit</label>
-              <input type="number" defaultValue={5} className="w-full rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-white focus:border-indigo-500 focus:outline-none" />
+              <input
+                type="number"
+                value={freeLimit}
+                onChange={(e) => setFreeLimit(parseInt(e.target.value))}
+                className="w-full rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-white focus:border-indigo-500 focus:outline-none"
+              />
             </div>
 
             <div className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-950 p-4">
@@ -74,7 +106,7 @@ export default function Plans() {
             <h3 className="text-lg font-semibold text-white">Pro Tier Limits</h3>
             <span className="rounded-full bg-amber-500/10 border border-amber-500/20 px-3 py-1 text-xs font-medium text-amber-500">Premium</span>
           </div>
-          
+
           <div className="space-y-6 relative z-10">
             <div className="space-y-2">
               <label className="text-sm font-medium text-zinc-300">Max File Size (MB)</label>

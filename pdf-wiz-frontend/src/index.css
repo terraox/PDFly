@@ -63,15 +63,16 @@
   left: 100%;
 }
 
-@media (pointer: fine) {
-  * {
-    cursor: none !important;
-  }
+/* Hide default cursor globally */
+html,
+body,
+* {
+  cursor: none !important;
+}
 
-  /* Restore text cursor for inputs */
-  input,
-  textarea,
-  [contenteditable="true"] {
-    cursor: text !important;
-  }
+/* Restore text cursor for inputs */
+input,
+textarea,
+[contenteditable="true"] {
+  cursor: text !important;
 }

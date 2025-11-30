@@ -135,6 +135,9 @@ export default function Navbar() {
 
             {/* Pricing Link */}
             <Link to="/pricing" className="relative transition-colors hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold text-indigo-600 dark:text-indigo-400">Pricing</Link>
+
+            {/* History Link */}
+            <Link to="/history" className="relative transition-colors hover:text-indigo-600 dark:hover:text-indigo-400">History</Link>
           </div>
         </div>
 

@@ -38,6 +38,7 @@ import java.util.HashMap;
 import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.graphics.PDXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.util.Matrix; // Explicit import
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.cos.COSBase;
@@ -413,19 +414,134 @@ public class PdfToolService {
     // 9. ADD PAGE NUMBERS
     // =================================================================
 
-    public byte[] addPageNumbers(MultipartFile file, String position) throws IOException {
+    public byte[] addPageNumbers(MultipartFile file, String position, String margin, String textTemplate,
+            String fontName, Float fontSize, String colorHex, Integer startNumber, Integer startPage, Integer endPage)
+            throws IOException {
         try (PDDocument document = PDDocument.load(file.getInputStream())) {
+            // Font Selection
             PDType1Font font = PDType1Font.HELVETICA;
+            if ("TIMES_ROMAN".equalsIgnoreCase(fontName))
+                font = PDType1Font.TIMES_ROMAN;
+            else if ("COURIER".equalsIgnoreCase(fontName))
+                font = PDType1Font.COURIER;
+            else if ("HELVETICA_BOLD".equalsIgnoreCase(fontName))
+                font = PDType1Font.HELVETICA_BOLD;
+
+            // Color Parsing
+            Color color;
+            try {
+                color = Color.decode(colorHex);
+            } catch (NumberFormatException e) {
+                color = Color.BLACK; // Default
+            }
+
+            // Margin Calculation
+            float marginVal = 20f;
+            if ("small".equalsIgnoreCase(margin))
+                marginVal = 10f;
+            else if ("big".equalsIgnoreCase(margin))
+                marginVal = 40f;
+
             int totalPages = document.getNumberOfPages();
+
+            // Range Logic
+            int start = (startPage != null && startPage > 0) ? startPage - 1 : 0;
+            int end = (endPage != null && endPage > 0 && endPage <= totalPages) ? endPage - 1 : totalPages - 1;
+
+            int rangeCount = end - start + 1;
+
+            // Default start number if null
+            int currentNum = (startNumber != null) ? startNumber : 1;
+
             for (int i = 0; i < totalPages; i++) {
+                // Skip pages outside range
+                if (i < start || i > end)
+                    continue;
+
                 PDPage page = document.getPage(i);
+                PDRectangle pageSize = page.getMediaBox();
+
+                // Format Text
+                // Calculate the number for this specific page relative to the sequence
+                int displayNum = currentNum + (i - start);
+
+                String text = textTemplate.replace("{n}", String.valueOf(displayNum))
+                        .replace("{total}", String.valueOf(rangeCount))
+                        .replace("{pdfTotal}", String.valueOf(totalPages));
+
+                float textWidth = font.getStringWidth(text) / 1000 * fontSize;
+                float textHeight = font.getFontDescriptor().getCapHeight() / 1000 * fontSize;
+
+                float x = 0, y = 0;
+
+                int rotation = page.getRotation();
+                boolean rotate90or270 = (rotation == 90 || rotation == 270);
+                float pageWidth = rotate90or270 ? pageSize.getHeight() : pageSize.getWidth();
+                float pageHeight = rotate90or270 ? pageSize.getWidth() : pageSize.getHeight();
+
+                // Position Logic (Calculated in visual coordinates first)
+                // Vertical
+                if (position.contains("top")) {
+                    y = pageHeight - marginVal - textHeight;
+                } else {
+                    // Default to bottom
+                    y = marginVal;
+                }
+
+                // Horizontal
+                if (position.contains("left")) {
+                    x = marginVal;
+                } else if (position.contains("right")) {
+                    x = pageWidth - marginVal - textWidth;
+                } else {
+                    // Default to center
+                    x = (pageWidth - textWidth) / 2;
+                }
+
+                // Transform coordinates based on rotation
+                // We use the switch below to calculate the matrix directly
+
+                System.out.println("Page " + (i + 1) + ": " + pageSize.getWidth() + "x" + pageSize.getHeight());
+                System.out.println("Position: " + position + ", Margin: " + marginVal);
+                System.out.println("Calculated Coords: (" + x + ", " + y + ")");
+
                 try (PDPageContentStream contentStream = new PDPageContentStream(document, page,
                         PDPageContentStream.AppendMode.APPEND, true, true)) {
-                    contentStream.setNonStrokingColor(Color.BLACK);
-                    contentStream.setFont(font, 12);
+
+                    contentStream.setNonStrokingColor(color);
+                    contentStream.setFont(font, fontSize);
                     contentStream.beginText();
-                    contentStream.newLineAtOffset(page.getMediaBox().getWidth() / 2, 20);
-                    contentStream.showText("Page " + (i + 1) + " of " + totalPages);
+
+                    float translateX = 0;
+                    float translateY = 0;
+
+                    switch (rotation) {
+                        case 0:
+                            translateX = x;
+                            translateY = y;
+                            contentStream.setTextMatrix(Matrix.getTranslateInstance(translateX, translateY));
+                            break;
+                        case 90:
+                            translateX = y + textHeight;
+                            translateY = pageSize.getHeight() - x;
+                            contentStream.setTextMatrix(
+                                    Matrix.getRotateInstance(Math.toRadians(90), translateX, translateY));
+                            break;
+                        case 180:
+                            translateX = pageSize.getWidth() - x;
+                            translateY = pageSize.getHeight() - y;
+                            contentStream.setTextMatrix(
+                                    Matrix.getRotateInstance(Math.toRadians(180), translateX, translateY));
+                            break;
+                        case 270:
+                            translateX = pageSize.getWidth() - y;
+                            translateY = x;
+                            contentStream.setTextMatrix(
+                                    Matrix.getRotateInstance(Math.toRadians(270), translateX, translateY));
+                            break;
+                    }
+
+                    contentStream.showText(text);
                     contentStream.endText();
                 }
             }
@@ -466,7 +582,6 @@ public class PdfToolService {
                     run.setText(cleanText);
                     run.setFontFamily("Calibri");
                     run.setFontSize(11);
-
                     if (cleanText.length() < 50 && cleanText.equals(cleanText.toUpperCase())) {
                         run.setBold(true);
                         run.setFontSize(14);
@@ -476,6 +591,12 @@ public class PdfToolService {
 
             wordDocument.write(out);
             return out.toByteArray();
+        }
+    }
+
+    public int getPageCount(MultipartFile file) throws IOException {
+        try (PDDocument document = PDDocument.load(file.getInputStream())) {
+            return document.getNumberOfPages();
         }
     }
 
@@ -686,8 +807,18 @@ public class PdfToolService {
             }
 
             PDFRenderer pdfRenderer = new PDFRenderer(document);
-            // Render first page at 150 DPI for good quality preview
-            BufferedImage image = pdfRenderer.renderImageWithDPI(0, 150, ImageType.RGB);
+            // Render first page at 150 DPI
+            // Use ARGB to capture transparency, then composite over white
+            BufferedImage rawImage = pdfRenderer.renderImageWithDPI(0, 150, ImageType.ARGB);
+
+            // Create a white background image
+            BufferedImage image = new BufferedImage(rawImage.getWidth(), rawImage.getHeight(),
+                    BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = image.createGraphics();
+            g.setColor(Color.WHITE);
+            g.fillRect(0, 0, image.getWidth(), image.getHeight());
+            g.drawImage(rawImage, 0, 0, null);
+            g.dispose();
 
             // Write as PNG
             ImageIO.write(image, "PNG", out);
