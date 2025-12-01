@@ -296,20 +296,24 @@ public class PdfToolController {
     // 8.5. PDF PREVIEW (for signature positioning)
     @PostMapping(value = "/preview", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> generatePreview(@RequestParam("file") MultipartFile file) {
-        System.out.println("Preview endpoint called"); // Debug log
+        return generatePagePreview(file, 0);
+    }
+
+    @PostMapping(value = "/preview-page", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<byte[]> generatePagePreview(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("page") int page) {
+        System.out.println("Page Preview endpoint called for page: " + page);
         if (file == null || file.isEmpty()) {
-            System.err.println("File is null or empty");
             return createErrorResponse("Please upload a PDF file.");
         }
-        System.out.println("File received: " + file.getOriginalFilename() + ", size: " + file.getSize());
         try {
-            byte[] previewImage = pdfToolService.generatePdfPreview(file);
-            System.out.println("Preview generated successfully, size: " + previewImage.length);
+            byte[] previewImage = pdfToolService.generatePagePreview(file, page);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.IMAGE_PNG);
             return ResponseEntity.ok().headers(headers).body(previewImage);
         } catch (Exception e) {
-            System.err.println("Preview generation failed:");
+            System.err.println("Page preview generation failed:");
             e.printStackTrace();
             return createErrorResponse("Preview generation failed: " + e.getMessage());
         }
@@ -421,6 +425,73 @@ public class PdfToolController {
         } catch (Exception e) {
             e.printStackTrace(); // Log the full stack trace for debugging
             return createErrorResponse("Conversion failed: " + e.getMessage());
+        }
+    }
+    // =================================================================
+    // 15. CROP PDF (PRO)
+    // =================================================================
+
+    @PostMapping("/crop")
+    public ResponseEntity<byte[]> cropPdf(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("x") Float x,
+            @RequestParam("y") Float y,
+            @RequestParam("width") Float width,
+            @RequestParam("height") Float height,
+            @RequestParam(value = "scope", defaultValue = "all") String scope,
+            @RequestParam(value = "pageIndex", required = false) Integer pageIndex) {
+        try {
+            byte[] pdfBytes = pdfToolService.cropPdf(file, x, y, width, height, scope, pageIndex);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=cropped.pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdfBytes);
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // =================================================================
+    // 16. REDACT PDF (PRO)
+    // =================================================================
+
+    @PostMapping("/redact")
+    public ResponseEntity<byte[]> redactPdf(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("redactions") String redactionsJson) {
+        try {
+            // Parse JSON string to List<Map> manually or use Jackson
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            List<Map<String, Object>> redactions = mapper.readValue(redactionsJson,
+                    new com.fasterxml.jackson.core.type.TypeReference<List<Map<String, Object>>>() {
+                    });
+
+            byte[] pdfBytes = pdfToolService.redactPdf(file, redactions);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=redacted.pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdfBytes);
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // =================================================================
+    // 17. ORGANIZE PDF (PRO)
+    // =================================================================
+
+    @PostMapping("/organize")
+    public ResponseEntity<byte[]> organizePdf(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("pageOrder") String pageOrder) {
+        try {
+            byte[] pdfBytes = pdfToolService.organizePdf(file, pageOrder);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=organized.pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdfBytes);
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

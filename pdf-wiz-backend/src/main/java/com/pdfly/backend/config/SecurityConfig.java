@@ -39,6 +39,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/tools/preview").permitAll()
                         // Config endpoint - allow without authentication (for checking feature flags)
                         .requestMatchers("/api/tools/config").permitAll()
+                        // Page preview and count - allow for tool initialization
+                        .requestMatchers("/api/tools/preview-page").permitAll()
+                        .requestMatchers("/api/tools/page-count").permitAll()
                         // Core tool processing endpoints require an active login token
                         .requestMatchers("/api/tools/**").authenticated()
                         // All other requests require authentication

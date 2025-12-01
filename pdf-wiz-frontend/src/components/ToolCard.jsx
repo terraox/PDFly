@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
+import ProBadge from "./ProBadge";
 
-export default function ToolCard({ icon: Icon, title, desc, color }) {
+export default function ToolCard({ icon: Icon, title, desc, color, isPro }) {
   const colorMap = {
     red: "bg-red-500/10 text-red-600 dark:bg-red-500/20 dark:text-red-400",
     orange: "bg-orange-500/10 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400",
@@ -9,6 +10,8 @@ export default function ToolCard({ icon: Icon, title, desc, color }) {
     purple: "bg-purple-600/10 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400",
     yellow: "bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400",
     gray: "bg-zinc-500/10 text-zinc-600 dark:bg-zinc-500/20 dark:text-zinc-400",
+    emerald: "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
+    violet: "bg-violet-500/10 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400",
   };
 
   return (
@@ -36,8 +39,11 @@ export default function ToolCard({ icon: Icon, title, desc, color }) {
       />
 
       <div className="relative z-10">
-        <div className={`mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl ${colorMap[color] || colorMap.gray} transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-sm`}>
-          <Icon className="h-7 w-7" strokeWidth={2} />
+        <div className="flex justify-between items-start mb-5">
+          <div className={`inline-flex h-14 w-14 items-center justify-center rounded-2xl ${colorMap[color] || colorMap.gray} transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-sm`}>
+            <Icon className="h-7 w-7" strokeWidth={2} />
+          </div>
+          {isPro && <ProBadge />}
         </div>
 
         <h3 className="mb-2 text-lg font-bold tracking-tight text-zinc-900 transition-colors group-hover:text-indigo-600 dark:text-zinc-100 dark:group-hover:text-indigo-400">

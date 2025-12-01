@@ -795,10 +795,109 @@ public class PdfToolService {
     }
 
     // =================================================================
-    // 15. GENERATE PDF PREVIEW (First Page as Image)
+    // 15. CROP PDF (PRO)
+    // =================================================================
+
+    public byte[] cropPdf(MultipartFile file, float x, float y, float width, float height, String scope,
+            Integer pageIndex) throws IOException {
+        try (PDDocument document = PDDocument.load(file.getInputStream())) {
+            int totalPages = document.getNumberOfPages();
+
+            if ("current".equalsIgnoreCase(scope) && pageIndex != null) {
+                if (pageIndex >= 0 && pageIndex < totalPages) {
+                    PDPage page = document.getPage(pageIndex);
+                    float pageHeight = page.getMediaBox().getHeight();
+                    // Flip Y coordinate (Frontend sends top-left Y, PDF uses bottom-left)
+                    float pdfY = pageHeight - y - height;
+                    PDRectangle cropBox = new PDRectangle(x, pdfY, width, height);
+                    page.setCropBox(cropBox);
+                    page.setMediaBox(cropBox);
+                }
+            } else {
+                // Apply to all pages
+                for (PDPage page : document.getPages()) {
+                    float pageHeight = page.getMediaBox().getHeight();
+                    // Flip Y coordinate
+                    float pdfY = pageHeight - y - height;
+                    PDRectangle cropBox = new PDRectangle(x, pdfY, width, height);
+                    page.setCropBox(cropBox);
+                    page.setMediaBox(cropBox);
+                }
+            }
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            document.save(outputStream);
+            return outputStream.toByteArray();
+        }
+    }
+
+    // =================================================================
+    // 16. REDACT PDF (PRO)
+    // =================================================================
+
+    public byte[] redactPdf(MultipartFile file, List<Map<String, Object>> redactions) throws IOException {
+        try (PDDocument document = PDDocument.load(file.getInputStream())) {
+            for (Map<String, Object> redaction : redactions) {
+                int pageIndex = (int) redaction.get("page");
+                float x = ((Number) redaction.get("x")).floatValue();
+                float y = ((Number) redaction.get("y")).floatValue();
+                float w = ((Number) redaction.get("width")).floatValue();
+                float h = ((Number) redaction.get("height")).floatValue();
+
+                if (pageIndex >= 0 && pageIndex < document.getNumberOfPages()) {
+                    PDPage page = document.getPage(pageIndex);
+                    // PDF coordinates: (0,0) is bottom-left. Frontend usually sends top-left.
+                    // We might need to flip Y depending on how frontend sends it.
+                    // Assuming frontend sends standard PDF coordinates or we handle conversion
+                    // there.
+                    // For now, let's assume standard PDF coords (bottom-left origin) or handle
+                    // simple rect drawing.
+
+                    try (PDPageContentStream contentStream = new PDPageContentStream(document, page,
+                            PDPageContentStream.AppendMode.APPEND, true, true)) {
+                        contentStream.setNonStrokingColor(Color.BLACK);
+                        contentStream.addRect(x, y, w, h);
+                        contentStream.fill();
+                    }
+                }
+            }
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            document.save(outputStream);
+            return outputStream.toByteArray();
+        }
+    }
+
+    // =================================================================
+    // 17. ORGANIZE PDF (PRO)
+    // =================================================================
+
+    public byte[] organizePdf(MultipartFile file, String pageOrder) throws IOException {
+        try (PDDocument sourceDoc = PDDocument.load(file.getInputStream());
+                PDDocument newDoc = new PDDocument()) {
+
+            String[] pages = pageOrder.split(",");
+            for (String p : pages) {
+                int pageIndex = Integer.parseInt(p.trim()) - 1; // 1-based to 0-based
+                if (pageIndex >= 0 && pageIndex < sourceDoc.getNumberOfPages()) {
+                    newDoc.addPage(sourceDoc.getPage(pageIndex));
+                }
+            }
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            newDoc.save(outputStream);
+            return outputStream.toByteArray();
+        }
+    }
+
+    // =================================================================
+    // 18. GENERATE PDF PREVIEW (First Page as Image)
     // =================================================================
 
     public byte[] generatePdfPreview(MultipartFile file) throws IOException {
+        return generatePagePreview(file, 0);
+    }
+
+    public byte[] generatePagePreview(MultipartFile file, int pageIndex) throws IOException {
         try (PDDocument document = PDDocument.load(file.getInputStream());
                 ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
@@ -806,10 +905,14 @@ public class PdfToolService {
                 throw new IOException("PDF has no pages");
             }
 
+            if (pageIndex < 0 || pageIndex >= document.getNumberOfPages()) {
+                throw new IOException("Invalid page index: " + pageIndex);
+            }
+
             PDFRenderer pdfRenderer = new PDFRenderer(document);
-            // Render first page at 150 DPI
+            // Render page at 150 DPI
             // Use ARGB to capture transparency, then composite over white
-            BufferedImage rawImage = pdfRenderer.renderImageWithDPI(0, 150, ImageType.ARGB);
+            BufferedImage rawImage = pdfRenderer.renderImageWithDPI(pageIndex, 150, ImageType.ARGB);
 
             // Create a white background image
             BufferedImage image = new BufferedImage(rawImage.getWidth(), rawImage.getHeight(),

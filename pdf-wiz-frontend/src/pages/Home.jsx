@@ -5,7 +5,8 @@ import ToolCard from "../components/ToolCard";
 import {
   ArrowLeftRight, Minimize2, FileText, Type, Presentation,
   FileSpreadsheet, Image as ImageIcon, PenTool, Stamp,
-  RefreshCw, Unlock, Shield, Hash, Scissors, Sparkles
+  RefreshCw, Unlock, Shield, Hash, Scissors, Sparkles,
+  Crop, Eraser, Layers
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
@@ -26,6 +27,9 @@ const tools = [
   { id: "unlock", title: "Unlock PDF", desc: "Remove PDF password security, giving you the freedom to use your PDFs as you want.", icon: Unlock, color: "gray" },
   { id: "protect", title: "Protect PDF", desc: "Encrypt your PDF with a password to keep sensitive data confidential.", icon: Shield, color: "gray" },
   { id: "page-numbers", title: "Page Numbers", desc: "Add page numbers into your PDFs with ease.", icon: Hash, color: "green" },
+  { id: "crop", title: "Crop PDF", desc: "Trim margins and crop your PDF pages.", icon: Crop, color: "emerald", bg: "bg-emerald-500/10", isPro: true },
+  { id: "redact", title: "Redact PDF", desc: "Permanently remove sensitive information.", icon: Eraser, color: "red", bg: "bg-red-500/10", isPro: true },
+  { id: "organize", title: "Organize PDF", desc: "Rearrange, delete, and organize pages.", icon: Layers, color: "violet", bg: "bg-violet-500/10", isPro: true },
 ];
 
 import axios from 'axios';
@@ -137,7 +141,6 @@ export default function Home() {
                   <div className="absolute inset-0 -z-10 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:animate-[shimmer_1.5s_infinite]" />
                 </Link>
               )}
-
               <Link to="/pricing" className="group inline-flex h-12 items-center justify-center rounded-full border border-zinc-200 bg-transparent px-8 font-medium text-zinc-900 transition-all duration-300 hover:bg-zinc-100 hover:scale-105 dark:border-zinc-800 dark:text-white dark:hover:bg-zinc-800">
                 View Pricing
               </Link>
@@ -157,7 +160,7 @@ export default function Home() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: index * 0.05, duration: 0.5, ease: "easeOut" }}
             >
-              <Link to={`/${tool.id}`}>
+              <Link to={'/' + tool.id}>
                 <ToolCard {...tool} />
               </Link>
             </motion.div>

@@ -24,6 +24,7 @@ com/pdfly/backend/model/User$Role.class
 com/pdfly/backend/controller/PublicCouponController.class
 com/pdfly/backend/service/PdfToolService.class
 com/pdfly/backend/dto/AuthResponse.class
+com/pdfly/backend/controller/PdfToolController$1.class
 com/pdfly/backend/config/JwtAuthenticationFilter.class
 com/pdfly/backend/repository/PlanRepository.class
 com/pdfly/backend/service/AdminService.class

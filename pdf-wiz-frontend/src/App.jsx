@@ -27,6 +27,9 @@ import WatermarkTool from './pages/WatermarkTool'; // Need to ensure this is imp
 import RotateTool from './pages/RotateTool'; // <--- NEW IMPORT
 import PageNumberTool from './pages/PageNumberTool';
 import History from './pages/History';
+import CropTool from './pages/CropTool';
+import RedactTool from './pages/RedactTool';
+import OrganizeTool from './pages/OrganizeTool';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard';
@@ -67,6 +70,9 @@ function AnimatedRoutes() {
           {/* Assuming you created WatermarkTool based on previous chat, otherwise remove this line */}
           {/* <Route path="/watermark" element={<WatermarkTool />} />  */}
           <Route path="/rotate" element={<RotateTool />} /> {/* <--- NEW ROTATE UI */}
+          <Route path="/crop" element={<CropTool />} />
+          <Route path="/redact" element={<RedactTool />} />
+          <Route path="/organize" element={<OrganizeTool />} />
 
           {/* Remaining Tool Routes using the generic ToolPage component */}
           <Route path="/compress" element={<ToolPage title="Compress PDF" icon={Minimize2} />} />
