@@ -1,11 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, Layers, Download, AlertCircle, Trash2, GripVertical, Lock, Sparkles, LayoutGrid } from 'lucide-react';
+import { Upload, Layers, Download, AlertCircle, Trash2, GripVertical, Lock, Sparkles, LayoutGrid, UploadCloud, FileText, X, Loader2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import ProBadge from '../components/ProBadge';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { useDropzone } from 'react-dropzone';
 
 export default function OrganizeTool() {
     const { user, isAuthenticated, refreshUser, token } = useAuth();
@@ -26,19 +27,28 @@ export default function OrganizeTool() {
                 handleOrganize();
             }
             if (e.key === 'Escape') {
-                setFile(null);
+                if (pages.length > 0) {
+                    setFile(null);
+                    setPages([]);
+                } else if (file) {
+                    setFile(null);
+                }
             }
             if ((e.metaKey || e.ctrlKey) && e.key === 'u') {
                 e.preventDefault();
-                fileInputRef.current?.click();
+                if (pages.length === 0) {
+                    open();
+                } else {
+                    setFile(null);
+                    setPages([]);
+                    setTimeout(() => open(), 100);
+                }
             }
-            // Note: Deleting specific pages via keyboard is tricky without selection state.
-            // For now, we'll just support saving via shortcut.
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [pages, file]); // Dependencies for handleOrganize context
+    }, [pages, file]);
 
     // Pro Gating Check
     useEffect(() => {
@@ -49,68 +59,81 @@ export default function OrganizeTool() {
 
     const isPro = user?.plan === 'PRO' || user?.role === 'ADMIN';
 
-    const handleFileChange = async (e) => {
-        const selectedFile = e.target.files[0];
-        if (selectedFile && selectedFile.type === 'application/pdf') {
-            setFile(selectedFile);
-            setError('');
-            setPages([]);
-            setIsLoadingPreviews(true);
-
-            try {
-                // 1. Get Page Count
-                const formData = new FormData();
-                formData.append('file', selectedFile);
-                const countRes = await axios.post('http://localhost:8080/api/tools/page-count', formData, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const totalPages = countRes.data.count;
-
-                // 2. Fetch Previews (Parallel-ish)
-                const newPages = [];
-                for (let i = 0; i < totalPages; i++) {
-                    const previewFormData = new FormData();
-                    previewFormData.append('file', selectedFile);
-                    previewFormData.append('page', i);
-
-                    try {
-                        const previewRes = await axios.post('http://localhost:8080/api/tools/preview-page', previewFormData, {
-                            headers: { 'Authorization': `Bearer ${token}` },
-                            responseType: 'blob'
-                        });
-                        newPages.push({
-                            id: `page-${i}`,
-                            originalIndex: i + 1, // 1-based for display/backend
-                            previewUrl: URL.createObjectURL(previewRes.data)
-                        });
-                    } catch (err) {
-                        console.error(`Failed to load preview for page ${i}`, err);
-                        // Push a placeholder or skip? Better to show error placeholder.
-                        newPages.push({
-                            id: `page-${i}`,
-                            originalIndex: i + 1,
-                            previewUrl: null,
-                            error: true
-                        });
-                    }
-                    // Update state incrementally to show progress
-                    setPages([...newPages]);
-                }
-            } catch (err) {
-                console.error("Failed to load pages", err);
-                setError("Failed to load PDF pages. Please try again.");
-            } finally {
-                setIsLoadingPreviews(false);
+    const onDrop = useCallback((acceptedFiles) => {
+        if (acceptedFiles?.length > 0) {
+            const selectedFile = acceptedFiles[0];
+            if (selectedFile.type === 'application/pdf') {
+                setFile(selectedFile);
+                setError('');
+            } else {
+                setError('Please upload a valid PDF file.');
             }
-        } else {
-            setError('Please upload a valid PDF file.');
+        }
+    }, []);
+
+    const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
+        onDrop,
+        accept: { 'application/pdf': ['.pdf'] },
+        maxFiles: 1,
+        noClick: !!file
+    });
+
+    const loadDocument = async () => {
+        if (!file) return;
+
+        setPages([]);
+        setIsLoadingPreviews(true);
+        setError('');
+
+        try {
+            // 1. Get Page Count
+            const formData = new FormData();
+            formData.append('file', file);
+            const countRes = await axios.post('http://localhost:8080/api/tools/page-count', formData, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const totalPages = countRes.data.count;
+
+            // 2. Fetch Previews (Parallel-ish)
+            const newPages = [];
+            for (let i = 0; i < totalPages; i++) {
+                const previewFormData = new FormData();
+                previewFormData.append('file', file);
+                previewFormData.append('page', i);
+
+                try {
+                    const previewRes = await axios.post('http://localhost:8080/api/tools/preview-page', previewFormData, {
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        responseType: 'blob'
+                    });
+                    newPages.push({
+                        id: `page-${i}`,
+                        originalIndex: i + 1, // 1-based for display/backend
+                        previewUrl: URL.createObjectURL(previewRes.data)
+                    });
+                } catch (err) {
+                    console.error(`Failed to load preview for page ${i}`, err);
+                    newPages.push({
+                        id: `page-${i}`,
+                        originalIndex: i + 1,
+                        previewUrl: null,
+                        error: true
+                    });
+                }
+                // Update state incrementally to show progress
+                setPages([...newPages]);
+            }
+        } catch (err) {
+            console.error("Failed to load pages", err);
+            setError("Failed to load PDF pages. Please try again.");
+        } finally {
+            setIsLoadingPreviews(false);
         }
     };
 
     const handleDragStart = (e, index) => {
         setDraggedIndex(index);
         e.dataTransfer.effectAllowed = "move";
-        // Transparent drag image or custom? Default is fine for now.
     };
 
     const handleDragOver = (e, index) => {
@@ -206,55 +229,29 @@ export default function OrganizeTool() {
         );
     }
 
-    return (
-        <div className="min-h-screen bg-zinc-50 dark:bg-black transition-colors duration-300 font-sans">
-            <Navbar />
-            <div className="mx-auto max-w-6xl px-6 py-12 lg:px-8 pt-32">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-center mb-12"
-                >
-                    <div className="flex items-center justify-center gap-3 mb-4">
-                        <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-5xl">
-                            Organize PDF
-                        </h1>
-                        <ProBadge size="lg" />
-                    </div>
-                    <p className="text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-                        Rearrange, delete, and organize your PDF pages.
-                    </p>
-                </motion.div>
-
-                <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-zinc-200 dark:border-zinc-800">
-                    {!file ? (
-                        <div className="text-center">
-                            <div className="mt-4 flex justify-center rounded-lg border border-dashed border-zinc-900/25 dark:border-zinc-100/25 px-6 py-10">
-                                <div className="text-center">
-                                    <Layers className="mx-auto h-12 w-12 text-zinc-300" aria-hidden="true" />
-                                    <div className="mt-4 flex text-sm leading-6 text-zinc-600 dark:text-zinc-400">
-                                        <label
-                                            htmlFor="file-upload"
-                                            className="relative cursor-pointer rounded-md bg-transparent font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                                        >
-                                            <span>Upload a file</span>
-                                            <input
-                                                id="file-upload"
-                                                name="file-upload"
-                                                type="file"
-                                                className="sr-only"
-                                                accept=".pdf"
-                                                onChange={handleFileChange}
-                                                ref={fileInputRef}
-                                            />
-                                        </label>
-                                        <p className="pl-1">or drag and drop</p>
-                                    </div>
-                                    <p className="text-xs leading-5 text-zinc-600 dark:text-zinc-400">PDF up to 10MB</p>
-                                </div>
-                            </div>
+    // --- EDITOR UI (When pages are loaded) ---
+    if (pages.length > 0 || isLoadingPreviews) {
+        return (
+            <div className="min-h-screen bg-zinc-50 dark:bg-black transition-colors duration-300 font-sans">
+                <Navbar />
+                <div className="mx-auto max-w-6xl px-6 py-12 lg:px-8 pt-32">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-center mb-12"
+                    >
+                        <div className="flex items-center justify-center gap-3 mb-4">
+                            <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-5xl">
+                                Organize PDF
+                            </h1>
+                            <ProBadge size="lg" />
                         </div>
-                    ) : (
+                        <p className="text-lg leading-8 text-zinc-600 dark:text-zinc-400">
+                            Rearrange, delete, and organize your PDF pages.
+                        </p>
+                    </motion.div>
+
+                    <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-zinc-200 dark:border-zinc-800">
                         <div className="space-y-6">
                             {isLoadingPreviews && pages.length === 0 && (
                                 <div className="text-center py-12">
@@ -321,7 +318,7 @@ export default function OrganizeTool() {
                                 </div>
                                 <div className="flex space-x-4">
                                     <button
-                                        onClick={() => setFile(null)}
+                                        onClick={() => { setFile(null); setPages([]); }}
                                         className="px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors"
                                     >
                                         Cancel
@@ -347,42 +344,176 @@ export default function OrganizeTool() {
                             </div>
 
                         </div>
-                    )}
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
-                    {/* Shortcuts Section - Always Visible */}
-                    <div className="mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800 text-left">
-                        <h4 className="text-xs font-semibold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-4 pl-1">
-                            Keyboard Shortcuts
-                        </h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors group">
-                                <span className="text-sm text-zinc-600 dark:text-zinc-400 font-medium group-hover:text-zinc-900 dark:group-hover:text-zinc-200 transition-colors">Save PDF</span>
-                                <div className="flex gap-1.5">
-                                    <kbd className="min-w-[20px] h-6 flex items-center justify-center px-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-sm">⌘</kbd>
-                                    <kbd className="min-w-[20px] h-6 flex items-center justify-center px-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-sm">S</kbd>
+    // --- UPLOAD UI (Split Card Layout) ---
+    return (
+        <div className="min-h-screen bg-zinc-50 dark:bg-black transition-colors duration-300 font-sans">
+            <Navbar />
+            <div className="mx-auto max-w-5xl px-6 py-12 lg:px-8 pt-32">
+                <motion.div
+                    className="text-center mb-8"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <motion.div
+                        className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/30"
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.1 }}
+                    >
+                        <Layers className="h-8 w-8" />
+                    </motion.div>
+                    <div className="flex items-center justify-center gap-3 mb-4">
+                        <motion.h1
+                            className="text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-5xl"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2, duration: 0.5 }}
+                        >
+                            Organize PDF
+                        </motion.h1>
+                        <ProBadge size="lg" />
+                    </div>
+                    <motion.p
+                        className="mx-auto max-w-2xl text-lg text-zinc-500 dark:text-zinc-400"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3, duration: 0.5 }}
+                    >
+                        Rearrange, delete, and organize your PDF pages.
+                    </motion.p>
+                </motion.div>
+
+                <motion.div
+                    className="grid gap-8 md:grid-cols-2 items-start"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4, duration: 0.6 }}
+                >
+                    {/* Left: Upload Zone */}
+                    <div className="relative">
+                        <motion.div
+                            {...getRootProps()}
+                            className={`relative h-64 rounded-3xl border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center cursor-pointer ${isDragActive
+                                ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/10'
+                                : 'border-zinc-300 hover:border-indigo-500 bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-indigo-400'
+                                }`}
+                            animate={isDragActive ? {
+                                scale: [1, 1.02, 1],
+                                boxShadow: [
+                                    '0 0 0 0 rgba(99, 102, 241, 0)',
+                                    '0 0 0 10px rgba(99, 102, 241, 0.1)',
+                                    '0 0 0 0 rgba(99, 102, 241, 0)',
+                                ],
+                            } : {}}
+                            transition={{ duration: 1, repeat: isDragActive ? Infinity : 0 }}
+                            whileHover={{ scale: 1.01 }}
+                            onClick={open}
+                        >
+                            <input {...getInputProps()} />
+                            {file ? (
+                                <div className="text-center p-4">
+                                    <motion.div
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/30"
+                                    >
+                                        <FileText className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+                                    </motion.div>
+                                    <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 truncate max-w-[200px] mx-auto">{file.name}</p>
+                                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                                 </div>
-                            </div>
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors group">
-                                <span className="text-sm text-zinc-600 dark:text-zinc-400 font-medium group-hover:text-zinc-900 dark:group-hover:text-zinc-200 transition-colors">Upload PDF</span>
-                                <div className="flex gap-1.5">
-                                    <kbd className="min-w-[20px] h-6 flex items-center justify-center px-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-sm">⌘</kbd>
-                                    <kbd className="min-w-[20px] h-6 flex items-center justify-center px-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-sm">U</kbd>
-                                </div>
-                            </div>
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors group">
-                                <span className="text-sm text-zinc-600 dark:text-zinc-400 font-medium group-hover:text-zinc-900 dark:group-hover:text-zinc-200 transition-colors">Cancel</span>
-                                <kbd className="min-w-[20px] h-6 flex items-center justify-center px-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-sm">Esc</kbd>
-                            </div>
-                        </div>
+                            ) : (
+                                <>
+                                    <motion.div
+                                        className="p-4 rounded-full bg-zinc-100 dark:bg-zinc-800 mb-4"
+                                        animate={isDragActive ? { scale: [1, 1.1, 1] } : {}}
+                                        transition={{ duration: 0.5, repeat: isDragActive ? Infinity : 0 }}
+                                    >
+                                        <UploadCloud className="h-8 w-8 text-zinc-500 dark:text-zinc-400" />
+                                    </motion.div>
+                                    <span className="text-lg font-semibold text-zinc-700 dark:text-zinc-200">
+                                        {isDragActive ? "Drop it here!" : "Click or Drag File"}
+                                    </span>
+                                    <span className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+                                        Supports .pdf
+                                    </span>
+                                </>
+                            )}
+                        </motion.div>
+                        {file && (
+                            <button
+                                onClick={(e) => { e.stopPropagation(); setFile(null); setError(null); }}
+                                className="absolute top-4 right-4 text-zinc-400 hover:text-red-500 transition-colors p-2 rounded-full bg-white dark:bg-zinc-800 shadow-sm border border-zinc-200 dark:border-zinc-700"
+                                title="Remove file"
+                            >
+                                <X className="h-4 w-4" />
+                            </button>
+                        )}
                     </div>
 
-                    {error && (
-                        <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg flex items-center">
-                            <AlertCircle className="w-5 h-5 mr-2" />
-                            {error}
+                    {/* Right: Action Panel */}
+                    <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-8 shadow-xl space-y-6">
+                        <div className="space-y-4">
+                            <button
+                                onClick={loadDocument}
+                                disabled={!file}
+                                className="w-full flex items-center justify-center gap-2 rounded-xl bg-indigo-600 py-4 text-sm font-bold text-white shadow-xl shadow-indigo-500/20 transition-all hover:bg-indigo-500 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isLoadingPreviews ? (
+                                    <>
+                                        <Loader2 className="h-5 w-5 animate-spin" />
+                                        Loading...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Layers className="h-5 w-5" />
+                                        Load Document
+                                    </>
+                                )}
+                            </button>
+
+                            {!file && (
+                                <p className="text-xs text-center text-zinc-500 dark:text-zinc-400">
+                                    Files are automatically deleted after 1 hour
+                                </p>
+                            )}
                         </div>
-                    )}
-                </div>
+
+                        {/* Shortcuts Section */}
+                        <div className="pt-6 border-t border-zinc-200 dark:border-zinc-800">
+                            <h4 className="text-xs font-semibold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-4 pl-1">
+                                Keyboard Shortcuts
+                            </h4>
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors group">
+                                    <span className="text-xs text-zinc-600 dark:text-zinc-400 font-medium group-hover:text-zinc-900 dark:group-hover:text-zinc-200">Upload PDF</span>
+                                    <div className="flex gap-1">
+                                        <kbd className="min-w-[18px] h-5 flex items-center justify-center px-1 text-[10px] font-bold text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded">⌘</kbd>
+                                        <kbd className="min-w-[18px] h-5 flex items-center justify-center px-1 text-[10px] font-bold text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded">U</kbd>
+                                    </div>
+                                </div>
+                                <div className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors group">
+                                    <span className="text-xs text-zinc-600 dark:text-zinc-400 font-medium group-hover:text-zinc-900 dark:group-hover:text-zinc-200">Clear File</span>
+                                    <kbd className="min-w-[18px] h-5 flex items-center justify-center px-1 text-[10px] font-bold text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded">Esc</kbd>
+                                </div>
+                            </div>
+                        </div>
+
+                        {error && (
+                            <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl flex items-center text-sm">
+                                <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />
+                                {error}
+                            </div>
+                        )}
+                    </div>
+                </motion.div>
             </div>
         </div>
     );

@@ -6,7 +6,7 @@ import {
   ArrowLeftRight, Minimize2, FileText, Type, Presentation,
   FileSpreadsheet, Image as ImageIcon, PenTool, Stamp,
   RefreshCw, Unlock, Shield, Hash, Scissors, Sparkles,
-  Crop, Eraser, Layers
+  Crop, Eraser, Layers, ScanText, Scan
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
@@ -30,6 +30,8 @@ const tools = [
   { id: "crop", title: "Crop PDF", desc: "Trim margins and crop your PDF pages.", icon: Crop, color: "emerald", bg: "bg-emerald-500/10", isPro: true },
   { id: "redact", title: "Redact PDF", desc: "Permanently remove sensitive information.", icon: Eraser, color: "red", bg: "bg-red-500/10", isPro: true },
   { id: "organize", title: "Organize PDF", desc: "Rearrange, delete, and organize pages.", icon: Layers, color: "violet", bg: "bg-violet-500/10", isPro: true },
+  { id: "ocr-pdf", title: "OCR PDF", desc: "Convert scanned PDFs into searchable and editable text.", icon: ScanText, color: "blue", isComingSoon: true },
+  { id: "scan-pdf", title: "Scan to PDF", desc: "Capture documents from your scanner or camera directly to PDF.", icon: Scan, color: "indigo", isComingSoon: true },
 ];
 
 import axios from 'axios';
@@ -60,7 +62,7 @@ export default function Home() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative px-6 pt-32 pb-20 text-center lg:pt-40 lg:pb-32 overflow-hidden">
+      <section className="relative px-6 pt-32 pb-10 text-center lg:pt-40 lg:pb-12 overflow-hidden">
         <motion.div
           initial="hidden"
           animate="visible"
@@ -68,7 +70,7 @@ export default function Home() {
             hidden: { opacity: 0 },
             visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
           }}
-          className="relative mx-auto max-w-5xl space-y-8"
+          className="relative mx-auto max-w-5xl space-y-6"
         >
           <div className="overflow-hidden">
             <motion.h1
@@ -126,7 +128,7 @@ export default function Home() {
           */}
           {(!user || user.plan !== 'PRO') && (
             <motion.div
-              className="flex flex-col sm:flex-row justify-center gap-6 pt-8"
+              className="flex flex-col sm:flex-row justify-center gap-6 pt-6"
               variants={{
                 hidden: { opacity: 0, y: 20 },
                 visible: { opacity: 1, y: 0 }

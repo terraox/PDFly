@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import ProBadge from "./ProBadge";
 
-export default function ToolCard({ icon: Icon, title, desc, color, isPro }) {
+export default function ToolCard({ icon: Icon, title, desc, color, isPro, isComingSoon }) {
   const colorMap = {
     red: "bg-red-500/10 text-red-600 dark:bg-red-500/20 dark:text-red-400",
     orange: "bg-orange-500/10 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400",
@@ -12,6 +12,7 @@ export default function ToolCard({ icon: Icon, title, desc, color, isPro }) {
     gray: "bg-zinc-500/10 text-zinc-600 dark:bg-zinc-500/20 dark:text-zinc-400",
     emerald: "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400",
     violet: "bg-violet-500/10 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400",
+    indigo: "bg-indigo-500/10 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400",
   };
 
   return (
@@ -44,6 +45,11 @@ export default function ToolCard({ icon: Icon, title, desc, color, isPro }) {
             <Icon className="h-7 w-7" strokeWidth={2} />
           </div>
           {isPro && <ProBadge />}
+          {isComingSoon && (
+            <span className="inline-flex items-center rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+              Soon
+            </span>
+          )}
         </div>
 
         <h3 className="mb-2 text-lg font-bold tracking-tight text-zinc-900 transition-colors group-hover:text-indigo-600 dark:text-zinc-100 dark:group-hover:text-indigo-400">

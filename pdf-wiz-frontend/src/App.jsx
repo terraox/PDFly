@@ -30,6 +30,7 @@ import History from './pages/History';
 import CropTool from './pages/CropTool';
 import RedactTool from './pages/RedactTool';
 import OrganizeTool from './pages/OrganizeTool';
+import ComingSoon from './pages/ComingSoon';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard';
@@ -73,6 +74,8 @@ function AnimatedRoutes() {
           <Route path="/crop" element={<CropTool />} />
           <Route path="/redact" element={<RedactTool />} />
           <Route path="/organize" element={<OrganizeTool />} />
+          <Route path="/ocr-pdf" element={<ComingSoon />} />
+          <Route path="/scan-pdf" element={<ComingSoon />} />
 
           {/* Remaining Tool Routes using the generic ToolPage component */}
           <Route path="/compress" element={<ToolPage title="Compress PDF" icon={Minimize2} />} />
