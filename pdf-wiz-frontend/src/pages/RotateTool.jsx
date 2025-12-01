@@ -154,7 +154,7 @@ export default function RotateTool() {
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black transition-colors duration-300 font-sans">
       <Navbar />
-      <div className="mx-auto max-w-5xl px-6 py-12 lg:px-8">
+      <div className="mx-auto max-w-5xl px-6 py-12 lg:px-8 pt-24">
 
         {/* Header */}
         <motion.div
