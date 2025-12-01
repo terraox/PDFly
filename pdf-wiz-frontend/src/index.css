@@ -74,6 +74,7 @@ body,
 html,
 body {
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 /* Restore text cursor for inputs */

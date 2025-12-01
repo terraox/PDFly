@@ -15,6 +15,23 @@ module.exports = {
         "spin-around": "spin-around calc(var(--speed) * 2) infinite linear",
         "slide": "slide var(--speed) ease-in-out infinite alternate",
         "rainbow": "rainbow var(--speed, 2s) infinite linear",
+        "shine": {
+          "0%": {
+            "background-position": "0% 0%",
+          },
+          "50%": {
+            "background-position": "100% 100%",
+          },
+          to: {
+            "background-position": "0% 0%",
+          },
+        },
+      },
+      animation: {
+        "shimmer": "shimmer 8s infinite",
+        "spin-around": "spin-around calc(var(--speed) * 2) infinite linear",
+        "slide": "slide var(--speed) ease-in-out infinite alternate",
+        "rainbow": "rainbow var(--speed, 2s) infinite linear",
         "shine": "shine var(--duration) infinite linear",
       },
       keyframes: {
