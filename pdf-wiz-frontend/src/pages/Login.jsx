@@ -80,7 +80,7 @@ export default function Login() {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label className="text-xs font-medium text-zinc-500 uppercase tracking-wider">Password (Access Key)</label>
-            <Link to="/register" className="relative z-50 text-xs text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer">Lost access key?</Link>
+            <Link to="/forgot-password" className="relative z-50 text-xs text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer">Lost access key?</Link>
           </div>
           <div className="relative">
             <Lock className="absolute left-3 top-2.5 h-5 w-5 text-zinc-400" />

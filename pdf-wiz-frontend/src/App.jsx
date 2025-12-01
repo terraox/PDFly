@@ -18,6 +18,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Pricing from './pages/Pricing';
 import Checkout from './pages/Checkout';
+import ForgotPassword from './pages/ForgotPassword';
 import ToolPage from './pages/ToolPage';
 import Profile from './pages/Profile';
 import MergeTool from './pages/MergeTool';
@@ -55,6 +56,7 @@ function AnimatedRoutes() {
         <Route path="/register" element={<Register />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* --------------------------------- */}
         {/* PROTECTED ROUTES (Requires Login) */}

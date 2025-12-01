@@ -154,11 +154,47 @@ public class AuthController {
 
         User user = userOpt.get();
         user.setPasswordResetPhrase(resetPhrase);
+        user.setPasswordResetExpiry(LocalDateTime.now().plusMinutes(15)); // Set expiry to 15 minutes
         userRepository.save(user);
 
         emailService.sendResetPhrase(email, resetPhrase);
 
         return ResponseEntity.ok("Reset code sent.");
+    }
+
+    // POST /api/auth/reset-password (Step 2: Reset with Key)
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> payload) {
+        String email = payload.get("email");
+        String resetKey = payload.get("resetKey");
+        String newPassword = payload.get("newPassword");
+
+        Optional<User> userOpt = userRepository.findByEmail(email);
+
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request.");
+        }
+
+        User user = userOpt.get();
+
+        if (user.getPasswordResetPhrase() == null || !user.getPasswordResetPhrase().equals(resetKey)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid reset key.");
+        }
+
+        if (user.getPasswordResetExpiry() == null || user.getPasswordResetExpiry().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Reset key has expired.");
+        }
+
+        // Update password
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        // Clear reset fields
+        user.setPasswordResetPhrase(null);
+        user.setPasswordResetExpiry(null);
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Password reset successfully. You can now login.");
     }
 
     // POST /api/auth/change-password
