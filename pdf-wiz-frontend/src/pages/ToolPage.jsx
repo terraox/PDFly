@@ -534,7 +534,7 @@ export default function ToolPage({ title, description, icon: Icon, endpoint, pro
     <div className="min-h-screen bg-zinc-50 dark:bg-black transition-colors duration-300">
       <Navbar />
       <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
-      <div className="mx-auto max-w-5xl px-6 py-12 lg:px-8 pt-24">
+      <div className="mx-auto max-w-5xl px-6 py-12 lg:px-8 pt-32">
         <motion.div
           className="text-center mb-8"
           initial={{ opacity: 0, y: 20 }}

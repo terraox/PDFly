@@ -90,7 +90,7 @@ export default function WatermarkTool() {
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black transition-colors duration-300 font-sans">
       <Navbar />
-      <div className="mx-auto max-w-5xl px-6 py-12 lg:px-8 pt-24">
+      <div className="mx-auto max-w-5xl px-6 py-12 lg:px-8 pt-32">
 
         {/* Header */}
         <div className="text-center mb-12">
@@ -113,8 +113,8 @@ export default function WatermarkTool() {
             <div
               {...getRootProps()}
               className={`relative h-64 rounded-3xl border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center cursor-pointer ${isDragActive
-                  ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/10'
-                  : 'border-zinc-300 hover:border-indigo-500 bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-indigo-400'
+                ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/10'
+                : 'border-zinc-300 hover:border-indigo-500 bg-white dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-indigo-400'
                 }`}
             >
               <input {...getInputProps()} />
