@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Upload, Eraser, Download, AlertCircle, Trash2, Lock, Sparkles } from 'lucide-react';
+import { Upload, Eraser, Download, AlertCircle, Trash2, Lock, Sparkles, EyeOff } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import ProBadge from '../components/ProBadge';
 import axios from 'axios';
@@ -20,6 +20,31 @@ export default function RedactTool() {
     const [currentRect, setCurrentRect] = useState(null);
     const imgRef = useRef(null);
     const containerRef = useRef(null);
+    const fileInputRef = useRef(null);
+
+    // Keyboard Shortcuts
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
+                e.preventDefault();
+                setRedactions(prev => prev.slice(0, -1));
+            }
+            if (e.key === 'Backspace' || e.key === 'Delete') {
+                // If we had selection, we'd delete selected. For now, delete last.
+                setRedactions(prev => prev.slice(0, -1));
+            }
+            if (e.key === 'Escape') {
+                setFile(null);
+            }
+            if ((e.metaKey || e.ctrlKey) && e.key === 'u') {
+                e.preventDefault();
+                fileInputRef.current?.click();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
 
     // Pro Gating Check
     useEffect(() => {
@@ -200,7 +225,7 @@ export default function RedactTool() {
                     </p>
                 </motion.div>
 
-                <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-xl p-8 border border-zinc-200 dark:border-zinc-800">
+                <div className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-zinc-200 dark:border-zinc-800">
                     {!file ? (
                         <div className="text-center">
                             <div className="mt-4 flex justify-center rounded-lg border border-dashed border-zinc-900/25 dark:border-zinc-100/25 px-6 py-10">
@@ -212,7 +237,15 @@ export default function RedactTool() {
                                             className="relative cursor-pointer rounded-md bg-transparent font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                                         >
                                             <span>Upload a file</span>
-                                            <input id="file-upload" name="file-upload" type="file" className="sr-only" accept=".pdf" onChange={handleFileChange} />
+                                            <input
+                                                id="file-upload"
+                                                name="file-upload"
+                                                type="file"
+                                                className="sr-only"
+                                                accept=".pdf"
+                                                onChange={handleFileChange}
+                                                ref={fileInputRef}
+                                            />
                                         </label>
                                         <p className="pl-1">or drag and drop</p>
                                     </div>
@@ -278,32 +311,71 @@ export default function RedactTool() {
                             </div>
 
                             <div className="flex justify-between items-center">
-                                <p className="text-sm text-zinc-500">
-                                    {redactions.length} area{redactions.length !== 1 ? 's' : ''} marked for redaction
-                                </p>
+                                <div className="flex flex-col">
+                                    <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium">
+                                        {redactions.length} area{redactions.length !== 1 ? 's' : ''} marked
+                                    </p>
+                                </div>
                                 <div className="flex space-x-4">
                                     <button
                                         onClick={() => setFile(null)}
-                                        className="px-4 py-2 text-sm font-semibold text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+                                        className="px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         onClick={handleRedact}
                                         disabled={isProcessing || redactions.length === 0}
-                                        className="flex items-center px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                        className="flex items-center px-6 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg shadow-lg shadow-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95"
                                     >
-                                        {isProcessing ? 'Processing...' : (
+                                        {isProcessing ? (
                                             <>
-                                                <Eraser className="w-4 h-4 mr-2" />
+                                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                                Processing...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <EyeOff className="w-4 h-4 mr-2" />
                                                 Redact PDF
                                             </>
                                         )}
                                     </button>
                                 </div>
                             </div>
+
                         </div>
                     )}
+
+                    {/* Shortcuts Section - Always Visible */}
+                    <div className="mt-8 pt-6 border-t border-zinc-200 dark:border-zinc-800 text-left">
+                        <h4 className="text-xs font-semibold text-zinc-500 dark:text-zinc-500 uppercase tracking-wider mb-4 pl-1">
+                            Keyboard Shortcuts
+                        </h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="flex items-center justify-between p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors group">
+                                <span className="text-sm text-zinc-600 dark:text-zinc-400 font-medium group-hover:text-zinc-900 dark:group-hover:text-zinc-200 transition-colors">Undo Action</span>
+                                <div className="flex gap-1.5">
+                                    <kbd className="min-w-[20px] h-6 flex items-center justify-center px-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-sm">⌘</kbd>
+                                    <kbd className="min-w-[20px] h-6 flex items-center justify-center px-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-sm">Z</kbd>
+                                </div>
+                            </div>
+                            <div className="flex items-center justify-between p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors group">
+                                <span className="text-sm text-zinc-600 dark:text-zinc-400 font-medium group-hover:text-zinc-900 dark:group-hover:text-zinc-200 transition-colors">Delete Selected</span>
+                                <kbd className="min-w-[20px] h-6 flex items-center justify-center px-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-sm">⌫</kbd>
+                            </div>
+                            <div className="flex items-center justify-between p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors group">
+                                <span className="text-sm text-zinc-600 dark:text-zinc-400 font-medium group-hover:text-zinc-900 dark:group-hover:text-zinc-200 transition-colors">Upload PDF</span>
+                                <div className="flex gap-1.5">
+                                    <kbd className="min-w-[20px] h-6 flex items-center justify-center px-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-sm">⌘</kbd>
+                                    <kbd className="min-w-[20px] h-6 flex items-center justify-center px-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-sm">U</kbd>
+                                </div>
+                            </div>
+                            <div className="flex items-center justify-between p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors group">
+                                <span className="text-sm text-zinc-600 dark:text-zinc-400 font-medium group-hover:text-zinc-900 dark:group-hover:text-zinc-200 transition-colors">Cancel</span>
+                                <kbd className="min-w-[20px] h-6 flex items-center justify-center px-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md shadow-sm">Esc</kbd>
+                            </div>
+                        </div>
+                    </div>
 
                     {error && (
                         <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg flex items-center">
