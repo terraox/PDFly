@@ -9,6 +9,7 @@ import axios from 'axios';
 export default function Pricing() {
   const { user, isAuthenticated } = useAuth();
   const [freeLimit, setFreeLimit] = useState(3);
+  const [isAnnual, setIsAnnual] = useState(false);
 
   useEffect(() => {
     fetchConfig();
@@ -44,7 +45,22 @@ export default function Pricing() {
           </p>
         </div>
 
-        <div className="isolate mx-auto mt-16 grid max-w-md grid-cols-1 gap-y-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-2 lg:gap-x-8 xl:gap-x-12">
+        <div className="mt-8 flex justify-center items-center gap-4">
+          <span className={`text-sm font-semibold ${!isAnnual ? 'text-zinc-900 dark:text-white' : 'text-zinc-500 dark:text-zinc-400'}`}>Monthly</span>
+          <button
+            onClick={() => setIsAnnual(!isAnnual)}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${isAnnual ? 'bg-indigo-600' : 'bg-zinc-200 dark:bg-zinc-700'}`}
+          >
+            <span
+              className={`${isAnnual ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}
+            />
+          </button>
+          <span className={`text-sm font-semibold ${isAnnual ? 'text-zinc-900 dark:text-white' : 'text-zinc-500 dark:text-zinc-400'}`}>
+            Yearly <span className="ml-1.5 inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-400">Save 17%</span>
+          </span>
+        </div>
+
+        <div className="isolate mx-auto mt-10 grid max-w-md grid-cols-1 gap-y-8 sm:mt-10 lg:mx-0 lg:max-w-none lg:grid-cols-2 lg:gap-x-8 xl:gap-x-12">
 
           {/* FREE TIER */}
           <div className={`rounded-3xl p-8 ring-1 ring-zinc-200 dark:ring-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-xl ${isFree && isAuthenticated ? 'ring-2 ring-indigo-500' : ''}`}>
@@ -52,7 +68,7 @@ export default function Pricing() {
             <p className="mt-4 text-sm leading-6 text-zinc-600 dark:text-zinc-400">Perfect for quick, one-off tasks.</p>
             <p className="mt-6 flex items-baseline gap-x-1">
               <span className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white">₹0</span>
-              <span className="text-sm font-semibold leading-6 text-zinc-600 dark:text-zinc-400">/month</span>
+              <span className="text-sm font-semibold leading-6 text-zinc-600 dark:text-zinc-400">/{isAnnual ? 'year' : 'month'}</span>
             </p>
             <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
               <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-600" /> {freeLimit} Tasks per day</li>
@@ -90,15 +106,15 @@ export default function Pricing() {
             <p className="mt-4 text-sm leading-6 text-zinc-300">For power users who need professional tools.</p>
             <p className="mt-6 flex items-baseline gap-x-1">
               <span className="text-4xl font-bold tracking-tight text-white">
-                ₹<NumberTicker value={499} className="text-white" />
+                ₹<NumberTicker value={isAnnual ? 4999 : 499} className="text-white" />
               </span>
-              <span className="text-sm font-semibold leading-6 text-zinc-300">/month</span>
+              <span className="text-sm font-semibold leading-6 text-zinc-300">/{isAnnual ? 'year' : 'month'}</span>
             </p>
             <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-zinc-300">
               <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-400" /> Unlimited Tasks</li>
               <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-400" /> 100MB Max File Size</li>
               <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-400" /> Priority Processing (3x Faster)</li>
-              <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-400" /> OCR & Text Recognition</li>
+              <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-400" /> AI-Powered OCR PDF</li>
               <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-400" /> No Ads</li>
             </ul>
             {isPro ? (

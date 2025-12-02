@@ -1,0 +1,5 @@
+# H2 Database Files
+/data/
+*.db
+*.lock.db
+*.trace.db

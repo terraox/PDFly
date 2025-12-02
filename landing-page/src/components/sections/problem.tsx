@@ -1,26 +1,26 @@
 import BlurFade from "@/components/magicui/blur-fade";
 import Section from "@/components/section";
 import { Card, CardContent } from "@/components/ui/card";
-import { Brain, Shield, Zap } from "lucide-react";
+import { FileWarning, LayoutGrid, Lock } from "lucide-react";
 
 const problems = [
   {
-    title: "Data Overload",
+    title: "File Size Limits",
     description:
-      "Businesses struggle to make sense of vast amounts of complex data, missing out on valuable insights that could drive growth and innovation.",
-    icon: Brain,
+      "Large PDF files get rejected by email servers and are difficult to share, slowing down your workflow.",
+    icon: FileWarning,
   },
   {
-    title: "Slow Decision-Making",
+    title: "Uneditable Documents",
     description:
-      "Traditional data processing methods are too slow, causing businesses to lag behind market changes and miss crucial opportunities.",
-    icon: Zap,
+      "Static PDF contracts and forms are impossible to edit without the right tools, leading to frustration.",
+    icon: Lock,
   },
   {
-    title: "Data Security Concerns",
+    title: "Scattered Tools",
     description:
-      "With increasing cyber threats, businesses worry about the safety of their sensitive information when adopting new technologies.",
-    icon: Shield,
+      "Switching between different websites for merging, converting, and signing documents is inefficient and risky.",
+    icon: LayoutGrid,
   },
 ];
 
@@ -28,7 +28,7 @@ export default function Component() {
   return (
     <Section
       title="Problem"
-      subtitle="Manually entering your data is a hassle."
+      subtitle="Managing PDFs shouldn't be a hassle."
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
         {problems.map((problem, index) => (

@@ -73,6 +73,17 @@ export default function Home() {
           className="relative mx-auto max-w-5xl space-y-6"
         >
           <div className="overflow-hidden">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="flex justify-center mb-6"
+            >
+              <div className="inline-flex items-center gap-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 text-sm font-medium text-indigo-600 dark:text-indigo-400">
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>New Feature: Redact PDF</span>
+              </div>
+            </motion.div>
             <motion.h1
               className="text-6xl font-extrabold tracking-tight sm:text-7xl lg:text-8xl text-zinc-900 dark:text-white leading-[1.1]"
               variants={{

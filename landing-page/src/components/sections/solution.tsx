@@ -9,38 +9,38 @@ import { motion } from "framer-motion";
 
 const features = [
   {
-    title: "Advanced AI Algorithms",
+    title: "All-in-One Platform",
     description:
-      "Our platform utilizes cutting-edge AI algorithms to provide accurate and efficient solutions for your business needs.",
+      "Merge, split, edit, and sign PDFs in one place. No need to switch between multiple tools for different tasks.",
     className: "hover:bg-red-500/10 transition-all duration-500 ease-out",
     content: (
       <>
         <Safari
           src={`/dashboard.png`}
-          url="https://acme.ai"
+          url="https://pdfly.com"
           className="-mb-32 mt-4 max-h-64 w-full px-4 select-none drop-shadow-[0_0_28px_rgba(0,0,0,.1)] group-hover:translate-y-[-10px] transition-all duration-300"
         />
       </>
     ),
   },
   {
-    title: "Secure Data Handling",
+    title: "Secure Processing",
     description:
-      "We prioritize your data security with state-of-the-art encryption and strict privacy protocols, ensuring your information remains confidential.",
+      "Your files are processed securely and deleted automatically after use. We prioritize your privacy and data security.",
     className:
       "order-3 xl:order-none hover:bg-blue-500/10 transition-all duration-500 ease-out",
     content: (
       <Safari
         src={`/dashboard.png`}
-        url="https://acme.ai"
+        url="https://pdfly.com"
         className="-mb-32 mt-4 max-h-64 w-full px-4 select-none drop-shadow-[0_0_28px_rgba(0,0,0,.1)] group-hover:translate-y-[-10px] transition-all duration-300"
       />
     ),
   },
   {
-    title: "Seamless Integration",
+    title: "Smart Compression",
     description:
-      "Easily integrate our AI solutions into your existing workflows and systems for a smooth and efficient operation.",
+      "Reduce file size significantly without compromising on visual quality. Perfect for sharing via email or web.",
     className:
       "md:row-span-2 hover:bg-orange-500/10 transition-all duration-500 ease-out",
     content: (
@@ -57,16 +57,16 @@ const features = [
         />
         <Safari
           src={`/dashboard.png`}
-          url="https://acme.ai"
+          url="https://pdfly.com"
           className="-mb-48 ml-12 mt-16 h-full px-4 select-none drop-shadow-[0_0_28px_rgba(0,0,0,.1)] group-hover:translate-x-[-10px] transition-all duration-300"
         />
       </>
     ),
   },
   {
-    title: "Customizable Solutions",
+    title: "Redact & Protect",
     description:
-      "Tailor our AI services to your specific needs with flexible customization options, allowing you to get the most out of our platform.",
+      "Permanently remove sensitive information and password protect your important documents with ease.",
     className:
       "flex-row order-4 md:col-span-2 md:flex-row xl:order-none hover:bg-green-500/10 transition-all duration-500 ease-out",
     content: (
@@ -74,7 +74,7 @@ const features = [
         <Ripple className="absolute -bottom-full" />
         <Safari
           src={`/dashboard.png`}
-          url="https://acme.ai"
+          url="https://pdfly.com"
           className="-mb-32 mt-4 max-h-64 w-full px-4 select-none drop-shadow-[0_0_28px_rgba(0,0,0,.1)] group-hover:translate-y-[-10px] transition-all duration-300"
         />
       </>
@@ -86,8 +86,8 @@ export default function Component() {
   return (
     <Section
       title="Solution"
-      subtitle="Empower Your Business with AI Workflows"
-      description="Generic AI tools won't suffice. Our platform is purpose-built to provide exceptional AI-driven solutions for your unique business needs."
+      subtitle="Empower Your Workflow with PDFly"
+      description="Generic tools won't suffice. Our platform is purpose-built to provide exceptional PDF solutions for your unique needs."
       className="bg-neutral-100 dark:bg-neutral-900"
     >
       <div className="mx-auto mt-16 grid max-w-sm grid-cols-1 gap-6 text-gray-500 md:max-w-3xl md:grid-cols-2 xl:grid-rows-2 md:grid-rows-3 xl:max-w-6xl xl:auto-rows-fr xl:grid-cols-3">

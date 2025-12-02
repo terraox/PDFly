@@ -84,184 +84,172 @@ export const TestimonialCard = ({
 
 const testimonials = [
   {
-    name: "Alex Rivera",
-    role: "CTO at InnovateTech",
-    img: "https://randomuser.me/api/portraits/men/91.jpg",
+    name: "Aarav Sharma",
+    role: "CTO at TechBharat",
+    img: "https://randomuser.me/api/portraits/men/32.jpg",
     description: (
       <p>
-        The AI-driven analytics from #QuantumInsights have revolutionized our
-        product development cycle.
+        PDFly has completely transformed how we handle documentation.
         <Highlight>
-          Insights are now more accurate and faster than ever.
+          Merging and compressing reports is now instant.
         </Highlight>{" "}
-        A game-changer for tech companies.
+        A game-changer for Indian tech companies.
       </p>
     ),
   },
   {
-    name: "Samantha Lee",
-    role: "Marketing Director at NextGen Solutions",
-    img: "https://randomuser.me/api/portraits/women/12.jpg",
+    name: "Priya Patel",
+    role: "Marketing Director at DesiSolutions",
+    img: "https://randomuser.me/api/portraits/women/44.jpg",
     description: (
       <p>
-        Implementing #AIStream&apos;s customer prediction model has drastically
-        improved our targeting strategy.
-        <Highlight>Seeing a 50% increase in conversion rates!</Highlight> Highly
-        recommend their solutions.
+        We use PDFly daily for our marketing assets.
+        <Highlight>The compression quality is unmatched.</Highlight> Highly
+        recommend it for keeping file sizes low without losing clarity.
       </p>
     ),
   },
   {
-    name: "Raj Patel",
-    role: "Founder & CEO at StartUp Grid",
-    img: "https://randomuser.me/api/portraits/men/45.jpg",
+    name: "Rohan Gupta",
+    role: "Founder & CEO at StartupIndia",
+    img: "https://randomuser.me/api/portraits/men/22.jpg",
     description: (
       <p>
-        As a startup, we need to move fast and stay ahead. #CodeAI&apos;s
-        automated coding assistant helps us do just that.
-        <Highlight>Our development speed has doubled.</Highlight> Essential tool
+        As a startup, we need efficient tools. PDFly&apos;s e-signature feature
+        is a lifesaver.
+        <Highlight>Contracts are signed and secured in minutes.</Highlight> Essential tool
         for any startup.
       </p>
     ),
   },
   {
-    name: "Emily Chen",
-    role: "Product Manager at Digital Wave",
-    img: "https://randomuser.me/api/portraits/women/83.jpg",
+    name: "Ananya Singh",
+    role: "Product Manager at DigitalWaves",
+    img: "https://randomuser.me/api/portraits/women/68.jpg",
     description: (
       <p>
-        #VoiceGen&apos;s AI-driven voice synthesis has made creating global
-        products a breeze.
-        <Highlight>Localization is now seamless and efficient.</Highlight> A
-        must-have for global product teams.
+        PDFly&apos;s interface is so intuitive.
+        <Highlight>Organizing pages and splitting PDFs is effortless.</Highlight> A
+        must-have for product teams managing specs.
       </p>
     ),
   },
   {
-    name: "Michael Brown",
-    role: "Data Scientist at FinTech Innovations",
-    img: "https://randomuser.me/api/portraits/men/1.jpg",
+    name: "Vikram Malhotra",
+    role: "Data Scientist at FinTechIndia",
+    img: "https://randomuser.me/api/portraits/men/11.jpg",
     description: (
       <p>
-        Leveraging #DataCrunch&apos;s AI for our financial models has given us
-        an edge in predictive accuracy.
+        Security is paramount in fintech. PDFly&apos;s local processing gives us peace of mind.
         <Highlight>
-          Our investment strategies are now powered by real-time data analytics.
+          Our sensitive financial data never leaves our control.
         </Highlight>{" "}
         Transformative for the finance industry.
       </p>
     ),
   },
   {
-    name: "Linda Wu",
-    role: "VP of Operations at LogiChain Solutions",
-    img: "https://randomuser.me/api/portraits/women/5.jpg",
+    name: "Meera Reddy",
+    role: "VP of Operations at LogiChain India",
+    img: "https://randomuser.me/api/portraits/women/33.jpg",
     description: (
       <p>
-        #LogiTech&apos;s supply chain optimization tools have drastically
-        reduced our operational costs.
+        PDFly has streamlined our invoicing process.
         <Highlight>
-          Efficiency and accuracy in logistics have never been better.
+          Batch processing hundreds of invoices saves us hours every week.
         </Highlight>{" "}
       </p>
     ),
   },
   {
-    name: "Carlos Gomez",
+    name: "Arjun Nair",
     role: "Head of R&D at EcoInnovate",
-    img: "https://randomuser.me/api/portraits/men/14.jpg",
+    img: "https://randomuser.me/api/portraits/men/55.jpg",
     description: (
       <p>
-        By integrating #GreenTech&apos;s sustainable energy solutions,
-        we&apos;ve seen a significant reduction in carbon footprint.
+        We love that PDFly is lightweight and fast.
         <Highlight>
-          Leading the way in eco-friendly business practices.
+          No bulky software installation required.
         </Highlight>{" "}
-        Pioneering change in the industry.
+        It just works perfectly in the browser.
       </p>
     ),
   },
   {
-    name: "Aisha Khan",
-    role: "Chief Marketing Officer at Fashion Forward",
-    img: "https://randomuser.me/api/portraits/women/56.jpg",
+    name: "Sana Khan",
+    role: "Chief Marketing Officer at FashionHub",
+    img: "https://randomuser.me/api/portraits/women/29.jpg",
     description: (
       <p>
-        #TrendSetter&apos;s market analysis AI has transformed how we approach
-        fashion trends.
+        Converting our lookbooks to PDF has never been easier.
         <Highlight>
-          Our campaigns are now data-driven with higher customer engagement.
+          The watermarking feature protects our designs beautifully.
         </Highlight>{" "}
-        Revolutionizing fashion marketing.
+        Revolutionizing how we share portfolios.
       </p>
     ),
   },
   {
-    name: "Tom Chen",
+    name: "Aditya Verma",
     role: "Director of IT at HealthTech Solutions",
-    img: "https://randomuser.me/api/portraits/men/18.jpg",
+    img: "https://randomuser.me/api/portraits/men/64.jpg",
     description: (
       <p>
-        Implementing #MediCareAI in our patient care systems has improved
-        patient outcomes significantly.
+        PDFly helps us manage patient records securely.
         <Highlight>
-          Technology and healthcare working hand in hand for better health.
+          Redacting sensitive information is quick and reliable.
         </Highlight>{" "}
-        A milestone in medical technology.
+        Technology and healthcare working hand in hand.
       </p>
     ),
   },
   {
-    name: "Sofia Patel",
+    name: "Kavita Iyer",
     role: "CEO at EduTech Innovations",
-    img: "https://randomuser.me/api/portraits/women/73.jpg",
+    img: "https://randomuser.me/api/portraits/women/91.jpg",
     description: (
       <p>
-        #LearnSmart&apos;s AI-driven personalized learning plans have doubled
-        student performance metrics.
+        Students love PDFly for organizing their study materials.
         <Highlight>
-          Education tailored to every learner&apos;s needs.
+          Merging lecture notes into a single PDF is a favorite feature.
         </Highlight>{" "}
         Transforming the educational landscape.
       </p>
     ),
   },
   {
-    name: "Jake Morrison",
-    role: "CTO at SecureNet Tech",
-    img: "https://randomuser.me/api/portraits/men/25.jpg",
+    name: "Rahul Das",
+    role: "CTO at SecureNet India",
+    img: "https://randomuser.me/api/portraits/men/76.jpg",
     description: (
       <p>
-        With #CyberShield&apos;s AI-powered security systems, our data
-        protection levels are unmatched.
-        <Highlight>Ensuring safety and trust in digital spaces.</Highlight>{" "}
-        Redefining cybersecurity standards.
+        The password protection feature on PDFly is top-notch.
+        <Highlight>Ensuring client data remains confidential.</Highlight>{" "}
+        Redefining document security standards.
       </p>
     ),
   },
   {
-    name: "Nadia Ali",
-    role: "Product Manager at Creative Solutions",
-    img: "https://randomuser.me/api/portraits/women/78.jpg",
+    name: "Neha Kapoor",
+    role: "Product Manager at CreativeMinds",
+    img: "https://randomuser.me/api/portraits/women/52.jpg",
     description: (
       <p>
-        #DesignPro&apos;s AI has streamlined our creative process, enhancing
-        productivity and innovation.
-        <Highlight>Bringing creativity and technology together.</Highlight> A
+        PDFly allows us to easily extract images from PDFs.
+        <Highlight>Great for repurposing content for our campaigns.</Highlight> A
         game-changer for creative industries.
       </p>
     ),
   },
   {
-    name: "Omar Farooq",
+    name: "Kabir Singh",
     role: "Founder at Startup Hub",
-    img: "https://randomuser.me/api/portraits/men/54.jpg",
+    img: "https://randomuser.me/api/portraits/men/88.jpg",
     description: (
       <p>
-        #VentureAI&apos;s insights into startup ecosystems have been invaluable
-        for our growth and funding strategies.
-        <Highlight>Empowering startups with data-driven decisions.</Highlight> A
-        catalyst for startup success.
+        The OCR feature is fantastic for digitizing old documents.
+        <Highlight>Searchable PDFs make our archives actually useful.</Highlight> A
+        catalyst for efficiency.
       </p>
     ),
   },

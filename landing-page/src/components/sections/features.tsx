@@ -1,41 +1,41 @@
 import Features from "@/components/features-horizontal";
 import Section from "@/components/section";
-import { BarChart3, Brain, FileText, LineChart } from "lucide-react";
+import { ArrowLeftRight, Minimize2, PenTool, Shield } from "lucide-react";
 
 const data = [
   {
     id: 1,
-    title: "AI-Powered Dashboard",
-    content: "Visualize trends and gain insights at a glance.",
+    title: "Merge & Split",
+    content: "Combine multiple PDFs into one or extract specific pages with ease.",
     image: "/dashboard.png",
-    icon: <BarChart3 className="h-6 w-6 text-primary" />,
+    icon: <ArrowLeftRight className="h-6 w-6 text-primary" />,
   },
   {
     id: 2,
-    title: "Natural Language Processing",
-    content: "Analyze text and extract sentiment effortlessly.",
+    title: "Compress & Convert",
+    content: "Reduce file size while maintaining quality and convert to/from various formats.",
     image: "/dashboard.png",
-    icon: <Brain className="h-6 w-6 text-primary" />,
+    icon: <Minimize2 className="h-6 w-6 text-primary" />,
   },
   {
     id: 3,
-    title: "Predictive Analytics",
-    content: "Forecast trends and make data-driven decisions.",
+    title: "Edit & Sign",
+    content: "Add text, images, and electronic signatures to your documents.",
     image: "/dashboard.png",
-    icon: <LineChart className="h-6 w-6 text-primary" />,
+    icon: <PenTool className="h-6 w-6 text-primary" />,
   },
   {
     id: 4,
-    title: "Automated Reporting",
-    content: "Generate comprehensive reports with one click.",
+    title: "Secure & Protect",
+    content: "Encrypt your files with passwords and redact sensitive information.",
     image: "/dashboard.png",
-    icon: <FileText className="h-6 w-6 text-primary" />,
+    icon: <Shield className="h-6 w-6 text-primary" />,
   },
 ];
 
 export default function Component() {
   return (
-    <Section title="Features" subtitle="User Flows and Navigational Structures">
+    <Section title="Features" subtitle="Everything you need to manage PDFs">
       <Features collapseDelay={5000} linePosition="bottom" data={data} />
     </Section>
   );

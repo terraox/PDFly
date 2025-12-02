@@ -60,6 +60,7 @@ public class AuthController {
 
         // 1. Generate secure password and hash it
         String rawPassword = generateRandomPassword();
+        System.out.println("Generated Password for " + request.getEmail() + ": " + rawPassword);
         String hashedPassword = passwordEncoder.encode(rawPassword);
 
         // 2. Create and save new user (Default FREE, Set 30-day expiry for PRO
@@ -200,21 +201,44 @@ public class AuthController {
     // POST /api/auth/change-password
     @PostMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody Map<String, String> payload) {
-        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication()
-                .getName();
-        String oldPassword = payload.get("oldPassword");
-        String newPassword = payload.get("newPassword");
+        try {
+            String email = org.springframework.security.core.context.SecurityContextHolder.getContext()
+                    .getAuthentication()
+                    .getName();
 
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+            // Log for debugging
+            System.out.println("Password change request for user: " + email);
 
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect old password.");
+            String oldPassword = payload.get("oldPassword");
+            String newPassword = payload.get("newPassword");
+
+            if (oldPassword == null || oldPassword.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Old password is required");
+            }
+
+            if (newPassword == null || newPassword.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("New password is required");
+            }
+
+            User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+
+            if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+                System.out.println("Password mismatch for user: " + email);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect old password");
+            }
+
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+
+            System.out.println("Password changed successfully for user: " + email);
+
+            return ResponseEntity.ok("Password changed successfully");
+        } catch (Exception e) {
+            System.err.println("Error changing password: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error changing password: " + e.getMessage());
         }
-
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
-
-        return ResponseEntity.ok("Password changed successfully.");
     }
 
     // Utility to generate a secure random password

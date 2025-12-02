@@ -1,31 +1,31 @@
 import Features from "@/components/features-vertical";
 import Section from "@/components/section";
-import { Sparkles, Upload, Zap } from "lucide-react";
+import { Download, MousePointerClick, Upload } from "lucide-react";
 
 const data = [
   {
     id: 1,
-    title: "1. Upload Your Data",
+    title: "1. Upload Your PDF",
     content:
-      "Simply upload your data to our secure platform. We support various file formats and data types to ensure a seamless integration with your existing systems.",
+      "Drag and drop your file or select it from your device. We support PDF, Word, Excel, JPG, and more.",
     image: "/dashboard.png",
     icon: <Upload className="w-6 h-6 text-primary" />,
   },
   {
     id: 2,
-    title: "2. Click Start",
+    title: "2. Choose Your Tool",
     content:
-      "Our advanced AI algorithms automatically process and analyze your data, extracting valuable insights and patterns that would be difficult to identify manually.",
+      "Select from our wide range of tools to merge, split, compress, convert, or edit your document.",
     image: "/dashboard.png",
-    icon: <Zap className="w-6 h-6 text-primary" />,
+    icon: <MousePointerClick className="w-6 h-6 text-primary" />,
   },
   {
     id: 3,
-    title: "3. Get Actionable Insights",
+    title: "3. Download Result",
     content:
-      "Receive clear, actionable insights and recommendations based on the AI analysis. Use these insights to make data-driven decisions and improve your business strategies.",
+      "Your file is processed instantly. Download the high-quality result to your device in seconds.",
     image: "/dashboard.png",
-    icon: <Sparkles className="w-6 h-6 text-primary" />,
+    icon: <Download className="w-6 h-6 text-primary" />,
   },
 ];
 

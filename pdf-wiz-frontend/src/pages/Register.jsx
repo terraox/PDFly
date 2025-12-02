@@ -9,6 +9,7 @@ const API_URL = "http://localhost:8080/api/auth/register";
 export default function Register() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const [error, setError] = useState(null);
   const [email, setEmail] = useState("");
 
@@ -26,6 +27,7 @@ export default function Register() {
 
       if (response.status === 200) {
         setSuccess(true);
+        setSuccessMessage(response.data);
       }
     } catch (err) {
       if (err.response && err.response.status === 409) {
@@ -49,7 +51,7 @@ export default function Register() {
             <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
           </div>
           <p className="text-sm text-zinc-600 dark:text-zinc-300">
-            We have generated a secure password and emailed it to **{email}**.
+            {successMessage || `We have generated a secure password and emailed it to **${email}**.`}
           </p>
           <Link to="/login" className="block w-full rounded-lg bg-zinc-900 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-[1.02] dark:bg-white dark:text-black">
             Proceed to Login

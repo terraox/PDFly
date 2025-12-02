@@ -2,14 +2,14 @@ import Marquee from "@/components/magicui/marquee";
 import Image from "next/image";
 
 const companies = [
-  "Google",
-  "Microsoft",
-  "Amazon",
-  "Netflix",
-  "YouTube",
-  "Instagram",
-  "Uber",
-  "Spotify",
+  "Flipkart",
+  "Zomato",
+  "Swiggy",
+  "Paytm",
+  "Ola",
+  "Razorpay",
+  "Zoho",
+  "Freshworks",
 ];
 
 export default function Logos() {
@@ -22,14 +22,14 @@ export default function Logos() {
         <div className="relative mt-6">
           <Marquee className="max-w-full [--duration:40s]">
             {companies.map((logo, idx) => (
-              <Image
+              <div
                 key={idx}
-                width={112}
-                height={40}
-                src={`https://cdn.magicui.design/companies/${logo}.svg`}
-                className="h-10 w-28 dark:brightness-0 dark:invert grayscale opacity-30"
-                alt={logo}
-              />
+                className="flex items-center justify-center h-10 w-32 mx-4"
+              >
+                <span className="text-xl font-bold text-neutral-500 opacity-50 uppercase tracking-wider whitespace-nowrap">
+                  {logo}
+                </span>
+              </div>
             ))}
           </Marquee>
           <div className="pointer-events-none absolute inset-y-0 left-0 h-full w-1/3 bg-gradient-to-r from-background"></div>

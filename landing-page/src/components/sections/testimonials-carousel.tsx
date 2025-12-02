@@ -11,14 +11,14 @@ import Image from "next/image";
 import { MdOutlineFormatQuote } from "react-icons/md";
 
 const companies = [
-  "Google",
-  "Microsoft",
-  "Amazon",
-  "Netflix",
-  "YouTube",
-  "Instagram",
-  "Uber",
-  "Spotify",
+  "Flipkart",
+  "Zomato",
+  "Swiggy",
+  "Paytm",
+  "Ola",
+  "Razorpay",
+  "Zoho",
+  "Freshworks",
 ];
 
 export default function Component() {
@@ -37,32 +37,24 @@ export default function Component() {
                     <MdOutlineFormatQuote className="text-4xl text-themeDarkGray my-4 mx-auto" />
                     <BlurFade delay={0.25} inView>
                       <h4 className="text-1xl font-semibold max-w-lg mx-auto px-10">
-                        There is a lot of exciting stuff going on in the stars
-                        above us that make astronomy so much fun. The truth is
-                        the universe is a constantly changing, moving, some
-                        would say “living” thing because you just never know
-                        what you are going to see on any given night of
-                        stargazing.
+                        PDFly has completely changed how I manage my documents.
+                        The ability to merge, compress, and sign PDFs all in one
+                        place is incredible. It&apos;s fast, secure, and
+                        incredibly easy to use. I can&apos;t imagine going back
+                        to my old workflow.
                       </h4>
                     </BlurFade>
                     <BlurFade delay={0.25 * 2} inView>
-                      <div className="mt-8">
-                        <Image
-                          width={0}
-                          height={40}
-                          key={index}
-                          src={`https://cdn.magicui.design/companies/${
-                            companies[index % companies.length]
-                          }.svg`}
-                          alt={`${companies[index % companies.length]} Logo`}
-                          className="mx-auto w-auto h-[40px] grayscale opacity-30"
-                        />
+                      <div className="mt-8 flex justify-center items-center h-[40px]">
+                        <span className="text-xl font-bold text-neutral-500 opacity-50 uppercase tracking-wider">
+                          {companies[index % companies.length]}
+                        </span>
                       </div>
                     </BlurFade>
                     <div className="">
                       <BlurFade delay={0.25 * 3} inView>
                         <h4 className="text-1xl font-semibold my-2">
-                          Leslie Alexander
+                          Ananya Gupta
                         </h4>
                       </BlurFade>
                     </div>

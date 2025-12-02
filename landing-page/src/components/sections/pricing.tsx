@@ -12,6 +12,7 @@ import { Check } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { FaStar } from "react-icons/fa";
+import { BorderBeam } from "@/components/magicui/border-beam";
 
 export default function PricingSection() {
   const [isMonthly, setIsMonthly] = useState(true);
@@ -32,7 +33,7 @@ export default function PricingSection() {
         </label>
         <span className="ml-2 font-semibold">Yearly</span>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 sm:2 gap-4">
+      <div className="flex flex-col md:flex-row justify-center gap-8">
         {siteConfig.pricing.map((plan, index) => (
           <motion.div
             key={index}
@@ -40,47 +41,42 @@ export default function PricingSection() {
             whileInView={
               isDesktop
                 ? {
-                    y: 0,
-                    opacity: 1,
-                    x:
-                      index === siteConfig.pricing.length - 1
-                        ? -30
-                        : index === 0
-                        ? 30
-                        : 0,
-                    scale:
-                      index === 0 || index === siteConfig.pricing.length - 1
-                        ? 0.94
-                        : 1.0,
-                  }
+                  y: 0,
+                  opacity: 1,
+                }
                 : {}
             }
             viewport={{ once: true }}
             transition={{
-              duration: 1.6,
+              duration: 0.8,
               type: "spring",
               stiffness: 100,
               damping: 30,
-              delay: 0.4,
+              delay: 0.2,
               opacity: { duration: 0.5 },
             }}
             className={cn(
-              `rounded-2xl border-[1px] p-6 bg-background text-center lg:flex lg:flex-col lg:justify-center relative`,
+              `rounded-2xl border-[1px] p-6 bg-background text-center lg:flex lg:flex-col lg:justify-center relative w-full max-w-md`,
               plan.isPopular ? "border-primary border-[2px]" : "border-border",
-              index === 0 || index === siteConfig.pricing.length - 1
-                ? "z-0 transform translate-x-0 translate-y-0 -translate-z-[50px] rotate-y-[10deg]"
-                : "z-10",
-              index === 0 && "origin-right",
-              index === siteConfig.pricing.length - 1 && "origin-left"
+              "z-10"
             )}
           >
             {plan.isPopular && (
-              <div className="absolute top-0 right-0 bg-primary py-0.5 px-2 rounded-bl-xl rounded-tr-xl flex items-center">
+              <div className="absolute top-0 right-0 bg-primary py-0.5 px-2 rounded-bl-xl rounded-tr-xl flex items-center z-20">
                 <FaStar className="text-white" />
                 <span className="text-white ml-1 font-sans font-semibold">
                   Popular
                 </span>
               </div>
+            )}
+            {plan.isPopular && (
+              <BorderBeam
+                size={250}
+                duration={12}
+                delay={9}
+                borderWidth={2}
+                className="z-10"
+              />
             )}
             <div>
               <p className="text-base font-semibold text-muted-foreground">
