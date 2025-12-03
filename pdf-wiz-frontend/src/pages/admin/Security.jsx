@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from './AdminLayout';
-import { ShieldAlert, Lock, Unlock, AlertTriangle, FileText } from 'lucide-react';
+import { ShieldAlert, Lock, Unlock, AlertTriangle, FileText, XCircle } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 
@@ -8,7 +8,30 @@ export default function Security() {
   const [maintenance, setMaintenance] = useState(false);
   const [disableSignups, setDisableSignups] = useState(false);
   const [disableCompression, setDisableCompression] = useState(false);
+  const [newIp, setNewIp] = useState("");
+  const [blockedIps, setBlockedIps] = useState(() => {
+    const saved = localStorage.getItem('pdfly_blocked_ips');
+    return saved ? JSON.parse(saved) : [
+      { ip: "203.0.113.45", date: "2 days ago" },
+      { ip: "198.51.100.2", date: "5 hours ago" }
+    ];
+  });
   const { token } = useAuth();
+
+  useEffect(() => {
+    localStorage.setItem('pdfly_blocked_ips', JSON.stringify(blockedIps));
+  }, [blockedIps]);
+
+  const handleBlockIp = () => {
+    if (newIp && !blockedIps.find(i => i.ip === newIp)) {
+      setBlockedIps([{ ip: newIp, date: "Just now" }, ...blockedIps]);
+      setNewIp("");
+    }
+  };
+
+  const handleUnblockIp = (ip) => {
+    setBlockedIps(blockedIps.filter(i => i.ip !== ip));
+  };
 
   useEffect(() => {
     if (token) {
@@ -83,18 +106,42 @@ export default function Security() {
             <ShieldAlert className="h-5 w-5 text-indigo-500" /> IP Blacklist
           </h3>
           <div className="flex gap-2 mb-4">
-            <input type="text" placeholder="Enter IP Address (e.g. 192.168.1.1)" className="flex-1 rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-white focus:border-indigo-500 focus:outline-none" />
-            <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 rounded-md text-sm font-medium">Block</button>
+            <input
+              type="text"
+              value={newIp}
+              onChange={(e) => setNewIp(e.target.value)}
+              placeholder="Enter IP Address (e.g. 192.168.1.1)"
+              className="flex-1 rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-white focus:border-indigo-500 focus:outline-none"
+            />
+            <button
+              onClick={handleBlockIp}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 rounded-md text-sm font-medium"
+            >
+              Block
+            </button>
           </div>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between p-3 rounded-md bg-zinc-950 border border-zinc-800 text-sm">
-              <span className="text-zinc-300 font-mono">203.0.113.45</span>
-              <span className="text-xs text-zinc-500">Blocked 2 days ago</span>
-            </div>
-            <div className="flex items-center justify-between p-3 rounded-md bg-zinc-950 border border-zinc-800 text-sm">
-              <span className="text-zinc-300 font-mono">198.51.100.2</span>
-              <span className="text-xs text-zinc-500">Blocked 5 hours ago</span>
-            </div>
+          <div className="space-y-2 max-h-[200px] overflow-y-auto">
+            {blockedIps.map((ipData, index) => (
+              <div key={index} className="flex items-center justify-between p-3 rounded-md bg-zinc-950 border border-zinc-800 text-sm group">
+                <span className="text-zinc-300 font-mono">{ipData.ip}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-zinc-500">Blocked {ipData.date}</span>
+                  <button
+                    onClick={() => handleUnblockIp(ipData.ip)}
+                    className="text-zinc-600 hover:text-red-500 transition-colors relative"
+                    title="Unblock User"
+                  >
+                    <XCircle className="h-4 w-4" />
+                    <span className="absolute bottom-full right-0 mb-2 w-max px-2 py-1 text-xs text-white bg-zinc-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                      Unblock User
+                    </span>
+                  </button>
+                </div>
+              </div>
+            ))}
+            {blockedIps.length === 0 && (
+              <p className="text-zinc-500 text-sm text-center py-4">No IPs blocked.</p>
+            )}
           </div>
         </div>
 
@@ -159,6 +206,6 @@ export default function Security() {
           ))}
         </div>
       </div>
-    </AdminLayout>
+    </AdminLayout >
   );
 }

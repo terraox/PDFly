@@ -2,19 +2,49 @@ import React, { useState } from 'react';
 import AdminLayout from './AdminLayout';
 import { Search, MoreVertical, Shield, ShieldAlert, CheckCircle2, XCircle } from 'lucide-react';
 
-const MOCK_USERS = [
-  { id: 1, name: "Sarah Connor", email: "sarah@skynet.com", role: "ADMIN", plan: "LIFETIME", status: "ACTIVE", joined: "Jan 12, 2024" },
-  { id: 2, name: "John Doe", email: "john.doe@gmail.com", role: "USER", plan: "PRO", status: "ACTIVE", joined: "Feb 05, 2025" },
-  { id: 3, name: "Spam Bot", email: "cheap-meds@bot.net", role: "USER", plan: "FREE", status: "BANNED", joined: "Nov 20, 2025" },
-  { id: 4, name: "Alice Wonderland", email: "alice@agency.com", role: "USER", plan: "FREE", status: "PENDING", joined: "Oct 10, 2025" },
-  { id: 5, name: "Enterprise Corp", email: "admin@corp.com", role: "USER", plan: "ENTERPRISE", status: "ACTIVE", joined: "Sep 15, 2025" },
-];
+
+
+import axios from 'axios';
+
+import { useAuth } from '../../context/AuthContext';
 
 export default function Users() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [users, setUsers] = useState([]);
+  const { token } = useAuth();
 
-  const filteredUsers = MOCK_USERS.filter(user => 
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  React.useEffect(() => {
+    if (token) {
+      fetchUsers();
+    }
+  }, [token]);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/admin/users', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUsers(response.data);
+    } catch (error) {
+      console.error('Failed to fetch users', error);
+    }
+  };
+
+  const handleBanUser = async (userId) => {
+    if (window.confirm('Are you sure you want to ban this user? This action cannot be undone.')) {
+      try {
+        await axios.post(`http://localhost:8080/api/admin/users/${userId}/ban`, {}, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        fetchUsers(); // Refresh list
+      } catch (error) {
+        console.error('Failed to ban user', error);
+        alert('Failed to ban user');
+      }
+    }
+  };
+
+  const filteredUsers = users.filter(user =>
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -28,9 +58,9 @@ export default function Users() {
         <div className="flex gap-3">
           <div className="relative">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-zinc-500" />
-            <input 
-              type="text" 
-              placeholder="Search users..." 
+            <input
+              type="text"
+              placeholder="Search users..."
               className="h-10 w-64 rounded-md border border-zinc-700 bg-zinc-900 pl-9 pr-4 text-sm text-zinc-200 focus:border-indigo-500 focus:outline-none"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -58,14 +88,13 @@ export default function Users() {
               <tr key={user.id} className="group hover:bg-zinc-800/50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex flex-col">
-                    <span className="font-medium text-zinc-200">{user.name}</span>
-                    <span className="text-xs text-zinc-500">{user.email}</span>
+                    <span className="font-medium text-zinc-200">{user.email}</span>
+                    <span className="text-xs text-zinc-500">{user.id}</span>
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                    user.role === 'ADMIN' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-zinc-800 text-zinc-400 border border-zinc-700'
-                  }`}>
+                  <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${user.role === 'ADMIN' ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-zinc-800 text-zinc-400 border border-zinc-700'
+                    }`}>
                     {user.role === 'ADMIN' && <Shield className="h-3 w-3" />}
                     {user.role}
                   </span>
@@ -74,20 +103,20 @@ export default function Users() {
                   <span className="text-zinc-300">{user.plan}</span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs font-medium ${
-                    user.status === 'ACTIVE' ? 'text-emerald-400' : 
-                    user.status === 'BANNED' ? 'text-red-400' : 'text-amber-400'
-                  }`}>
-                    {user.status === 'ACTIVE' ? <CheckCircle2 className="h-3 w-3" /> : 
-                     user.status === 'BANNED' ? <ShieldAlert className="h-3 w-3" /> : 
-                     <div className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />}
-                    {user.status}
+                  <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs font-medium ${user.active ? 'text-emerald-400' : 'text-red-400'
+                    }`}>
+                    {user.active ? <CheckCircle2 className="h-3 w-3" /> : <ShieldAlert className="h-3 w-3" />}
+                    {user.active ? 'ACTIVE' : 'INACTIVE'}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-zinc-500">{user.joined}</td>
-                <td className="px-6 py-4 text-right">
-                  <button className="p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-md transition-colors">
-                    <MoreVertical className="h-4 w-4" />
+                <td className="px-6 py-4 text-zinc-500">{new Date(user.createdAt).toLocaleDateString()}</td>
+                <td className="px-6 py-4 text-right flex justify-end gap-2">
+                  <button
+                    onClick={() => handleBanUser(user.id)}
+                    className="p-2 text-red-500 hover:text-white hover:bg-red-600 rounded-md transition-colors"
+                    title="Ban User"
+                  >
+                    <ShieldAlert className="h-4 w-4" />
                   </button>
                 </td>
               </tr>

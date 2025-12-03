@@ -71,6 +71,12 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/users/{id}/ban")
+    public ResponseEntity<Void> banUser(@PathVariable Long id) {
+        adminService.banUser(id);
+        return ResponseEntity.ok().build();
+    }
+
     // =========================================================
     // PLAN MANAGEMENT
     // =========================================================

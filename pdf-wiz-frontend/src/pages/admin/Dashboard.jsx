@@ -2,6 +2,7 @@ import React from 'react';
 import AdminLayout from './AdminLayout';
 import { Users, IndianRupee, HardDrive, Cpu, ArrowUpRight } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import axios from 'axios';
 
 // Mock Data for the chart
 const trafficData = [
@@ -11,21 +12,44 @@ const trafficData = [
   { name: 'Sun', files: 140 },
 ];
 
+import { useAuth } from '../../context/AuthContext';
+
 export default function AdminDashboard() {
+  const [stats, setStats] = React.useState({ activeUsers: 0, totalRevenue: 0, revenueGrowth: 0 });
+  const { token } = useAuth();
+
+  React.useEffect(() => {
+    if (token) {
+      fetchStats();
+    }
+  }, [token]);
+
+  const fetchStats = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/admin/stats', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setStats(response.data);
+    } catch (error) {
+      console.error('Failed to fetch stats', error);
+    }
+  };
+
   return (
     <AdminLayout>
       {/* 1. Metric Cards Row */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        
+
         {/* Revenue Card (Updated to INR) */}
         <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-medium text-zinc-400">Total Revenue</h3>
             <IndianRupee className="h-4 w-4 text-emerald-500" />
           </div>
-          <div className="mt-2 text-2xl font-bold text-white">₹45,231.89</div>
-          <p className="flex items-center text-xs text-emerald-500 mt-1">
-            <ArrowUpRight className="h-3 w-3 mr-1" /> +20.1% from last month
+          <div className="mt-2 text-2xl font-bold text-white">₹{stats.totalRevenue || 0}</div>
+          <p className={`flex items-center text-xs mt-1 ${stats.revenueGrowth >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+            <ArrowUpRight className={`h-3 w-3 mr-1 ${stats.revenueGrowth < 0 ? 'rotate-180' : ''}`} />
+            {stats.revenueGrowth ? `${stats.revenueGrowth.toFixed(1)}%` : '0%'} from last month
           </p>
         </div>
 
@@ -35,8 +59,8 @@ export default function AdminDashboard() {
             <h3 className="text-sm font-medium text-zinc-400">Active Users</h3>
             <Users className="h-4 w-4 text-indigo-500" />
           </div>
-          <div className="mt-2 text-2xl font-bold text-white">+2350</div>
-          <p className="text-xs text-zinc-500 mt-1">180 new signups this week</p>
+          <div className="mt-2 text-2xl font-bold text-white">{stats.activeUsers}</div>
+          <p className="text-xs text-zinc-500 mt-1">Total registered users</p>
         </div>
 
         {/* JVM Stats (Java) */}
@@ -64,7 +88,7 @@ export default function AdminDashboard() {
 
       {/* 2. Main Content Grid */}
       <div className="grid gap-6 md:grid-cols-7">
-        
+
         {/* Chart Section */}
         <div className="col-span-4 rounded-xl border border-zinc-800 bg-zinc-900 p-6">
           <h3 className="mb-6 text-lg font-semibold text-zinc-100">Files Processed (Last 7 Days)</h3>
@@ -74,8 +98,8 @@ export default function AdminDashboard() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
                 <XAxis dataKey="name" stroke="#71717a" fontSize={12} tickLine={false} axisLine={false} />
                 <YAxis stroke="#71717a" fontSize={12} tickLine={false} axisLine={false} />
-                <Tooltip 
-                  cursor={{fill: '#27272a'}}
+                <Tooltip
+                  cursor={{ fill: '#27272a' }}
                   contentStyle={{ backgroundColor: '#18181b', border: '1px solid #27272a', borderRadius: '8px', color: '#fff' }}
                 />
                 <Bar dataKey="files" fill="#6366f1" radius={[4, 4, 0, 0]} />

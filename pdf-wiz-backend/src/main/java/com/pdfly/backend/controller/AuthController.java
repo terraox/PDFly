@@ -7,6 +7,7 @@ import com.pdfly.backend.model.GlobalConfig;
 import com.pdfly.backend.model.User;
 import com.pdfly.backend.repository.GlobalConfigRepository;
 import com.pdfly.backend.repository.UserRepository;
+import com.pdfly.backend.repository.BannedUserRepository;
 import com.pdfly.backend.service.EmailService;
 import com.pdfly.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ import java.util.Map;
 public class AuthController {
 
     private final UserRepository userRepository;
+    private final BannedUserRepository bannedUserRepository;
     private final GlobalConfigRepository globalConfigRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
@@ -52,6 +54,11 @@ public class AuthController {
         if (config.isPresent() && "true".equalsIgnoreCase(config.get().getConfigValue())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body("New user registration is currently disabled by the administrator.");
+        }
+
+        // CHECK IF EMAIL IS BANNED
+        if (bannedUserRepository.existsByEmail(request.getEmail())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("This email has been banned from the platform.");
         }
 
         if (userRepository.existsByEmail(request.getEmail())) {
