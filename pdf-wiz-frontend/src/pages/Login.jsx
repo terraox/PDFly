@@ -39,7 +39,9 @@ export default function Login() {
         setError("Invalid response from server.");
       }
     } catch (err) {
-      if (err.response && err.response.status === 401) {
+      if (err.response && err.response.status === 403) {
+        setError(err.response.data || "Your account has been banned. Please contact admin.");
+      } else if (err.response && err.response.status === 401) {
         setError("Invalid email or access key. Check your inbox for the exact key.");
       } else {
         setError("Login failed. Check server connection.");

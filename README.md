@@ -80,7 +80,7 @@ proj/
 **Option 1: Use the Helper Script (Recommended)**
 From the project root directory:
 ```bash
-./run_backend.sh
+./start-backend.sh
 ```
 
 **Option 2: Manual Start**

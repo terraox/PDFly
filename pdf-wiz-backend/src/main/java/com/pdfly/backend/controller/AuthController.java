@@ -105,7 +105,13 @@ public class AuthController {
 
     // POST /api/auth/login
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        // CHECK IF EMAIL IS BANNED
+        if (bannedUserRepository.existsByEmail(request.getEmail())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Your account has been banned. Please contact admin.");
+        }
+
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
