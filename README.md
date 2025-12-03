@@ -1,39 +1,8 @@
-# ✈️ PDFly - Enterprise PDF SaaS Platform
+# PDFly - Enterprise PDF SaaS Platform
 
-PDFly is a scalable, high-performance Micro-SaaS application designed for secure and efficient PDF manipulation. Built with a modern **React** frontend and a robust **Java Spring Boot** backend, it offers enterprise-grade document processing capabilities including merging, splitting, compression, conversion (Word/Excel/PPT), and security tools.
+## System Architecture & Code Patterns
 
-The platform operates on a **Freemium** business model, offering essential tools for free with daily usage limits, while incentivizing upgrades to the **Pro** tier for unlimited access and advanced features.
-
----
-
-## 🌟 Key Features
-
-### 🎨 Frontend (User Experience)
-- **Premium UI/UX**: A modern, high-end interface built with **Tailwind CSS** and **Framer Motion**. Features "Magic UI" components like `RainbowButton`, `ShineBorder`, and `NumberTicker` for a polished feel.
-- **15+ PDF Tools**: Comprehensive suite including Merge, Split, Compress, Convert (Word/Excel/PPT/JPG), Watermark, Sign, Protect, and Unlock.
-- **Smart Rate Limiting**: Enforces a **3 Free Tasks per Day** policy for free users, with visual countdowns and "Limit Reached" prompts.
-- **Interactive Pricing**: Animated pricing page with counting numbers to drive conversions.
-- **Dark Mode**: Fully responsive theme support (System/Light/Dark) using `next-themes`.
-- **Real-time Feedback**: Toast notifications and smooth loading states for all operations.
-
-### 🛡️ Backend (Core Engine)
-- **Secure Authentication**: Stateless architecture using **Spring Security** and **JWT** (JSON Web Tokens).
-- **Passwordless Entry**: "Magic Link" style access where secure keys are emailed to users via **JavaMail**.
-- **Robust PDF Engine**: Powered by **Apache PDFBox** and **Apache POI**, handling complex document manipulations efficiently in memory.
-- **Daily Usage Reset**: Automated scheduled tasks (`@Scheduled`) reset user limits daily.
-- **Role-Based Access Control (RBAC)**: Strict separation between `USER` and `ADMIN` roles.
-- **HTML Emails**: Beautifully styled transactional emails for welcome messages and password resets.
-
-### 📊 Admin Command Center
-- **Live Dashboard**: Real-time visualization of system health and user activity.
-- **Feature Flags**: Dynamic control to enable/disable specific tools (e.g., "Disable Compression") or signups globally.
-- **User Management**: CRM-style interface to view users, manage plans, and monitor usage.
-
----
-
-## 🏗 System Architecture & Code Patterns
-
-The application follows a **Monolithic Service-Oriented Architecture** designed for maintainability and easy containerization.
+The application follows a Monolithic Service-Oriented Architecture designed for maintainability and easy containerization.
 
 ### Backend Patterns (Spring Boot)
 - **Controller-Service-Repository**: Separation of concerns.
@@ -48,9 +17,7 @@ The application follows a **Monolithic Service-Oriented Architecture** designed 
 - **Component-Based Design**: Reusable UI components (`/components/ui`) like Modals, Buttons, and Inputs.
 - **Layout Wrapper**: `Navbar` and `Footer` integrated into the main layout for consistent navigation.
 
----
-
-## 🛠 Technology Stack
+## Technology Stack
 
 ### Frontend
 | Technology | Description |
@@ -75,9 +42,7 @@ The application follows a **Monolithic Service-Oriented Architecture** designed 
 | **Apache POI** | Microsoft Office document conversion |
 | **Lombok** | Boilerplate code reduction |
 
----
-
-## 📂 Project Structure
+## Project Structure
 
 ```
 proj/
@@ -103,9 +68,7 @@ proj/
 └── README.md                 # Project Documentation
 ```
 
----
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - **Node.js** (v18+)
@@ -113,6 +76,14 @@ proj/
 - **PostgreSQL** (Local or Cloud)
 
 ### 1. Backend Setup
+
+**Option 1: Use the Helper Script (Recommended)**
+From the project root directory:
+```bash
+./run_backend.sh
+```
+
+**Option 2: Manual Start**
 ```bash
 cd pdf-wiz-backend
 
@@ -138,9 +109,7 @@ npm run dev
 ```
 *UI accessible at `http://localhost:5173`*
 
----
-
-## 🔑 Configuration
+## Configuration
 
 The backend `application.properties` requires the following configurations:
 
@@ -150,7 +119,34 @@ The backend `application.properties` requires the following configurations:
 | `jwt.secret` | Token Signing Key | `5367566B59...` (Base64 encoded) |
 | `spring.mail.password` | SMTP Password | Google App Password |
 
----
+## Product Overview
 
-## 📄 License
+PDFly is a scalable, high-performance Micro-SaaS application designed for secure and efficient PDF manipulation. Built with a modern **React** frontend and a robust **Java Spring Boot** backend, it offers enterprise-grade document processing capabilities including merging, splitting, compression, conversion (Word/Excel/PPT), and security tools.
+
+The platform operates on a **Freemium** business model, offering essential tools for free with daily usage limits, while incentivizing upgrades to the **Pro** tier for unlimited access and advanced features.
+
+## Key Features
+
+### Frontend (User Experience)
+- **Premium UI/UX**: A modern, high-end interface built with **Tailwind CSS** and **Framer Motion**. Features "Magic UI" components like `RainbowButton`, `ShineBorder`, and `NumberTicker` for a polished feel.
+- **15+ PDF Tools**: Comprehensive suite including Merge, Split, Compress, Convert (Word/Excel/PPT/JPG), Watermark, Sign, Protect, and Unlock.
+- **Smart Rate Limiting**: Enforces a **3 Free Tasks per Day** policy for free users, with visual countdowns and "Limit Reached" prompts.
+- **Interactive Pricing**: Animated pricing page with counting numbers to drive conversions.
+- **Dark Mode**: Fully responsive theme support (System/Light/Dark) using `next-themes`.
+- **Real-time Feedback**: Toast notifications and smooth loading states for all operations.
+
+### Backend (Core Engine)
+- **Secure Authentication**: Stateless architecture using **Spring Security** and **JWT** (JSON Web Tokens).
+- **Passwordless Entry**: "Magic Link" style access where secure keys are emailed to users via **JavaMail**.
+- **Robust PDF Engine**: Powered by **Apache PDFBox** and **Apache POI**, handling complex document manipulations efficiently in memory.
+- **Daily Usage Reset**: Automated scheduled tasks (`@Scheduled`) reset user limits daily.
+- **Role-Based Access Control (RBAC)**: Strict separation between `USER` and `ADMIN` roles.
+- **HTML Emails**: Beautifully styled transactional emails for welcome messages and password resets.
+
+### Admin Command Center
+- **Live Dashboard**: Real-time visualization of system health and user activity.
+- **Feature Flags**: Dynamic control to enable/disable specific tools (e.g., "Disable Compression") or signups globally.
+- **User Management**: CRM-style interface to view users, manage plans, and monitor usage.
+
+## License
 Copyright © 2025 PDFly Inc. All rights reserved.
