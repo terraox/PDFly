@@ -16,7 +16,7 @@ export default function Footer() {
           <span className="font-bold text-xl">{siteConfig.name}</span>
         </a>
 
-        <div className="grid md:grid-cols-3 lg:grid-cols-4 sm:grid-cols-2 mt-8">
+        <div className="grid md:grid-cols-3 lg:grid-cols-3 sm:grid-cols-2 mt-8">
           {siteConfig.footer.map((section, index) => (
             <div key={index} className="mb-5">
               <h2 className="font-semibold">{section.title}</h2>

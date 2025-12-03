@@ -5,19 +5,19 @@ import { Download, MousePointerClick, Upload } from "lucide-react";
 const data = [
   {
     id: 1,
-    title: "1. Upload Your PDF",
-    content:
-      "Drag and drop your file or select it from your device. We support PDF, Word, Excel, JPG, and more.",
-    image: "/dashboard.png",
-    icon: <Upload className="w-6 h-6 text-primary" />,
-  },
-  {
-    id: 2,
-    title: "2. Choose Your Tool",
+    title: "1. Choose Your Tool",
     content:
       "Select from our wide range of tools to merge, split, compress, convert, or edit your document.",
     image: "/dashboard.png",
     icon: <MousePointerClick className="w-6 h-6 text-primary" />,
+  },
+  {
+    id: 2,
+    title: "2. Upload Your PDF",
+    content:
+      "Drag and drop your file or select it from your device. We support PDF, Word, Excel, JPG, and more.",
+    image: "/dashboard.png",
+    icon: <Upload className="w-6 h-6 text-primary" />,
   },
   {
     id: 3,

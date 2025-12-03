@@ -182,9 +182,8 @@ export default function Features({
         <div className="max-w-6xl mx-auto ">
           <div className="">
             <div
-              className={`hidden md:flex order-1 md:order-[0]  ${
-                ltr ? "md:order-2 md:justify-end" : "justify-start"
-              }`}
+              className={`hidden md:flex order-1 md:order-[0]  ${ltr ? "md:order-2 md:justify-end" : "justify-start"
+                }`}
             >
               <Accordion.Root
                 className="grid md:grid-cols-4 gap-x-10 py-8"
@@ -203,16 +202,14 @@ export default function Features({
                   >
                     {linePosition === "left" || linePosition === "right" ? (
                       <div
-                        className={`absolute bottom-0 top-0 h-full w-0.5 overflow-hidden rounded-lg bg-neutral-300/50 dark:bg-neutral-300/30 ${
-                          linePosition === "right"
-                            ? "left-auto right-0"
-                            : "left-0 right-auto"
-                        }`}
+                        className={`absolute bottom-0 top-0 h-full w-0.5 overflow-hidden rounded-lg bg-neutral-300/50 dark:bg-neutral-300/30 ${linePosition === "right"
+                          ? "left-auto right-0"
+                          : "left-0 right-auto"
+                          }`}
                       >
                         <div
-                          className={`absolute left-0 top-0 w-full ${
-                            currentIndex === index ? "h-full" : "h-0"
-                          } origin-top bg-primary transition-all ease-linear dark:bg-white`}
+                          className={`absolute left-0 top-0 w-full ${currentIndex === index ? "h-full" : "h-0"
+                            } origin-top bg-primary transition-all ease-linear dark:bg-white`}
                           style={{
                             transitionDuration:
                               currentIndex === index
@@ -225,16 +222,13 @@ export default function Features({
 
                     {linePosition === "top" || linePosition === "bottom" ? (
                       <div
-                        className={`absolute left-0 right-0 w-full h-0.5 overflow-hidden rounded-lg bg-neutral-300/50 dark:bg-neutral-300/30 ${
-                          linePosition === "bottom" ? "bottom-0" : "top-0"
-                        }`}
+                        className={`absolute left-0 right-0 w-full h-0.5 overflow-hidden rounded-lg bg-neutral-300/50 dark:bg-neutral-300/30 ${linePosition === "bottom" ? "bottom-0" : "top-0"
+                          }`}
                       >
                         <div
-                          className={`absolute left-0 ${
-                            linePosition === "bottom" ? "bottom-0" : "top-0"
-                          } h-full ${
-                            currentIndex === index ? "w-full" : "w-0"
-                          } origin-left bg-primary transition-all ease-linear dark:bg-white`}
+                          className={`absolute left-0 ${linePosition === "bottom" ? "bottom-0" : "top-0"
+                            } h-full ${currentIndex === index ? "w-full" : "w-0"
+                            } origin-left bg-primary transition-all ease-linear dark:bg-white`}
                           style={{
                             transitionDuration:
                               currentIndex === index
@@ -263,16 +257,15 @@ export default function Features({
               </Accordion.Root>
             </div>
             <div
-              className={`w-auto overflow-hidden relative rounded-lg ${
-                ltr && "md:order-1"
-              }`}
+              className={`w-auto overflow-hidden relative rounded-lg ${ltr && "md:order-1"
+                }`}
             >
               {data[currentIndex]?.image ? (
                 <motion.img
                   key={currentIndex}
                   src={data[currentIndex].image}
                   alt="feature"
-                  className="aspect-auto h-full w-full object-cover relative border rounded-lg shadow-lg"
+                  className="aspect-auto h-full w-full object-cover object-top relative border rounded-lg shadow-lg min-h-[500px]"
                   initial={{ opacity: 0, scale: 0.98 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.98 }}
@@ -291,7 +284,7 @@ export default function Features({
                 <div className="aspect-auto h-full w-full rounded-xl border border-neutral-300/50 bg-gray-200 p-1 min-h-[600px]"></div>
               )}
               <BorderBeam
-                size={400}
+                size={800}
                 duration={12}
                 delay={9}
                 borderWidth={1.5}
@@ -318,9 +311,8 @@ export default function Features({
                 >
                   <div className="absolute bottom-0 left-0 right-auto top-0 h-0.5 w-full overflow-hidden rounded-lg bg-neutral-300/50 dark:bg-neutral-300/30">
                     <div
-                      className={`absolute left-0 top-0 h-full ${
-                        currentIndex === index ? "w-full" : "w-0"
-                      } origin-top bg-primary transition-all ease-linear dark:bg-white`}
+                      className={`absolute left-0 top-0 h-full ${currentIndex === index ? "w-full" : "w-0"
+                        } origin-top bg-primary transition-all ease-linear dark:bg-white`}
                       style={{
                         transitionDuration:
                           currentIndex === index ? `${collapseDelay}ms` : "0s",

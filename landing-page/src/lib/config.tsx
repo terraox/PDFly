@@ -11,7 +11,7 @@ export const siteConfig = {
   url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
   keywords: ["PDF", "Editor", "Converter", "Merge", "Split", "Compress"],
   links: {
-    email: "support@pdfly.com",
+    email: "aadityabasisthdev@gmail.com",
     twitter: "https://twitter.com/pdfly",
     discord: "https://discord.gg/pdfly",
     github: "https://github.com/pdfly",
@@ -123,15 +123,13 @@ export const siteConfig = {
       links: [
         { href: "#", text: "Features", icon: null },
         { href: "#", text: "Pricing", icon: null },
-        { href: "#", text: "API", icon: null },
       ],
     },
     {
       title: "Company",
       links: [
         { href: "#", text: "About Us", icon: null },
-        { href: "#", text: "Blog", icon: null },
-        { href: "#", text: "Contact", icon: null },
+        { href: "mailto:aadityabasisthdev@gmail.com", text: "Contact", icon: null },
       ],
     },
     {
@@ -141,26 +139,7 @@ export const siteConfig = {
         { href: "#", text: "Terms of Service", icon: null },
       ],
     },
-    {
-      title: "Social",
-      links: [
-        {
-          href: "#",
-          text: "Twitter",
-          icon: <FaTwitter />,
-        },
-        {
-          href: "#",
-          text: "Instagram",
-          icon: <RiInstagramFill />,
-        },
-        {
-          href: "#",
-          text: "Youtube",
-          icon: <FaYoutube />,
-        },
-      ],
-    },
+
   ],
 };
 

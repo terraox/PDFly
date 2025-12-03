@@ -1,0 +1,29 @@
+  Future<String?> _showSingleSelectDialog({
+    required String title,
+    required String label,
+    required List<String> options,
+  }) async {
+    return showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => SimpleDialog(
+        title: Text(title, style: const TextStyle(color: AppColors.textPrimary)),
+        backgroundColor: AppColors.surface,
+        children: options.map((option) {
+          return SimpleDialogOption(
+            onPressed: () => Navigator.pop(context, option),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(
+                '$option°',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
