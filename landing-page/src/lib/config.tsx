@@ -104,15 +104,15 @@ export const siteConfig = {
       question: "Can I use PDFly on mobile?",
       answer: (
         <span>
-          Yes! PDFly is fully responsive and works seamlessly on smartphones and tablets, so you can manage your PDFs on the go.
+          Yes, we have a dedicated app for it. You can download it to manage your PDFs seamlessly on the go.
         </span>
       ),
     },
     {
-      question: "Do you offer an API?",
+      question: "What file formats do you support?",
       answer: (
         <span>
-          Yes, we provide a robust API for developers to integrate PDFly's powerful processing capabilities into their own applications. Check our documentation for more details.
+          We support a wide range of formats including PDF, Word (DOCX), PowerPoint (PPTX), Excel (XLSX), JPG, PNG, and more.
         </span>
       ),
     },
@@ -138,7 +138,6 @@ export const siteConfig = {
         { href: "#", text: "Privacy Policy", icon: null },
         { href: "#", text: "Terms of Service", icon: null },
       ],
-    },
     },
   ],
 };

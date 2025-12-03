@@ -85,7 +85,7 @@ export default function Navbar() {
     return (
       <div className="flex items-center gap-4">
         {user.plan === 'PRO' ? (
-          <ShimmerButton className="h-8 px-4 text-xs font-bold" shimmerColor="#fbbf24" background="rgba(0, 0, 0, 1)">
+          <ShimmerButton className="h-8 px-4 text-xs font-bold" shimmerColor="#fbbf24" background="#27272a">
             <div className="flex items-center gap-1.5">
               <Sparkles className="h-3 w-3 text-amber-400" />
               <span className="text-amber-100">PRO</span>

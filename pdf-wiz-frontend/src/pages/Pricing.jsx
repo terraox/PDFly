@@ -65,17 +65,17 @@ export default function Pricing() {
           {/* FREE TIER */}
           <div className={`rounded-3xl p-8 ring-1 ring-zinc-200 dark:ring-zinc-800 bg-white dark:bg-zinc-900/50 backdrop-blur-xl ${isFree && isAuthenticated ? 'ring-2 ring-indigo-500' : ''}`}>
             <h3 className="text-lg font-semibold leading-8 text-zinc-900 dark:text-white">Free</h3>
-            <p className="mt-4 text-sm leading-6 text-zinc-600 dark:text-zinc-400">Perfect for quick, one-off tasks.</p>
+            <p className="mt-4 text-sm leading-6 text-zinc-700 dark:text-zinc-400">Perfect for quick, one-off tasks.</p>
             <p className="mt-6 flex items-baseline gap-x-1">
               <span className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white">₹0</span>
-              <span className="text-sm font-semibold leading-6 text-zinc-600 dark:text-zinc-400">/{isAnnual ? 'year' : 'month'}</span>
+              <span className="text-sm font-semibold leading-6 text-zinc-700 dark:text-zinc-400">/{isAnnual ? 'year' : 'month'}</span>
             </p>
-            <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
+            <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-zinc-700 dark:text-zinc-400">
               <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-600" /> {freeLimit} Tasks per day</li>
               <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-600" /> 10MB Max File Size</li>
               <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-600" /> Standard Processing Speed</li>
-              <li className="flex gap-x-3 text-zinc-400 dark:text-zinc-600"><X className="h-6 w-5 flex-none" /> No OCR Support</li>
-              <li className="flex gap-x-3 text-zinc-400 dark:text-zinc-600"><X className="h-6 w-5 flex-none" /> Ads Supported</li>
+              <li className="flex gap-x-3 text-zinc-500 dark:text-zinc-600"><X className="h-6 w-5 flex-none" /> No Advanced Tools</li>
+              <li className="flex gap-x-3 text-zinc-500 dark:text-zinc-600"><X className="h-6 w-5 flex-none" /> Ads Supported</li>
             </ul>
             {isAuthenticated && isFree ? (
               <button disabled className="mt-8 block w-full rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 text-zinc-500 bg-zinc-100 dark:bg-zinc-800 cursor-not-allowed">
@@ -89,7 +89,7 @@ export default function Pricing() {
           </div>
 
           {/* PRO TIER */}
-          <div className={`relative rounded-3xl p-8 ring-1 ring-indigo-600 bg-zinc-900 dark:bg-black shadow-2xl ${isPro ? 'ring-2 ring-green-500' : ''}`}>
+          <div className={`relative rounded-3xl p-8 ring-1 ring-indigo-600 bg-white dark:bg-zinc-900 shadow-2xl ${isPro ? 'ring-2 ring-green-500' : ''}`}>
             {isPro && (
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-green-500 px-3 py-1 text-xs font-semibold text-white shadow-sm">
                 Active Plan
@@ -100,25 +100,25 @@ export default function Pricing() {
                 Most Popular
               </div>
             )}
-            <h3 className="flex items-center gap-2 text-lg font-semibold leading-8 text-white">
-              Pro <Sparkles className="h-4 w-4 text-indigo-400" />
+            <h3 className="flex items-center gap-2 text-lg font-semibold leading-8 text-zinc-900 dark:text-white">
+              Pro <Sparkles className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
             </h3>
-            <p className="mt-4 text-sm leading-6 text-zinc-300">For power users who need professional tools.</p>
+            <p className="mt-4 text-sm leading-6 text-zinc-600 dark:text-zinc-300">For power users who need professional tools.</p>
             <p className="mt-6 flex items-baseline gap-x-1">
-              <span className="text-4xl font-bold tracking-tight text-white">
-                ₹<NumberTicker value={isAnnual ? 4999 : 499} className="text-white" />
+              <span className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white">
+                ₹<NumberTicker value={isAnnual ? 4999 : 499} className="text-zinc-900 dark:text-white" />
               </span>
-              <span className="text-sm font-semibold leading-6 text-zinc-300">/{isAnnual ? 'year' : 'month'}</span>
+              <span className="text-sm font-semibold leading-6 text-zinc-600 dark:text-zinc-300">/{isAnnual ? 'year' : 'month'}</span>
             </p>
-            <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-zinc-300">
-              <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-400" /> Unlimited Tasks</li>
-              <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-400" /> 100MB Max File Size</li>
-              <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-400" /> Priority Processing (3x Faster)</li>
-              <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-400" /> AI-Powered OCR PDF</li>
-              <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-400" /> No Ads</li>
+            <ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">
+              <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-600 dark:text-indigo-400" /> Unlimited Tasks</li>
+              <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-600 dark:text-indigo-400" /> 100MB Max File Size</li>
+              <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-600 dark:text-indigo-400" /> Priority Processing (3x Faster)</li>
+              <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-600 dark:text-indigo-400" /> Advanced Tools (Crop, Redact, Organize)</li>
+              <li className="flex gap-x-3"><Check className="h-6 w-5 flex-none text-indigo-600 dark:text-indigo-400" /> No Ads</li>
             </ul>
             {isPro ? (
-              <button disabled className="mt-8 block w-full rounded-md bg-green-600/20 py-2 px-3 text-center text-sm font-semibold leading-6 text-green-400 cursor-not-allowed border border-green-500/30">
+              <button disabled className="mt-8 block w-full rounded-md bg-green-600/20 py-2 px-3 text-center text-sm font-semibold leading-6 text-green-600 dark:text-green-400 cursor-not-allowed border border-green-500/30">
                 Current Plan
               </button>
             ) : (
