@@ -32,6 +32,8 @@ export default function Register() {
     } catch (err) {
       if (err.response && err.response.status === 409) {
         setError("This email is already registered. Please login.");
+      } else if (err.response && err.response.status === 403) {
+        setError(err.response.data || "Registration is currently disabled or restricted.");
       } else {
         setError("Registration failed. Please check server logs.");
       }

@@ -9,6 +9,7 @@ import Magnetic from "./ui/Magnetic";
 import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 
+
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
@@ -82,10 +83,12 @@ export default function Navbar() {
       );
     }
 
+
+
     return (
       <div className="flex items-center gap-4">
         {user.plan === 'PRO' ? (
-          <ShimmerButton className="h-8 px-4 text-xs font-bold" shimmerColor="#fbbf24" background="#27272a">
+          <ShimmerButton className="h-8 px-4 text-xs font-bold" shimmerColor="#fbbf24" background="rgba(0, 0, 0, 1)">
             <div className="flex items-center gap-1.5">
               <Sparkles className="h-3 w-3 text-amber-400" />
               <span className="text-amber-100">PRO</span>
