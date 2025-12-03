@@ -43,6 +43,8 @@ public class User {
 
     private int dailyUsageCount = 0;
 
+    private java.time.LocalDate lastUsageDate;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

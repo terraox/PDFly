@@ -38,6 +38,14 @@ public class PdfToolController {
                 if (userOpt.isPresent()) {
                     com.pdfly.backend.model.User user = userOpt.get();
                     if (user.getPlan() == com.pdfly.backend.model.User.PlanType.FREE) {
+                        // Check for daily reset
+                        java.time.LocalDate today = java.time.LocalDate.now();
+                        if (user.getLastUsageDate() == null || !user.getLastUsageDate().equals(today)) {
+                            user.setDailyUsageCount(0);
+                            user.setLastUsageDate(today);
+                            userRepository.save(user); // Save reset immediately
+                        }
+
                         // Fetch dynamic limit
                         int limit = 3; // Default
                         Optional<GlobalConfig> limitConfig = globalConfigRepository.findByConfigKey("FREE_TIER_LIMIT");
@@ -54,6 +62,7 @@ public class PdfToolController {
                             throw new RuntimeException("Daily limit reached. Please upgrade to Pro.");
                         }
                         user.setDailyUsageCount(user.getDailyUsageCount() + 1);
+                        user.setLastUsageDate(today); // Ensure date is set
                         userRepository.save(user);
                     }
                 } else {
