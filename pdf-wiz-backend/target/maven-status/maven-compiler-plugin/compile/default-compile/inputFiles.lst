@@ -11,9 +11,11 @@
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/config/JwtAuthenticationFilter.java
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/controller/AdminController.java
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/dto/LoginRequest.java
+/Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/repository/BannedUserRepository.java
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/model/User.java
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/config/SecurityConfig.java
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/model/Transaction.java
+/Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/model/BannedUser.java
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/dto/AuthResponse.java
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/service/EmailService.java
 /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/main/java/com/pdfly/backend/model/Coupon.java

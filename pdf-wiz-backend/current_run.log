@@ -12,7 +12,8 @@
 [INFO] Copying 0 resource from src/main/resources to target/classes
 [INFO] 
 [INFO] --- compiler:3.11.0:compile (default-compile) @ backend ---
-[INFO] Nothing to compile - all classes are up to date
+[INFO] Changes detected - recompiling the module! :input tree
+[INFO] Compiling 30 source files with javac [debug release 17] to target/classes
 [INFO] 
 [INFO] --- resources:3.3.1:testResources (default-testResources) @ backend ---
 [INFO] skip non existing resourceDirectory /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/src/test/resources
@@ -35,31 +36,47 @@ Standard Commons Logging discovery in action with spring-jcl: please remove comm
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v3.2.3)
 
-2025-12-03T14:22:48.024+05:30  INFO 47335 --- [           main] com.pdfly.backend.BackendApplication     : Starting BackendApplication using Java 17.0.17 with PID 47335 (/Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/target/classes started by aadityabasisth in /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend)
-2025-12-03T14:22:48.030+05:30  INFO 47335 --- [           main] com.pdfly.backend.BackendApplication     : No active profile set, falling back to 1 default profile: "default"
-2025-12-03T14:22:48.764+05:30  INFO 47335 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-12-03T14:22:48.826+05:30  INFO 47335 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 58 ms. Found 5 JPA repository interfaces.
-2025-12-03T14:22:49.561+05:30  INFO 47335 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
-2025-12-03T14:22:49.571+05:30  INFO 47335 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2025-12-03T14:22:49.572+05:30  INFO 47335 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
-2025-12-03T14:22:49.626+05:30  INFO 47335 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2025-12-03T14:22:49.627+05:30  INFO 47335 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1551 ms
+2025-12-03T15:55:14.071+05:30  INFO 57171 --- [           main] com.pdfly.backend.BackendApplication     : Starting BackendApplication using Java 17.0.17 with PID 57171 (/Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend/target/classes started by aadityabasisth in /Users/aadityabasisth/Desktop/thynkTech-assignments/proj/pdf-wiz-backend)
+2025-12-03T15:55:14.078+05:30  INFO 57171 --- [           main] com.pdfly.backend.BackendApplication     : No active profile set, falling back to 1 default profile: "default"
+2025-12-03T15:55:15.164+05:30  INFO 57171 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-03T15:55:15.264+05:30  INFO 57171 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 94 ms. Found 6 JPA repository interfaces.
+2025-12-03T15:55:16.167+05:30  INFO 57171 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-12-03T15:55:16.183+05:30  INFO 57171 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-03T15:55:16.183+05:30  INFO 57171 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-12-03T15:55:16.258+05:30  INFO 57171 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-03T15:55:16.260+05:30  INFO 57171 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2107 ms
 Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
-2025-12-03T14:22:49.758+05:30  INFO 47335 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-12-03T14:22:49.800+05:30  INFO 47335 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
-2025-12-03T14:22:49.824+05:30  INFO 47335 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2025-12-03T14:22:49.958+05:30  INFO 47335 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-12-03T14:22:49.972+05:30  INFO 47335 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2025-12-03T14:22:53.359+05:30  INFO 47335 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@5e37fb82
-2025-12-03T14:22:53.364+05:30  INFO 47335 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2025-12-03T14:22:53.947+05:30  WARN 47335 --- [           main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2025-12-03T14:22:55.207+05:30  INFO 47335 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2025-12-03T14:22:58.850+05:30  INFO 47335 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-12-03T14:22:59.057+05:30  INFO 47335 --- [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
-2025-12-03T14:22:59.653+05:30  WARN 47335 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2025-12-03T14:22:59.855+05:30  INFO 47335 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@61b6f287, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@6ca9ec77, org.springframework.security.web.context.SecurityContextHolderFilter@7fecc26f, org.springframework.security.web.header.HeaderWriterFilter@73b71935, org.springframework.web.filter.CorsFilter@360432d3, org.springframework.security.web.authentication.logout.LogoutFilter@216c6825, com.pdfly.backend.config.JwtAuthenticationFilter@580c4c0b, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@70313b0b, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5da16ed6, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@6c2a7c73, org.springframework.security.web.session.SessionManagementFilter@493ed8e6, org.springframework.security.web.access.ExceptionTranslationFilter@6df0d030, org.springframework.security.web.access.intercept.AuthorizationFilter@2c9430c6]
-2025-12-03T14:23:00.079+05:30  INFO 47335 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
-2025-12-03T14:23:00.090+05:30  INFO 47335 --- [           main] com.pdfly.backend.BackendApplication     : Started BackendApplication in 12.408 seconds (process running for 12.773)
+2025-12-03T15:55:16.444+05:30  INFO 57171 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-03T15:55:16.487+05:30  INFO 57171 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-12-03T15:55:16.520+05:30  INFO 57171 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-12-03T15:55:16.709+05:30  INFO 57171 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-03T15:55:16.730+05:30  INFO 57171 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-12-03T15:55:20.331+05:30  INFO 57171 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@5e37fb82
+2025-12-03T15:55:20.336+05:30  INFO 57171 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-12-03T15:55:20.621+05:30  WARN 57171 --- [           main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-03T15:55:22.332+05:30  INFO 57171 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: 
+    create table banned_users (
+        id bigserial not null,
+        banned_at timestamp(6),
+        email varchar(255) not null,
+        reason varchar(255),
+        primary key (id)
+    )
+Hibernate: 
+    alter table if exists banned_users 
+       drop constraint if exists UK_6h7g3g1p71uus811a1pe8xjeo
+2025-12-03T15:55:23.921+05:30  WARN 57171 --- [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
+2025-12-03T15:55:23.923+05:30  WARN 57171 --- [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : constraint "uk_6h7g3g1p71uus811a1pe8xjeo" of relation "banned_users" does not exist, skipping
+Hibernate: 
+    alter table if exists banned_users 
+       add constraint UK_6h7g3g1p71uus811a1pe8xjeo unique (email)
+2025-12-03T15:55:26.527+05:30  INFO 57171 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-03T15:55:26.825+05:30  INFO 57171 --- [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-12-03T15:55:27.908+05:30  WARN 57171 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-03T15:55:28.221+05:30  INFO 57171 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@34e7a627, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@5bb7fc38, org.springframework.security.web.context.SecurityContextHolderFilter@6d76aa05, org.springframework.security.web.header.HeaderWriterFilter@43e6f05f, org.springframework.web.filter.CorsFilter@27ea7c8f, org.springframework.security.web.authentication.logout.LogoutFilter@37bac0f4, com.pdfly.backend.config.JwtAuthenticationFilter@623a891d, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@8b93c88, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@628e0403, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@17e31657, org.springframework.security.web.session.SessionManagementFilter@26edfa34, org.springframework.security.web.access.ExceptionTranslationFilter@4690a37e, org.springframework.security.web.access.intercept.AuthorizationFilter@6c2063e0]
+2025-12-03T15:55:28.586+05:30  INFO 57171 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
+2025-12-03T15:55:28.607+05:30  INFO 57171 --- [           main] com.pdfly.backend.BackendApplication     : Started BackendApplication in 15.29 seconds (process running for 16.826)
 Hibernate: 
     select
         u1_0.id 
@@ -69,37 +86,9 @@ Hibernate:
         u1_0.email=? 
     fetch
         first ? rows only
-2025-12-03T14:26:49.016+05:30  INFO 47335 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2025-12-03T14:26:49.025+05:30  INFO 47335 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2025-12-03T14:26:49.062+05:30  INFO 47335 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 37 ms
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
+2025-12-03T15:57:35.637+05:30  INFO 57171 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-03T15:57:35.645+05:30  INFO 57171 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-03T15:57:35.709+05:30  INFO 57171 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 63 ms
 Hibernate: 
     select
         u1_0.id,
@@ -117,1253 +106,6 @@ Hibernate:
         users u1_0 
     where
         u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0 
-    where
-        gc1_0.config_key=?
-Checking DISABLE_COMPRESSION config...
-Config found. Value: false
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-2025-12-03T14:42:56.287+05:30  WARN 47335 --- [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1m2s500ms).
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        c1_0.id,
-        c1_0.code,
-        c1_0.current_uses,
-        c1_0.discount_percent,
-        c1_0.expiry_date,
-        c1_0.max_uses,
-        c1_0.plan_type 
-    from
-        coupons c1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        c1_0.id,
-        c1_0.code,
-        c1_0.current_uses,
-        c1_0.discount_percent,
-        c1_0.expiry_date,
-        c1_0.max_uses,
-        c1_0.plan_type 
-    from
-        coupons c1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        c1_0.id,
-        c1_0.code,
-        c1_0.current_uses,
-        c1_0.discount_percent,
-        c1_0.expiry_date,
-        c1_0.max_uses,
-        c1_0.plan_type 
-    from
-        coupons c1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        c1_0.id,
-        c1_0.code,
-        c1_0.current_uses,
-        c1_0.discount_percent,
-        c1_0.expiry_date,
-        c1_0.max_uses,
-        c1_0.plan_type 
-    from
-        coupons c1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        c1_0.id,
-        c1_0.code,
-        c1_0.current_uses,
-        c1_0.discount_percent,
-        c1_0.expiry_date,
-        c1_0.max_uses,
-        c1_0.plan_type 
-    from
-        coupons c1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        c1_0.id,
-        c1_0.code,
-        c1_0.current_uses,
-        c1_0.discount_percent,
-        c1_0.expiry_date,
-        c1_0.max_uses,
-        c1_0.plan_type 
-    from
-        coupons c1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        c1_0.id,
-        c1_0.code,
-        c1_0.current_uses,
-        c1_0.discount_percent,
-        c1_0.expiry_date,
-        c1_0.max_uses,
-        c1_0.plan_type 
-    from
-        coupons c1_0
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        c1_0.id,
-        c1_0.code,
-        c1_0.current_uses,
-        c1_0.discount_percent,
-        c1_0.expiry_date,
-        c1_0.max_uses,
-        c1_0.plan_type 
-    from
-        coupons c1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0
 Hibernate: 
     select
         count(*) 
@@ -1374,6 +116,15 @@ Hibernate:
         count(*) 
     from
         plans p1_0
+Hibernate: 
+    select
+        t1_0.id,
+        t1_0.amount,
+        t1_0.date,
+        t1_0.status,
+        t1_0.user_id 
+    from
+        transactions t1_0
 Hibernate: 
     select
         t1_0.id,
@@ -1383,33 +134,6 @@ Hibernate:
         t1_0.user_id 
     from
         transactions t1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        count(*) 
-    from
-        users u1_0
-Hibernate: 
-    select
-        count(*) 
-    from
-        plans p1_0
 Hibernate: 
     select
         t1_0.id,
@@ -1450,24 +174,17 @@ Hibernate:
         u1_0.plan_expiry_date,
         u1_0.role 
     from
-        users u1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
         users u1_0 
     where
         u1_0.email=?
+Hibernate: 
+    select
+        bu1_0.id,
+        bu1_0.banned_at,
+        bu1_0.email,
+        bu1_0.reason 
+    from
+        banned_users bu1_0
 Hibernate: 
     select
         u1_0.id,
@@ -1483,247 +200,6 @@ Hibernate:
         u1_0.role 
     from
         users u1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
 Hibernate: 
     select
         gc1_0.id,
@@ -1774,11 +250,27 @@ Hibernate:
         u1_0.email=?
 Hibernate: 
     select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
+        bu1_0.id,
+        bu1_0.banned_at,
+        bu1_0.email,
+        bu1_0.reason 
     from
-        global_config gc1_0
+        banned_users bu1_0
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.daily_usage_count,
+        u1_0.email,
+        u1_0.is_active,
+        u1_0.password,
+        u1_0.password_reset_expiry,
+        u1_0.password_reset_phrase,
+        u1_0.plan,
+        u1_0.plan_expiry_date,
+        u1_0.role 
+    from
+        users u1_0
 Hibernate: 
     select
         u1_0.id,
@@ -1798,11 +290,15 @@ Hibernate:
         u1_0.email=?
 Hibernate: 
     select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
+        c1_0.id,
+        c1_0.code,
+        c1_0.current_uses,
+        c1_0.discount_percent,
+        c1_0.expiry_date,
+        c1_0.max_uses,
+        c1_0.plan_type 
     from
-        global_config gc1_0
+        coupons c1_0
 Hibernate: 
     select
         u1_0.id,
@@ -1822,59 +318,15 @@ Hibernate:
         u1_0.email=?
 Hibernate: 
     select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
+        c1_0.id,
+        c1_0.code,
+        c1_0.current_uses,
+        c1_0.discount_percent,
+        c1_0.expiry_date,
+        c1_0.max_uses,
+        c1_0.plan_type 
     from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
-Hibernate: 
-    select
-        u1_0.id,
-        u1_0.created_at,
-        u1_0.daily_usage_count,
-        u1_0.email,
-        u1_0.is_active,
-        u1_0.password,
-        u1_0.password_reset_expiry,
-        u1_0.password_reset_phrase,
-        u1_0.plan,
-        u1_0.plan_expiry_date,
-        u1_0.role 
-    from
-        users u1_0 
-    where
-        u1_0.email=?
-Hibernate: 
-    select
-        gc1_0.id,
-        gc1_0.config_key,
-        gc1_0.config_value 
-    from
-        global_config gc1_0
+        coupons c1_0
 Hibernate: 
     select
         u1_0.id,
@@ -2003,17 +455,39 @@ Hibernate:
         gc1_0.config_value 
     from
         global_config gc1_0
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    2025-12-03T14:22:43.507+05:30  INFO 45190 --- [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD FAILURE
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time:  04:17 min
-[INFO] Finished at: 2025-12-03T14:22:44+05:30
-[INFO] ------------------------------------------------------------------------
-[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.2.3:run (default-cli) on project backend: Process terminated with exit code: 143 -> [Help 1]
-[ERROR] 
-[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
-[ERROR] Re-run Maven using the -X switch to enable full debug logging.
-[ERROR] 
-[ERROR] For more information about the errors and possible solutions, please read the following articles:
-[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.daily_usage_count,
+        u1_0.email,
+        u1_0.is_active,
+        u1_0.password,
+        u1_0.password_reset_expiry,
+        u1_0.password_reset_phrase,
+        u1_0.plan,
+        u1_0.plan_expiry_date,
+        u1_0.role 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        gc1_0.id,
+        gc1_0.config_key,
+        gc1_0.config_value 
+    from
+        global_config gc1_0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   Hibernate: 
+    select
+        t1_0.id,
+        t1_0.amount,
+        t1_0.date,
+        t1_0.status,
+        t1_0.user_id 
+    from
+        transactions t1_0
+2025-12-03T15:54:21.045+05:30  INFO 47335 --- [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-03T15:54:21.264+05:30  INFO 47335 --- [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-12-03T15:54:23.868+05:30  INFO 47335 --- [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

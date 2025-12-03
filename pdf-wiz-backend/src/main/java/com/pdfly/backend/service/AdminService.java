@@ -106,6 +106,32 @@ public class AdminService {
         userRepository.delete(user);
     }
 
+    public List<BannedUser> getAllBannedUsers() {
+        return bannedUserRepository.findAll();
+    }
+
+    public void unbanUser(String email) {
+        BannedUser bannedUser = bannedUserRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Banned user not found"));
+        bannedUserRepository.delete(bannedUser);
+    }
+
+    public String exportUsersToCsv() {
+        List<User> users = userRepository.findAll();
+        StringBuilder csv = new StringBuilder();
+        csv.append("ID,Email,Role,Plan,Active,Created At\n");
+
+        for (User user : users) {
+            csv.append(user.getId()).append(",")
+                    .append(user.getEmail()).append(",")
+                    .append(user.getRole()).append(",")
+                    .append(user.getPlan()).append(",")
+                    .append(user.isActive()).append(",")
+                    .append(user.getCreatedAt()).append("\n");
+        }
+        return csv.toString();
+    }
+
     // =========================================================
     // PLAN MANAGEMENT
     // =========================================================

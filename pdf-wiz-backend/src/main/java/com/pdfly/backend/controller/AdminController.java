@@ -77,6 +77,26 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/users/banned")
+    public ResponseEntity<List<com.pdfly.backend.model.BannedUser>> getAllBannedUsers() {
+        return ResponseEntity.ok(adminService.getAllBannedUsers());
+    }
+
+    @PostMapping("/users/unban")
+    public ResponseEntity<Void> unbanUser(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        adminService.unbanUser(email);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = "/users/export", produces = "text/csv")
+    public ResponseEntity<String> exportUsers() {
+        String csv = adminService.exportUsersToCsv();
+        return ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=users.csv")
+                .body(csv);
+    }
+
     // =========================================================
     // PLAN MANAGEMENT
     // =========================================================

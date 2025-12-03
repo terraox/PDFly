@@ -64,20 +64,10 @@
 }
 
 /* Hide default cursor globally */
-/* Hide default cursor globally */
-html,
-body,
 * {
   cursor: none !important;
 }
 
-html,
-body {
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-}
-
-/* Restore text cursor for inputs */
 /* Restore text cursor for inputs */
 input,
 textarea,
