@@ -8,7 +8,7 @@ const data = [
     title: "1. Choose Your Tool",
     content:
       "Select from our wide range of tools to merge, split, compress, convert, or edit your document.",
-    image: "/dashboard.png",
+    image: "/all-tools-light.png",
     icon: <MousePointerClick className="w-6 h-6 text-primary" />,
   },
   {
@@ -16,7 +16,7 @@ const data = [
     title: "2. Upload Your PDF",
     content:
       "Drag and drop your file or select it from your device. We support PDF, Word, Excel, JPG, and more.",
-    image: "/dashboard.png",
+    image: "/step-2.png",
     icon: <Upload className="w-6 h-6 text-primary" />,
   },
   {
@@ -24,7 +24,7 @@ const data = [
     title: "3. Download Result",
     content:
       "Your file is processed instantly. Download the high-quality result to your device in seconds.",
-    image: "/dashboard.png",
+    image: "/step-3.png",
     icon: <Download className="w-6 h-6 text-primary" />,
   },
 ];

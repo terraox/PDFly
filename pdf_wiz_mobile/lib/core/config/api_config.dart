@@ -8,7 +8,7 @@ class ApiConfig {
   // ---------------------------------------------------------------------------
   
   // CHANGE THIS IP ADDRESS to match your setup
-  static const String _host = '192.168.1.11'; 
+  static const String _host = '192.168.1.17'; 
   // static const String _host = '10.0.2.2'; // Android Emulator default
   // static const String _host = '192.168.1.X'; // Your Local IP
   

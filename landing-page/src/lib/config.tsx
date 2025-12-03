@@ -139,7 +139,7 @@ export const siteConfig = {
         { href: "#", text: "Terms of Service", icon: null },
       ],
     },
-
+    },
   ],
 };
 
