@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 
 import { Icons } from "@/components/icons";
 import HeroVideoDialog from "@/components/magicui/hero-video";
+import HeroAnimation from "@/components/magicui/hero-animation";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -45,6 +46,8 @@ function HeroPill() {
 function HeroTitles() {
   return (
     <div className="flex w-full max-w-2xl flex-col space-y-4 overflow-hidden pt-8">
+      <HeroAnimation />
+
       <motion.h1
         className="text-center text-4xl font-medium leading-tight text-foreground sm:text-5xl md:text-6xl flex flex-wrap items-center justify-center gap-2"
         initial={{ filter: "blur(10px)", opacity: 0, y: 50 }}
@@ -55,15 +58,6 @@ function HeroTitles() {
           staggerChildren: 0.2,
         }}
       >
-        <motion.span
-          className="group relative inline-flex items-center justify-center mr-2"
-          initial={{ opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, ease }}
-        >
-          <div className="absolute -inset-2 rounded-full bg-indigo-500/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          <Icons.logo className="relative h-12 w-12 md:h-16 md:w-16 text-primary transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:-rotate-12 cursor-pointer" />
-        </motion.span>
         {["Master", "your", "PDFs", "with PDFly"].map((text, index) => (
           <motion.span
             key={index}
