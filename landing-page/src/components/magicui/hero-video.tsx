@@ -20,6 +20,7 @@ interface HeroVideoProps {
   animationStyle?: AnimationStyle;
   videoSrc: string;
   thumbnailSrc: string;
+  thumbnailSrcDark?: string;
   thumbnailAlt?: string;
   className?: string;
 }
@@ -71,6 +72,7 @@ export default function HeroVideoDialog({
   animationStyle = "from-center",
   videoSrc,
   thumbnailSrc,
+  thumbnailSrcDark,
   thumbnailAlt = "Video thumbnail",
   className,
 }: HeroVideoProps) {
@@ -88,8 +90,20 @@ export default function HeroVideoDialog({
           alt={thumbnailAlt}
           width={1920}
           height={1080}
-          className="transition-all duration-200 group-hover:brightness-[0.8] ease-out rounded-md border"
+          className={cn(
+            "transition-all duration-200 group-hover:brightness-[0.8] ease-out rounded-md border",
+            thumbnailSrcDark ? "block dark:hidden" : ""
+          )}
         />
+        {thumbnailSrcDark && (
+          <Image
+            src={thumbnailSrcDark}
+            alt={thumbnailAlt}
+            width={1920}
+            height={1080}
+            className="transition-all duration-200 group-hover:brightness-[0.8] ease-out rounded-md border hidden dark:block"
+          />
+        )}
         <div className="absolute inset-0 flex items-center justify-center group-hover:scale-100 scale-[0.9] transition-all duration-200 ease-out rounded-2xl">
           <div className="z-30 bg-primary/10 flex items-center justify-center rounded-full backdrop-blur-md size-28">
             <div
