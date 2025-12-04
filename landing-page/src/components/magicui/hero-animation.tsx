@@ -1,159 +1,141 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Icons } from "@/components/icons";
 
 /**
- * =============================================================================
- * HERO ANIMATION - Notion Mail Inspired
- * =============================================================================
- * 
- * The logo flies smoothly from left to center along a gentle curve.
- * No wobble, no rotation - just a clean, elegant entry animation.
- * 
- * =============================================================================
+ * HERO ANIMATION - Notion Mail Style
+ * Paper plane flies from left along an S-curve, with dotted trail drawing behind it
+ * Lands smoothly in the center
  */
-
-// =============================================================================
-// CONFIGURATION
-// =============================================================================
-
-const CONFIG = {
-    duration: 1800, // Smooth, not too fast
-    strokeColor: "rgba(148, 163, 184, 0.3)",
-    strokeWidth: 1.5,
-    dashArray: "8 6",
-};
-
-// =============================================================================
-// ANIMATION UTILITIES
-// =============================================================================
-
-/**
- * Ease-out quart - very smooth deceleration, feels natural
- */
-function easeOutQuart(t: number): number {
-    return 1 - Math.pow(1 - t, 4);
-}
-
-// =============================================================================
-// COMPONENT
-// =============================================================================
 
 export default function HeroAnimation() {
-    const containerRef = useRef<HTMLDivElement>(null);
     const pathRef = useRef<SVGPathElement>(null);
-    const logoRef = useRef<HTMLDivElement>(null);
     const trailRef = useRef<SVGPathElement>(null);
-
-    const animationRef = useRef<number | null>(null);
-    const startTimeRef = useRef<number | null>(null);
-    const [hasLanded, setHasLanded] = useState(false);
-
-    // Smooth curved path from left to exact center
-    // The path ends at 500,100 which is the center of viewBox (1000x200)
-    const flightPath = "M -100,100 Q 200,160 500,100";
-
-    // =============================================================================
-    // ANIMATION LOOP - Runs once on mount
-    // =============================================================================
-
-    const animate = useCallback((timestamp: number) => {
-        if (!pathRef.current || !logoRef.current || !trailRef.current) return;
-
-        if (!startTimeRef.current) {
-            startTimeRef.current = timestamp;
-        }
-
-        const elapsed = timestamp - startTimeRef.current;
-        const progress = Math.min(elapsed / CONFIG.duration, 1);
-        const easedProgress = easeOutQuart(progress);
-
-        const totalLength = pathRef.current.getTotalLength();
-        const currentLength = easedProgress * totalLength;
-        const point = pathRef.current.getPointAtLength(currentLength);
-
-        // Convert SVG coordinates to screen position
-        // ViewBox is 1000 wide, center is 500
-        // We want the logo centered when point.x = 500
-        const xPercent = ((point.x - 500) / 1000) * 100;
-        const yOffset = (point.y - 100) * 0.5; // Reduce vertical movement
-
-        // Apply transform - NO ROTATION, just smooth translation
-        logoRef.current.style.transform = `translateX(${xPercent}%) translateY(${yOffset}px)`;
-        logoRef.current.style.opacity = `${Math.min(progress * 2, 1)}`;
-
-        // Animate the trail to follow the logo
-        const trailLength = currentLength;
-        trailRef.current.style.strokeDasharray = `${trailLength} ${totalLength}`;
-
-        if (progress < 1) {
-            animationRef.current = requestAnimationFrame(animate);
-        } else {
-            // Animation complete - snap to final position
-            setHasLanded(true);
-            logoRef.current.style.transform = 'translateX(0) translateY(0)';
-            logoRef.current.style.opacity = '1';
-        }
-    }, []);
+    const logoRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [isComplete, setIsComplete] = useState(false);
 
     useEffect(() => {
-        // Small delay before starting animation for page load
+        const path = pathRef.current;
+        const trail = trailRef.current;
+        const logo = logoRef.current;
+        const container = containerRef.current;
+
+        if (!path || !trail || !logo || !container) return;
+
+        const totalLength = path.getTotalLength();
+        const duration = 3000; // 3 seconds - smooth like Notion
+        let startTime: number | null = null;
+        let animationId: number;
+
+        // Initialize trail as hidden
+        trail.style.strokeDasharray = `${totalLength}`;
+        trail.style.strokeDashoffset = `${totalLength}`;
+
+        const animate = (timestamp: number) => {
+            if (!startTime) startTime = timestamp;
+
+            const elapsed = timestamp - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            // Smooth ease-out for natural deceleration
+            const eased = 1 - Math.pow(1 - progress, 4);
+
+            // Get point on path
+            const point = path.getPointAtLength(eased * totalLength);
+
+            // Calculate rotation angle based on path tangent
+            const delta = 0.1;
+            const p1 = path.getPointAtLength(Math.max(0, eased * totalLength - delta));
+            const p2 = path.getPointAtLength(Math.min(totalLength, eased * totalLength + delta));
+            const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * (180 / Math.PI);
+
+            // Map SVG coordinates to screen position
+            // Path ends at x=600 (center of 1200 viewBox)
+            const containerRect = container.getBoundingClientRect();
+            const scaleX = containerRect.width / 1200;
+            const scaleY = containerRect.height / 100;
+
+            // Calculate screen position (600 = center)
+            const screenX = (point.x - 600) * scaleX;
+            const screenY = (point.y - 50) * scaleY;
+
+            // Subtle rotation that decreases near the end
+            const rotationFactor = progress < 0.8 ? 0.4 : 0.4 * (1 - (progress - 0.8) / 0.2);
+            const rotation = angle * rotationFactor;
+
+            // Apply transform
+            logo.style.transform = `translate(${screenX}px, ${screenY}px) rotate(${rotation}deg)`;
+            logo.style.opacity = progress < 0.1 ? `${progress * 10}` : '1';
+
+            // Draw trail behind the logo
+            trail.style.strokeDashoffset = `${totalLength * (1 - eased)}`;
+
+            if (progress < 1) {
+                animationId = requestAnimationFrame(animate);
+            } else {
+                // Snap to center with no rotation
+                logo.style.transform = 'translate(0px, 0px) rotate(0deg)';
+                logo.style.opacity = '1';
+                setIsComplete(true);
+            }
+        };
+
+        // Start after page settles
         const timeout = setTimeout(() => {
-            animationRef.current = requestAnimationFrame(animate);
-        }, 200);
+            animationId = requestAnimationFrame(animate);
+        }, 400);
 
         return () => {
             clearTimeout(timeout);
-            if (animationRef.current) {
-                cancelAnimationFrame(animationRef.current);
-            }
+            cancelAnimationFrame(animationId);
         };
-    }, [animate]);
+    }, []);
 
-    // =============================================================================
-    // RENDER
-    // =============================================================================
+    // S-curve path: starts from left below center, curves up, then down to center
+    // Similar to Notion Mail's elegant swooping motion
+    const curvePath = "M -100 70 C 100 20, 300 80, 400 30 S 550 60, 600 50";
 
     return (
         <div
             ref={containerRef}
-            className="relative w-full h-28 md:h-36 overflow-visible z-10 flex items-center justify-center"
+            className="relative w-full h-20 md:h-24 overflow-visible z-10 flex items-center justify-center"
             aria-hidden="true"
         >
-            {/* Flight path trail */}
+            {/* SVG with S-curve path */}
             <svg
-                className="absolute w-full h-full pointer-events-none"
-                viewBox="0 0 1000 200"
+                className="absolute inset-0 w-full h-full pointer-events-none"
+                viewBox="0 0 1200 100"
                 fill="none"
                 preserveAspectRatio="xMidYMid meet"
                 style={{ overflow: "visible" }}
             >
-                {/* Hidden path for calculations */}
+                {/* Hidden path for position calculations */}
                 <path
                     ref={pathRef}
-                    d={flightPath}
-                    stroke="transparent"
+                    d={curvePath}
                     fill="none"
+                    stroke="transparent"
                 />
 
-                {/* Visible animated trail */}
+                {/* Visible dotted trail that draws as logo flies */}
                 <path
                     ref={trailRef}
-                    d={flightPath}
-                    stroke={CONFIG.strokeColor}
-                    strokeWidth={CONFIG.strokeWidth}
-                    strokeDasharray="0 1000"
-                    strokeLinecap="round"
+                    d={curvePath}
                     fill="none"
+                    stroke="rgba(99, 102, 241, 0.35)"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeDasharray="4 6"
                     style={{
-                        opacity: hasLanded ? 0 : 1,
-                        transition: hasLanded ? "opacity 1s ease-out" : "none"
+                        opacity: isComplete ? 0 : 1,
+                        transition: isComplete ? "opacity 2s ease-out" : "none"
                     }}
                 />
             </svg>
 
-            {/* The logo - flies in and lands */}
+            {/* The logo that flies and lands in center */}
             <div
                 ref={logoRef}
                 className="relative group cursor-pointer"
@@ -163,7 +145,7 @@ export default function HeroAnimation() {
                 }}
             >
                 <div className="absolute -inset-3 rounded-full bg-indigo-500/20 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <Icons.logo className="relative h-16 w-16 md:h-20 md:w-20 text-primary transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:-rotate-12" />
+                <Icons.logo className="relative h-12 w-12 md:h-14 md:w-14 text-primary transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:-rotate-12" />
             </div>
         </div>
     );
