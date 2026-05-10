@@ -19,6 +19,7 @@ com/pdfly/backend/dto/CouponRequest.class
 com/pdfly/backend/model/Transaction$Status.class
 com/pdfly/backend/controller/AuthController.class
 com/pdfly/backend/util/AdminInitializer.class
+com/pdfly/backend/repository/BannedUserRepository.class
 com/pdfly/backend/controller/PdfToolController.class
 com/pdfly/backend/model/User$Role.class
 com/pdfly/backend/controller/PublicCouponController.class
@@ -28,6 +29,7 @@ com/pdfly/backend/controller/PdfToolController$1.class
 com/pdfly/backend/config/JwtAuthenticationFilter.class
 com/pdfly/backend/repository/PlanRepository.class
 com/pdfly/backend/service/AdminService.class
+com/pdfly/backend/model/BannedUser.class
 com/pdfly/backend/repository/GlobalConfigRepository.class
 com/pdfly/backend/model/GlobalConfig.class
 com/pdfly/backend/model/Transaction.class

@@ -1,21 +1,47 @@
 # PDFly - Enterprise PDF SaaS Platform
 
-## System Architecture & Code Patterns
+## Project Demo
+*(Demo content to be added)*
 
-The application follows a Monolithic Service-Oriented Architecture designed for maintainability and easy containerization.
+## Landing Page
+Check out the live landing page here: [PDFly Landing Page](https://pd-gucmvwrhy-aadityabasisths-projects.vercel.app/)
 
-### Backend Patterns (Spring Boot)
-- **Controller-Service-Repository**: Separation of concerns.
-    - **Controllers** (`/controller`): Handle HTTP requests, input validation, and response formatting.
-    - **Services** (`/service`): Contain business logic (e.g., `PdfToolService` for file processing, `UsageResetService` for scheduling).
-    - **Repositories** (`/repository`): Interface with PostgreSQL via Spring Data JPA.
-- **DTOs**: Data Transfer Objects used for type-safe communication between frontend and backend (e.g., `AuthResponse`, `LoginRequest`).
-- **Global Configuration**: System-wide settings stored in the database for dynamic runtime adjustments.
+## Features
 
-### Frontend Patterns (React)
-- **Context API**: Global state management for Authentication (`AuthContext`), Toast Notifications (`ToastContext`), and User History (`HistoryContext`).
-- **Component-Based Design**: Reusable UI components (`/components/ui`) like Modals, Buttons, and Inputs.
-- **Layout Wrapper**: `Navbar` and `Footer` integrated into the main layout for consistent navigation.
+### Product Features (15+ PDF Tools)
+Comprehensive suite of tools for all your document needs:
+- **Merge PDF**: Combine multiple PDF files into a single document.
+- **Split PDF**: Separate pages into individual files or extract specific ranges.
+- **Compress PDF**: Reduce file size while maintaining optimal quality.
+- **Convert to PDF**: Transform Word, Excel, PowerPoint, and JPG files into PDF.
+- **Convert from PDF**: Export PDF content to Word, Excel, or PowerPoint formats.
+- **Edit & Organize**:
+    - **Rotate PDF**: Adjust the orientation of your pages.
+    - **Organize PDF**: Reorder, add, or delete pages within a document.
+    - **Crop PDF**: Trim page margins to your specific requirements.
+- **Security & Trust**:
+    - **Protect PDF**: Encrypt documents with strong passwords.
+    - **Unlock PDF**: Remove security from protected files.
+    - **Redact PDF**: Permanently black out sensitive information.
+- **Sign & Annotate**:
+    - **Sign PDF**: Add professional text-based signatures.
+    - **Watermark**: Overlay custom text or images across pages.
+    - **Page Numbers**: Insert customizable page numbering for easy navigation.
+
+### Frontend (User Experience)
+- **Premium UI/UX**: A modern, high-end interface built with **Tailwind CSS** and **Framer Motion**. Features "Magic UI" components like `RainbowButton`, `ShineBorder`, and `NumberTicker` for a polished feel.
+- **Smart Rate Limiting**: Enforces a **3 Free Tasks per Day** policy for free users, with visual countdowns and "Limit Reached" prompts.
+- **Interactive Pricing**: Animated pricing page with counting numbers to drive conversions.
+- **Dark Mode**: Fully responsive theme support (System/Light/Dark) using `next-themes`.
+- **Real-time Feedback**: Toast notifications and smooth loading states for all operations.
+
+### Backend (Core Engine)
+- **Secure Authentication**: Stateless architecture using **Spring Security** and **JWT** (JSON Web Tokens).
+- **Passwordless Entry**: "Magic Link" style access where secure keys are emailed to users via **JavaMail**.
+- **Robust PDF Engine**: Powered by **Apache PDFBox** and **Apache POI**, handling complex document manipulations efficiently in memory.
+- **Daily Usage Reset**: Automated scheduled tasks (`@Scheduled`) reset user limits daily.
+- **Role-Based Access Control (RBAC)**: Strict separation between `USER` and `ADMIN` roles.
+- **HTML Emails**: Beautifully styled transactional emails for welcome messages and password resets.
 
 ## Technology Stack
 
@@ -42,8 +68,37 @@ The application follows a Monolithic Service-Oriented Architecture designed for 
 | **Apache POI** | Microsoft Office document conversion |
 | **Lombok** | Boilerplate code reduction |
 
-## Project Structure
+## How it Works
 
+**Product Overview**
+PDFly is a scalable, high-performance Micro-SaaS application designed for secure and efficient PDF manipulation. Built with a modern **React** frontend and a robust **Java Spring Boot** backend, it offers enterprise-grade document processing capabilities including merging, splitting, compression, conversion (Word/Excel/PPT), and security tools.
+
+The platform operates on a **Freemium** business model, offering essential tools for free with daily usage limits, while incentivizing upgrades to the **Pro** tier for unlimited access and advanced features.
+
+**System Architecture & Code Patterns**
+The application follows a Monolithic Service-Oriented Architecture designed for maintainability and easy containerization.
+
+- **Backend Patterns (Spring Boot)**
+    - **Controller-Service-Repository**: Separation of concerns.
+        - **Controllers** (`/controller`): Handle HTTP requests, input validation, and response formatting.
+        - **Services** (`/service`): Contain business logic (e.g., `PdfToolService` for file processing, `UsageResetService` for scheduling).
+        - **Repositories** (`/repository`): Interface with PostgreSQL via Spring Data JPA.
+    - **DTOs**: Data Transfer Objects used for type-safe communication between frontend and backend.
+    - **Global Configuration**: System-wide settings stored in the database for dynamic runtime adjustments.
+
+- **Frontend Patterns (React)**
+    - **Context API**: Global state management for Authentication (`AuthContext`), Toast Notifications (`ToastContext`), and User History (`HistoryContext`).
+    - **Component-Based Design**: Reusable UI components (`/components/ui`) like Modals, Buttons, and Inputs.
+    - **Layout Wrapper**: `Navbar` and `Footer` integrated into the main layout for consistent navigation.
+
+## Other Details
+
+### Admin Panel Features
+- **Live Dashboard**: Real-time visualization of system health and user activity.
+- **Feature Flags**: Dynamic control to enable/disable specific tools (e.g., "Disable Compression") or signups globally.
+- **User Management**: CRM-style interface to view users, manage plans, and monitor usage.
+
+### Project Structure
 ```
 proj/
 ├── pdf-wiz-backend/          # Spring Boot Application
@@ -68,14 +123,14 @@ proj/
 └── README.md                 # Project Documentation
 ```
 
-## Getting Started
+### Getting Started
 
-### Prerequisites
+#### Prerequisites
 - **Node.js** (v18+)
 - **Java JDK** (v17+)
 - **PostgreSQL** (Local or Cloud)
 
-### 1. Backend Setup
+#### 1. Backend Setup
 
 **Option 1: Use the Helper Script (Recommended)**
 From the project root directory:
@@ -97,7 +152,7 @@ cd pdf-wiz-backend
 ```
 *Server starts on `http://localhost:8080`*
 
-### 2. Frontend Setup
+#### 2. Frontend Setup
 ```bash
 cd pdf-wiz-frontend
 
@@ -109,7 +164,7 @@ npm run dev
 ```
 *UI accessible at `http://localhost:5173`*
 
-## Configuration
+### Configuration
 
 The backend `application.properties` requires the following configurations:
 
@@ -119,34 +174,5 @@ The backend `application.properties` requires the following configurations:
 | `jwt.secret` | Token Signing Key | `5367566B59...` (Base64 encoded) |
 | `spring.mail.password` | SMTP Password | Google App Password |
 
-## Product Overview
-
-PDFly is a scalable, high-performance Micro-SaaS application designed for secure and efficient PDF manipulation. Built with a modern **React** frontend and a robust **Java Spring Boot** backend, it offers enterprise-grade document processing capabilities including merging, splitting, compression, conversion (Word/Excel/PPT), and security tools.
-
-The platform operates on a **Freemium** business model, offering essential tools for free with daily usage limits, while incentivizing upgrades to the **Pro** tier for unlimited access and advanced features.
-
-## Key Features
-
-### Frontend (User Experience)
-- **Premium UI/UX**: A modern, high-end interface built with **Tailwind CSS** and **Framer Motion**. Features "Magic UI" components like `RainbowButton`, `ShineBorder`, and `NumberTicker` for a polished feel.
-- **15+ PDF Tools**: Comprehensive suite including Merge, Split, Compress, Convert (Word/Excel/PPT/JPG), Watermark, Sign, Protect, and Unlock.
-- **Smart Rate Limiting**: Enforces a **3 Free Tasks per Day** policy for free users, with visual countdowns and "Limit Reached" prompts.
-- **Interactive Pricing**: Animated pricing page with counting numbers to drive conversions.
-- **Dark Mode**: Fully responsive theme support (System/Light/Dark) using `next-themes`.
-- **Real-time Feedback**: Toast notifications and smooth loading states for all operations.
-
-### Backend (Core Engine)
-- **Secure Authentication**: Stateless architecture using **Spring Security** and **JWT** (JSON Web Tokens).
-- **Passwordless Entry**: "Magic Link" style access where secure keys are emailed to users via **JavaMail**.
-- **Robust PDF Engine**: Powered by **Apache PDFBox** and **Apache POI**, handling complex document manipulations efficiently in memory.
-- **Daily Usage Reset**: Automated scheduled tasks (`@Scheduled`) reset user limits daily.
-- **Role-Based Access Control (RBAC)**: Strict separation between `USER` and `ADMIN` roles.
-- **HTML Emails**: Beautifully styled transactional emails for welcome messages and password resets.
-
-### Admin Command Center
-- **Live Dashboard**: Real-time visualization of system health and user activity.
-- **Feature Flags**: Dynamic control to enable/disable specific tools (e.g., "Disable Compression") or signups globally.
-- **User Management**: CRM-style interface to view users, manage plans, and monitor usage.
-
-## License
+### License
 Copyright © 2025 PDFly Inc. All rights reserved.
